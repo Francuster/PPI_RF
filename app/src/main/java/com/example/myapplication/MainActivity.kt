@@ -19,6 +19,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplicationTheme {
+                Log.d("myTag", "Testing");
+
+                if (OpenCVLoader.initLocal()) {
+                    Log.d("myTag", "OpenCV loaded");
+
+                }
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -26,6 +32,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Greeting("Android")
                 }
+
             }
         }
     }

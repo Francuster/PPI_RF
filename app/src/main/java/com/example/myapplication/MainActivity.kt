@@ -6,11 +6,17 @@ import android.hardware.Camera
 import android.os.Bundle
 import android.view.Gravity
 import android.view.SurfaceView
+import android.view.SurfaceHolder
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Mat
 import org.opencv.core.MatOfRect
@@ -34,38 +40,87 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
 
+    // Variables para dibujar el óvalo y el mensaje
+    private val paint: Paint = Paint().apply {
+        color = Color.RED
+        style = Paint.Style.STROKE
+        strokeWidth = 3f
+    }
+    private val ovalRect: RectF = RectF()
+
+    // Callback para dibujar el óvalo en la superficie de la cámara
+    private val surfaceCallback = object : SurfaceHolder.Callback {
+        override fun surfaceCreated(holder: SurfaceHolder) {
+            startCameraPreview(holder)
+        }
+        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {}
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
+            stopCameraPreview()
+        }
+    }
+
+    // Variable para la vista previa de la cámara
+    private var surfaceView: SurfaceView? = null
+
+    override fun onPause() {
+        super.onPause()
+        stopCamera()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopCamera()
+    }
+
+    private fun stopCamera() {
+        // Detener la vista previa de la cámara
+        camera?.stopPreview()
+        // Liberar la cámara
+        camera?.release()
+        camera = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        // Inicializar OpenCV y cargar el clasificador de Haar
-        OpenCVLoader.initDebug()
-        loadFaceCascade()
+        // Crear SurfaceView para la vista previa de la cámara
+        surfaceView = SurfaceView(this)
+        surfaceView?.layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        )
+        setContentView(surfaceView)
 
-        // Configurar la vista de la cámara
-        val surfaceView = SurfaceView(this)
-        val layoutParams = WindowManager.LayoutParams()
-        layoutParams.width = 1
-        layoutParams.height = 1
-        addContentView(surfaceView, layoutParams)
-
-        // Agregar botón "Escanear"
+        // Crear botón "Escanear"
         val buttonScan = Button(this)
         buttonScan.text = "Escanear"
         buttonScan.setOnClickListener {
             toggleScanning()
             openCamera()
         }
-        val buttonLayoutParams = FrameLayout.LayoutParams(
+        val buttonParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT
         )
-        buttonLayoutParams.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
-        addContentView(buttonScan, buttonLayoutParams)
+        buttonParams.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+        addContentView(buttonScan, buttonParams)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onResume() {
+        super.onResume()
+        // Inicializar OpenCV y cargar el clasificador de Haar
+        OpenCVLoader.initDebug()
+        loadFaceCascade()
+    }
+
+    private fun startCameraPreview(holder: SurfaceHolder) {
+        camera = Camera.open()
+        camera?.setPreviewDisplay(holder)
+        camera?.startPreview()
+    }
+
+    private fun stopCameraPreview() {
         camera?.stopPreview()
         camera?.release()
         camera = null
@@ -95,12 +150,47 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
         yuvMat.release()
     }
 
+    private fun toggleScanning() {
+        isScanning = !isScanning
+        if (isScanning) {
+            Toast.makeText(this, "Escaneando...", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openCamera() {
+        if (!checkCameraPermission()) return
+
+        if (camera == null) {
+            camera = Camera.open()
+            camera?.setPreviewCallback(this)
+        }
+    }
+
     private fun checkCameraPermission(): Boolean {
-        return if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            true
-        } else {
-            requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
-            false
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+            return false
+        }
+        return true
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            REQUEST_CAMERA_PERMISSION -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permiso concedido, abrir la cámara
+                    openCamera()
+                } else {
+                    // Permiso denegado, mostrar un mensaje o tomar una acción adecuada
+                    Toast.makeText(this, "Permiso de la cámara denegado", Toast.LENGTH_SHORT).show()
+                }
+                return
+            }
+            else -> {
+                // Manejar otros casos de permisos si es necesario
+            }
         }
     }
 
@@ -129,22 +219,6 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
             e.printStackTrace()
         } catch (e: Exception) {
             e.printStackTrace()
-        }
-    }
-
-    private fun toggleScanning() {
-        isScanning = !isScanning
-        if (isScanning) {
-            Toast.makeText(this, "Escaneando...", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun openCamera() {
-        if (!checkCameraPermission()) return
-
-        if (camera == null) {
-            camera = Camera.open()
-            camera?.setPreviewCallback(this)
         }
     }
 }

@@ -1,3 +1,6 @@
+package com.example.myapplication;
+
+import android.Manifest
 import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.os.Bundle
@@ -16,7 +19,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
+class MainActivity : AppCompatActivity(), Camera.PreviewCallback  {
 
     // Variables
     private var camera: Camera? = null
@@ -78,9 +81,12 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
     }
 
     private fun checkCameraPermission(): Boolean {
-        val permission = android.Manifest.permission.CAMERA
-        val res = checkCallingOrSelfPermission(permission)
-        return res == PackageManager.PERMISSION_GRANTED
+        return if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            true
+        } else {
+            requestPermissions(arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
+            false
+        }
     }
 
     private fun loadFaceCascade() {

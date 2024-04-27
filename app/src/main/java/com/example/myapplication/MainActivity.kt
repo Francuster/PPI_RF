@@ -1,11 +1,15 @@
-package com.example.myapplication;
+package com.example.myapplication
 
 import android.Manifest
 import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.os.Bundle
+import android.view.Gravity
 import android.view.SurfaceView
 import android.view.WindowManager
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Mat
@@ -19,11 +23,12 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-class MainActivity : AppCompatActivity(), Camera.PreviewCallback  {
+class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     // Variables
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier // Clasificador de Haar para la detección de rostros
+    private var isScanning = false
 
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
@@ -44,11 +49,19 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback  {
         layoutParams.height = 1
         addContentView(surfaceView, layoutParams)
 
-        // Abrir la cámara
-        if (checkCameraPermission()) {
-            camera = Camera.open()
-            camera?.setPreviewCallback(this)
+        // Agregar botón "Escanear"
+        val buttonScan = Button(this)
+        buttonScan.text = "Escanear"
+        buttonScan.setOnClickListener {
+            toggleScanning()
+            openCamera()
         }
+        val buttonLayoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.WRAP_CONTENT,
+            FrameLayout.LayoutParams.WRAP_CONTENT
+        )
+        buttonLayoutParams.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
+        addContentView(buttonScan, buttonLayoutParams)
     }
 
     override fun onDestroy() {
@@ -59,6 +72,8 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback  {
     }
 
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
+        if (!isScanning) return
+
         val parameters = camera?.parameters
         val width = parameters?.previewSize?.width ?: 0
         val height = parameters?.previewSize?.height ?: 0
@@ -91,7 +106,7 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback  {
 
     private fun loadFaceCascade() {
         try {
-            val resourceId = resources.getIdentifier("lbpcascade_frontalface_improved", "raw", packageName)
+            val resourceId = R.raw.lbpcascade_frontalface_improved
             val isStream: InputStream = resources.openRawResource(resourceId)
             val cascadeDir: File = cacheDir
             val cascadeFile: File = File(cascadeDir, "lbpcascade_frontalface_improved.xml")
@@ -108,9 +123,28 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback  {
             cascadeClassifier = CascadeClassifier(cascadeFile.absolutePath)
             if (cascadeClassifier.empty()) {
                 // Manejar el error al cargar el clasificador de Haar
+                throw IOException("El clasificador de Haar está vacío")
             }
         } catch (e: IOException) {
             e.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun toggleScanning() {
+        isScanning = !isScanning
+        if (isScanning) {
+            Toast.makeText(this, "Escaneando...", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openCamera() {
+        if (!checkCameraPermission()) return
+
+        if (camera == null) {
+            camera = Camera.open()
+            camera?.setPreviewCallback(this)
         }
     }
 }

@@ -2,11 +2,13 @@ package com.example.myapplication
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.hardware.Camera
 import android.os.Bundle
 import android.view.Gravity
 import android.view.SurfaceView
-import android.view.SurfaceHolder
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
@@ -14,35 +16,29 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Mat
 import org.opencv.core.MatOfRect
+import org.opencv.core.Point
 import org.opencv.core.Scalar
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
-import android.view.ViewGroup
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-
 class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
 
-    // Variables
     private var camera: Camera? = null
-    private lateinit var cascadeClassifier: CascadeClassifier // Clasificador de Haar para la detección de rostros
+    private lateinit var cascadeClassifier: CascadeClassifier
     private var isScanning = false
 
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
 
-    // Variables para dibujar el rectángulo y el mensaje
     private val paint: Paint = Paint().apply {
         color = Color.RED
         style = Paint.Style.STROKE
@@ -50,14 +46,12 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
     }
     private val rect: RectF = RectF()
 
-    // Variable para la vista previa de la cámara
     private var surfaceView: SurfaceView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        // Crear SurfaceView para la vista previa de la cámara
         surfaceView = SurfaceView(this)
         surfaceView?.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
@@ -68,7 +62,6 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
             FrameLayout.LayoutParams.MATCH_PARENT
         ))
 
-        // Crear botón "Escanear"
         val buttonScan = Button(this)
         buttonScan.text = "Escanear"
         buttonScan.setOnClickListener {
@@ -85,12 +78,9 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     override fun onResume() {
         super.onResume()
-        // Inicializar OpenCV
         OpenCVLoader.initDebug()
-        // Cargar el clasificador de Haar
         loadFaceCascade()
     }
-
 
     override fun onPause() {
         super.onPause()
@@ -99,15 +89,15 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     override fun onDestroy() {
         super.onDestroy()
-        camera?.release()
         stopCamera()
     }
 
     private fun stopCamera() {
-        // Detener la vista previa de la cámara
-        camera?.stopPreview()
-        // Liberar la cámara
-        camera?.release()
+        camera?.apply {
+            setPreviewCallback(null)
+            stopPreview()
+            release()
+        }
         camera = null
     }
 
@@ -115,7 +105,6 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
         if (!checkCameraPermission()) return
 
         if (camera == null) {
-            // Abrir la cámara frontal
             val cameraCount = Camera.getNumberOfCameras()
             var frontCameraId = -1
             for (i in 0 until cameraCount) {
@@ -129,48 +118,54 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
             if (frontCameraId != -1) {
                 camera = Camera.open(frontCameraId)
                 camera?.setPreviewCallback(this)
+
+                // Configure camera parameters
+                val parameters = camera?.parameters
+
+                // Set camera preview surface
+                try {
+                    camera?.setDisplayOrientation(90)
+                    camera?.setPreviewDisplay(surfaceView?.holder)
+
+                    // Find the best preview size for the camera
+                    val bestSize = getBestPreviewSize(parameters)
+                    parameters?.setPreviewSize(bestSize.width.toInt(), bestSize.height.toInt())
+
+                    camera?.parameters = parameters
+                    camera?.startPreview()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             } else {
                 Toast.makeText(this, "No se pudo abrir la cámara frontal", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun openCamera() {
-        startCamera()
+    private fun getBestPreviewSize(parameters: Camera.Parameters?): org.opencv.core.Size {
+        var bestSize = parameters?.supportedPreviewSizes?.get(0)?.let {
+            org.opencv.core.Size(it.width.toDouble(), it.height.toDouble())
+        } ?: org.opencv.core.Size(640.0, 480.0)
 
-        // Crear SurfaceView para la vista previa de la cámara
-        surfaceView = SurfaceView(this)
-        surfaceView?.layoutParams = FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
-        )
+        val targetRatio = bestSize.width / bestSize.height
 
-        // Configurar la superficie de vista previa
-        surfaceView?.holder?.addCallback(object : SurfaceHolder.Callback {
-            override fun surfaceCreated(holder: SurfaceHolder) {
-                try {
-                    camera?.setPreviewDisplay(holder)
-                    camera?.startPreview()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
+        for (size in parameters?.supportedPreviewSizes ?: emptyList()) {
+            val ratio = size.width.toDouble() / size.height.toDouble()
+            if (Math.abs(ratio - targetRatio) < Math.abs(bestSize.width / bestSize.height - targetRatio)) {
+                bestSize = org.opencv.core.Size(size.width.toDouble(), size.height.toDouble())
             }
+        }
 
-            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-                // Aquí puedes ajustar la configuración de la cámara si es necesario
-            }
-
-            override fun surfaceDestroyed(holder: SurfaceHolder) {
-                // Detener la vista previa de la cámara
-                camera?.stopPreview()
-            }
-        })
-
-        // Añadir la vista previa de la cámara al contenedor principal
-        val rootView = findViewById(android.R.id.content) as ViewGroup
-        rootView.addView(surfaceView)
+        return bestSize
     }
 
+
+
+
+
+    private fun openCamera() {
+        startCamera()
+    }
 
     private fun checkCameraPermission(): Boolean {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -186,16 +181,14 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
         when (requestCode) {
             REQUEST_CAMERA_PERMISSION -> {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // Permiso concedido, abrir la cámara
                     openCamera()
                 } else {
-                    // Permiso denegado, mostrar un mensaje o tomar una acción adecuada
                     Toast.makeText(this, "Permiso de la cámara denegado", Toast.LENGTH_SHORT).show()
                 }
                 return
             }
             else -> {
-                // Manejar otros casos de permisos si es necesario
+                // Handle other permission cases if necessary
             }
         }
     }
@@ -204,32 +197,57 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
         isScanning = !isScanning
         if (isScanning) {
             Toast.makeText(this, "Escaneando...", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Escaneo terminado", Toast.LENGTH_SHORT).show()
         }
     }
 
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
+        // Verificar si el escaneo está activado
         if (!isScanning) return
 
-        val parameters = camera?.parameters
-        val width = parameters?.previewSize?.width ?: 0
-        val height = parameters?.previewSize?.height ?: 0
+        // Crear un nuevo hilo para el procesamiento de la imagen
+        Thread {
+            // Obtener el tamaño de la imagen de la vista previa de la cámara
+            val parameters = camera?.parameters
+            val width = parameters?.previewSize?.width ?: 0
+            val height = parameters?.previewSize?.height ?: 0
 
-        val yuvMat = Mat(height + height / 2, width, org.opencv.core.CvType.CV_8UC1)
-        yuvMat.put(0, 0, data)
+            // Crear una matriz para los datos de la imagen en formato YUV
+            val yuvMat = Mat(height + height / 2, width, org.opencv.core.CvType.CV_8UC1)
+            yuvMat.put(0, 0, data)
 
-        val rgbaMat = Mat()
-        Imgproc.cvtColor(yuvMat, rgbaMat, Imgproc.COLOR_YUV2RGBA_NV21, 4)
+            // Crear una matriz para la imagen en formato RGBA
+            val rgbaMat = Mat()
+            // Convertir la imagen de YUV a RGBA
+            Imgproc.cvtColor(yuvMat, rgbaMat, Imgproc.COLOR_YUV2RGBA_NV21, 4)
 
-        val faces = MatOfRect()
-        cascadeClassifier.detectMultiScale(rgbaMat, faces, 1.1, 2, 2, Size(150.0, 150.0), Size())
+            // Detectar rostros en la imagen
+            val faces = MatOfRect()
+            cascadeClassifier.detectMultiScale(rgbaMat, faces, 1.1, 2, 2, Size(150.0, 150.0), Size())
 
-        val facesArray = faces.toArray()
-        for (faceRect in facesArray) {
-            Imgproc.rectangle(rgbaMat, faceRect.tl(), faceRect.br(), Scalar(255.0, 0.0, 0.0), 3)
-        }
+            // Obtener la lista de rostros detectados
+            val facesArray = faces.toArray()
+            // Iterar sobre cada rostro detectado y dibujar un rectángulo alrededor de él
+            for (faceRect in facesArray) {
+                // Dibujar el rectángulo con las coordenadas ajustadas
+                Imgproc.rectangle(rgbaMat, Point(faceRect.x.toDouble(), faceRect.y.toDouble()), Point((faceRect.x + faceRect.width).toDouble(), (faceRect.y + faceRect.height).toDouble()), Scalar(255.0, 0.0, 0.0), 3)
+                // Mostrar un mensaje indicando que se detectó un rostro
+                runOnUiThread {
+                    Toast.makeText(this, "Rostro detectado", Toast.LENGTH_SHORT).show()
+                }
+            }
 
-        yuvMat.release()
+            // Liberar la matriz de datos de YUV
+            yuvMat.release()
+
+            // Actualizar la vista previa de la cámara en el hilo principal
+            runOnUiThread {
+                // Aquí puedes actualizar la vista previa de la cámara si es necesario
+            }
+        }.start()
     }
+
     private fun loadFaceCascade() {
         try {
             val resourceId = R.raw.lbpcascade_frontalface_improved
@@ -248,7 +266,6 @@ class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
 
             cascadeClassifier = CascadeClassifier(cascadeFile.absolutePath)
             if (cascadeClassifier.empty()) {
-                // Manejar el error al cargar el clasificador de Haar
                 throw IOException("El clasificador de Haar está vacío")
             }
         } catch (e: IOException) {

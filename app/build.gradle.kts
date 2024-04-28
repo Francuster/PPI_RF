@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation("org.opencv:opencv:4.9.0")
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.cardview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

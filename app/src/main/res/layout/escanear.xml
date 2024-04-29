@@ -76,17 +76,6 @@
         </View>
 
 
-        <ImageView
-            android:id="@+id/atras"
-            android:layout_width="40dp"
-            android:layout_height="50dp"
-
-
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.006"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/Arrow_left"
-            tools:layout_editor_absoluteY="5dp" />
 
         <ImageView
             android:id="@+id/escaneo"

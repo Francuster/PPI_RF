@@ -1,6 +1,7 @@
 package com.example.myapplication
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
@@ -9,6 +10,7 @@ import android.hardware.Camera
 import android.os.Bundle
 import android.view.Gravity
 import android.view.SurfaceView
+import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
@@ -34,7 +36,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier
     private var isScanning = false
-
+    private var detecto=false
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
@@ -74,6 +76,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         )
         buttonParams.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
         addContentView(buttonScan, buttonParams)
+
     }
 
     override fun onResume() {
@@ -203,6 +206,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
     }
 
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
+
         // Verificar si el escaneo está activado
         if (!isScanning) return
 
@@ -235,6 +239,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
                 // Mostrar un mensaje indicando que se detectó un rostro
                 runOnUiThread {
                     Toast.makeText(this, "Rostro detectado", Toast.LENGTH_SHORT).show()
+                    detecto=true
                 }
             }
 
@@ -246,6 +251,9 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
                 // Aquí puedes actualizar la vista previa de la cámara si es necesario
             }
         }.start()
+        if(detecto){
+            siguiente()
+        }
     }
 
     private fun loadFaceCascade() {
@@ -273,5 +281,10 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+    fun siguiente(){
+        val intent = Intent(applicationContext, RegistroExitoso::class.java)
+        startActivity(intent)
+
     }
 }

@@ -1,6 +1,8 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity: AppCompatActivity() {
@@ -9,7 +11,9 @@ class MainActivity: AppCompatActivity() {
         setContentView(R.layout.escanear)
 
     }
-    fun Siguiente(View view){
+    fun Siguiente(view : View){
+        val intent = Intent(applicationContext, Escanea::class.java)
+        startActivity(intent)
 
     }
 }

@@ -39,6 +39,41 @@
             app:layout_constraintVertical_bias="0.107"
             tools:ignore="MissingConstraints" />
 
+
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/alerta"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:background="@drawable/rectangulo_alerta"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintHorizontal_bias="0.605"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.301"
+            app:layout_constraintWidth_percent="0.90">
+
+            <TextView
+                android:id="@+id/cartel_primera_linea"
+                android:layout_width="283dp"
+                android:layout_height="86dp"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="ACTIVA LA CAMARA PARA TOMAR LOS DATOS BIOMETRICOS"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="MissingConstraints"
+                tools:layout_editor_absoluteY="5dp" />
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <Button
             android:id="@+id/boton_siguiente"
             android:layout_width="0dp"
@@ -47,14 +82,17 @@
             android:layout_weight="1"
             android:background="@drawable/boton"
             android:fontFamily="@font/inter_extrabold"
+            android:onClick="Siguiente"
+
             android:text="SIGUIENTE"
             android:textColor="@android:color/white"
-
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.525"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintWidth_percent="0.48"
-            tools:layout_editor_absoluteY="502dp" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.919"
+            app:layout_constraintWidth_percent="0.48" />
 
         <View
             android:id="@+id/elipse_correcto"
@@ -90,39 +128,6 @@
             app:layout_constraintTop_toTopOf="@+id/elipse_correcto"
             app:layout_constraintVertical_bias="0.523"
             app:srcCompat="@drawable/escaneo" />
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/alerta"
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:background="@drawable/rectangulo_alerta"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintHorizontal_bias="0.605"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.301"
-            app:layout_constraintWidth_percent="0.90">
-
-            <TextView
-                android:id="@+id/cartel_primera_linea"
-                android:layout_width="283dp"
-                android:layout_height="86dp"
-                android:fontFamily="@font/inter_extrabold"
-                android:text="ACTIVA LA CAMARA PARA TOMAR LOS DATOS BIOMETRICOS"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:textAlignment="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteY="5dp" />
-
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

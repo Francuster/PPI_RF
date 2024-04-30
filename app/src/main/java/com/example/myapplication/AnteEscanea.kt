@@ -5,14 +5,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity: AppCompatActivity() {
+class AnteEscanea: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.escanear)
 
     }
     fun Siguiente(view : View){
-        val intent = Intent(applicationContext, AnteEscanea::class.java)
+        val intent = Intent(applicationContext, Escanea::class.java)
         startActivity(intent)
 
     }

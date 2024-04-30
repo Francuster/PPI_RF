@@ -35,7 +35,8 @@
 
         </activity>
 
-        <activity android:name=".RegistroExitoso" android:label="RegistroExitoso" >
+        <activity android:name=".RegistroExitoso" android:label="RegistroExitoso" ></activity>
+        <activity android:name=".AnteEscanea" android:label="AnteEscanea" >
 
         </activity>
 

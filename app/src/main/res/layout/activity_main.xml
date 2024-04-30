@@ -16,6 +16,7 @@
             android:layout_width="374dp"
             android:layout_height="113dp"
             android:backgroundTint="#1C6E92"
+            android:onClick="Siguiente"
             android:src="@drawable/botoningreso"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

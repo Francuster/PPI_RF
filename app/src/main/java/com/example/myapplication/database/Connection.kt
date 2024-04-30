@@ -30,7 +30,7 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
     }
     val CREATE_TABLE_USUARIOS="""
       CREATE TABLE usuarios (
-        id INTEGER AUTO_INCREMENT PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL,
         apellido TEXT NOT NULL,
         email TEXT NOT NULL,
@@ -42,12 +42,12 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
 
     val CREATE_TABLE_INGRESOS="""
     CREATE TABLE ingresos (
-      id INTEGER AUTO_INCREMENT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       id_usuario INTEGER,
       fecha_hora_entrada TEXT NOT NULL, -- YYYY-MM-DD HH:MM:SS.SSS
       fecha_hora_salida TEXT DEFAULT NULL, -- YYYY-MM-DD HH:MM:SS.SSS
       entrada_online INTEGER NOT NULL, -- 0=offline 1=online
-      salida_online INTEGER NULL DEFAULT NULL, -- 0=offline 1=online
+      salida_online INTEGER DEFAULT NULL, -- 0=offline 1=online
 
       FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
     );
@@ -66,7 +66,7 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
 
     val CREATE_TABLE_ADMINS="""
     CREATE TABLE admins (
-      id INTEGER AUTO_INCREMENT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       nombre TEXT NOT NULL,
       apellido TEXT NOT NULL,
       email TEXT NOT NULL,

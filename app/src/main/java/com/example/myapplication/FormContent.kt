@@ -1,4 +1,5 @@
 package com.example.myapplication
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -18,9 +19,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.example.myapplication.database.entradaVisitante
+import com.example.myapplication.database.obtenerIdUsuarioPorLegajo
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.util.Calendar
+import java.util.Locale
 
 @Composable
-fun MainContent() {
+fun MainContent(context: Context) {
     var showForm by remember { mutableStateOf(false) }
 
     Column(
@@ -48,9 +55,11 @@ fun MainContent() {
                     .padding(2.dp) // Espacio interno
             ) {
                 Formulario ({ nombre, mail, dni, categoria ->
-                    // Aquí puedes manejar los datos del formulario (name y email)
-                    println("NOMBRE VISITANTE: $nombre, MAIL: $mail, DNI: $dni, TIPO DE CUENTA: $categoria")
+                    var idUsuario = obtenerIdUsuarioPorLegajo(context, dni)
 
+                    println("NOMBRE VISITANTE: $nombre, MAIL: $mail, DNI: $dni, TIPO DE CUENTA: $categoria")
+                    if(idUsuario !== null)
+                    entradaVisitante(context, idUsuario, obtenerFechaActualISO(), 0)
                     // Opcionalmente, puedes cerrar el formulario después de enviarlo
                     showForm = false
                 }, {showForm = false})
@@ -59,12 +68,26 @@ fun MainContent() {
     }
 }
 
+fun obtenerFechaActualISO(): String {
+    // Crear un objeto Calendar para obtener la fecha y hora actual
+    val calendar = Calendar.getInstance()
+
+    // Crear un formato de fecha ISO 8601
+    val formatoISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+
+    // Obtener la fecha actual en formato ISO 8601
+    val fechaActualISO = formatoISO.format(calendar.time)
+
+    // Retornar la fecha en formato ISO
+    return fechaActualISO
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Formulario(onSubmit: (String, String, String, String) -> Unit, onBack: () -> Unit) {
     var nombre by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
-    val categorias = listOf("Visitante", "Profesor", "Alumno")
+    val categorias = listOf("Visitante", "Profesor", "Alumno", "Seguridad")
     var mail by remember { mutableStateOf("") }
     var dni by remember { mutableStateOf("") }
     var isDropdownExpanded by remember { mutableStateOf(false) }
@@ -241,7 +264,7 @@ fun Formulario(onSubmit: (String, String, String, String) -> Unit, onBack: () ->
                         )
                         Spacer(modifier = Modifier.width(25.dp))
                         Text(
-                            "CATEGORÍA",
+                            "TIPO DE CUENTA",
                             style = TextStyle(
                                 fontFamily = Inter,
                                 fontWeight = FontWeight.Bold,

@@ -29,7 +29,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-class MainActivity : AppCompatActivity(), Camera.PreviewCallback {
+class Escanea : AppCompatActivity(), Camera.PreviewCallback {
 
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier

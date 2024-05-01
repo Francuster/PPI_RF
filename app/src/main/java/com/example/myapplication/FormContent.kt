@@ -30,23 +30,13 @@ import java.util.Locale
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun MainContent(context: Context) {
-    var showForm by remember { mutableStateOf(false) }
+    var showForm by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Botón para mostrar el formulario
-        Button(
-            onClick = {
-                showForm = !showForm
-            },
-            modifier = Modifier.padding(bottom = 16.dp)
-        ) {
-            Text("Mostrar formulario")
-        }
-
         // Mostrar formulario si showForm es verdadero
         if (showForm) {
             Box(

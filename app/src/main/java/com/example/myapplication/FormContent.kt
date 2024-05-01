@@ -1,5 +1,7 @@
 package com.example.myapplication
 import android.content.Context
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -19,6 +21,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import com.example.myapplication.database.TAG
 import com.example.myapplication.database.entradaVisitante
 import com.example.myapplication.database.obtenerIdUsuarioPorLegajo
 import java.text.SimpleDateFormat
@@ -58,8 +61,13 @@ fun MainContent(context: Context) {
                     var idUsuario = obtenerIdUsuarioPorLegajo(context, dni)
 
                     println("NOMBRE VISITANTE: $nombre, MAIL: $mail, DNI: $dni, TIPO DE CUENTA: $categoria")
-                    if(idUsuario !== null)
-                    entradaVisitante(context, idUsuario, obtenerFechaActualISO(), 0)
+                    if(idUsuario !== null) {
+                        entradaVisitante(context, idUsuario, obtenerFechaActualISO(), 0)
+                        Toast.makeText(context, "Usuario ingresado exitosamente", Toast.LENGTH_LONG).show()
+                    }else{
+                        Log.e(TAG, "Error de registro: No se encontro el legajo del visitante en la base local.")
+                        Toast.makeText(context, "Error de registro.", Toast.LENGTH_LONG).show()
+                    }
                     // Opcionalmente, puedes cerrar el formulario después de enviarlo
                     showForm = false
                 }, {showForm = false})

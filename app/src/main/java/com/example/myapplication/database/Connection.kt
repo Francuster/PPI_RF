@@ -102,6 +102,8 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
 
   override fun onOpen(db: SQLiteDatabase?) {
     super.onOpen(db)
-    Toast.makeText(ctx, "DB abierta onOpen", Toast.LENGTH_LONG).show()
+//    Toast.makeText(ctx, "DB abierta onOpen", Toast.LENGTH_LONG).show()
+      Log.e(TAG,"DB abierta onOpen")
+
   }
 }

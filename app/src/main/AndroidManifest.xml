@@ -39,6 +39,9 @@
         <activity android:name=".AnteEscanea" android:label="AnteEscanea" >
 
         </activity>
+        <activity android:name=".FormularioOffline" android:label="FormularioOffline" >
+
+        </activity>
 
     </application>
 

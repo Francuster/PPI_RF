@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import android.widget.Toast
 
 //import com.example.myapplication.entities.Usuario
 /*
@@ -36,6 +37,7 @@ fun entradaVisitante(context: Context, usuarioID: Int, fechaHoraEntrada: String,
             Log.e(TAG, "Error al insertar la entrada de usuario en la tabla ingresos.")
         } else {
             Log.i(TAG, "Entrada de usuario insertada correctamente en la tabla ingresos con ID: $newRowId")
+
         }
     } catch (e: Exception) {
         // Manejar la excepción si algo sale mal

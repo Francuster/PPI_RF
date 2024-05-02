@@ -2,45 +2,37 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import com.example.myapplication.database.Connection
-import com.example.myapplication.database.verificarBaseDatos
-import com.example.myapplication.ui.theme.MyApplicationTheme
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : ComponentActivity() {
+
+class MainActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MyApplicationTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Siguiente()
-                }
-            }
+        setContentView(R.layout.activity_main)
+        checkConnection()
+
+    }
+    fun Siguiente(view : View){
+        val intent = Intent(applicationContext, AnteEscanea::class.java)
+        startActivity(intent)
+
+    }
+
+    fun checkConnection() {
+        if (!deviceIsConnected(applicationContext)) {
+            Toast.makeText(applicationContext, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
+            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
+            startActivity(intent)
         }
     }
+
+
 }
 
-@Composable
-fun Siguiente() {
-    val context = LocalContext.current
 
-    if (deviceIsConnected(context)) {
-        val intent = Intent(context, AnteEscanea::class.java)
-        context.startActivity(intent)
-    } else {
-        Toast.makeText(context, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
-        MainContent(context)
-        verificarBaseDatos(context)
-    }
-}
+
+
+
+

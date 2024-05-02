@@ -30,7 +30,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
-class Escanea : AppCompatActivity(), Camera.PreviewCallback {
+class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier
@@ -282,7 +282,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         }
     }
     fun siguiente(){
-        val intent = Intent(applicationContext, RegistroExitoso::class.java)
+        val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
         startActivity(intent)
 
     }

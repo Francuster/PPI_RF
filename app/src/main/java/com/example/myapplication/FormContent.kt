@@ -26,13 +26,12 @@ import com.example.myapplication.database.TAG
 import com.example.myapplication.database.entradaVisitante
 import com.example.myapplication.database.obtenerIdUsuarioPorLegajo
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Locale
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun MainContent(context: Context) {
+fun RenderFormulario(context: Context) {
     var showForm by remember { mutableStateOf(true) }
 
     Column(

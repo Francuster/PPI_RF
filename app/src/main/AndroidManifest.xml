@@ -33,15 +33,15 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <activity android:name=".Escanea" android:label="Escanea" >
+        <activity android:name=".EscaneaActivity" android:label="Escanea" >
 
         </activity>
 
-        <activity android:name=".RegistroExitoso" android:label="RegistroExitoso" ></activity>
+        <activity android:name=".RegistroExitosoActivity" android:label="RegistroExitoso" ></activity>
         <activity android:name=".AnteEscanea" android:label="AnteEscanea" >
 
         </activity>
-        <activity android:name=".FormularioOffline" android:label="FormularioOffline" >
+        <activity android:name=".FormularioOfflineActivity" android:label="FormularioOffline" >
 
         </activity>
 

@@ -3,11 +3,9 @@ package com.example.myapplication
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
 import android.hardware.Camera
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.Gravity
 import android.view.SurfaceView
 import android.view.WindowManager
@@ -20,8 +18,6 @@ import androidx.core.content.ContextCompat
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Mat
 import org.opencv.core.MatOfRect
-import org.opencv.core.Point
-import org.opencv.core.Scalar
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
@@ -35,24 +31,22 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier
     private var isScanning = false
-    private var detecto=false
+    private var detecto = false
+
+    private var surfaceView: SurfaceView? = null
+
+    private var timer: CountDownTimer? = null
+    private var timerStoppedManual = false
+
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
-
-    private val paint: Paint = Paint().apply {
-        color = Color.RED
-        style = Paint.Style.STROKE
-        strokeWidth = 3f
-    }
-    private val rect: RectF = RectF()
-
-    private var surfaceView: SurfaceView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        // Configurar la vista de superficie para la vista previa de la cámara
         surfaceView = SurfaceView(this)
         surfaceView?.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
@@ -63,6 +57,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
             FrameLayout.LayoutParams.MATCH_PARENT
         ))
 
+        // Agregar un botón para iniciar el escaneo
         val buttonScan = Button(this)
         buttonScan.text = "Escanear"
         buttonScan.setOnClickListener {
@@ -75,7 +70,6 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         )
         buttonParams.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
         addContentView(buttonScan, buttonParams)
-
     }
 
     override fun onResume() {
@@ -94,6 +88,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         stopCamera()
     }
 
+    // Detener y liberar la cámara
     private fun stopCamera() {
         camera?.apply {
             setPreviewCallback(null)
@@ -103,6 +98,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         camera = null
     }
 
+    // Iniciar la cámara
     private fun startCamera() {
         if (!checkCameraPermission()) return
 
@@ -121,15 +117,12 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
                 camera = Camera.open(frontCameraId)
                 camera?.setPreviewCallback(this)
 
-                // Configure camera parameters
                 val parameters = camera?.parameters
 
-                // Set camera preview surface
                 try {
                     camera?.setDisplayOrientation(90)
                     camera?.setPreviewDisplay(surfaceView?.holder)
 
-                    // Find the best preview size for the camera
                     val bestSize = getBestPreviewSize(parameters)
                     parameters?.setPreviewSize(bestSize.width.toInt(), bestSize.height.toInt())
 
@@ -144,31 +137,30 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         }
     }
 
-    private fun getBestPreviewSize(parameters: Camera.Parameters?): org.opencv.core.Size {
+    // Obtener el mejor tamaño de vista previa de la cámara
+    private fun getBestPreviewSize(parameters: Camera.Parameters?): Size {
         var bestSize = parameters?.supportedPreviewSizes?.get(0)?.let {
-            org.opencv.core.Size(it.width.toDouble(), it.height.toDouble())
-        } ?: org.opencv.core.Size(640.0, 480.0)
+            Size(it.width.toDouble(), it.height.toDouble())
+        } ?: Size(640.0, 480.0)
 
         val targetRatio = bestSize.width / bestSize.height
 
         for (size in parameters?.supportedPreviewSizes ?: emptyList()) {
             val ratio = size.width.toDouble() / size.height.toDouble()
             if (Math.abs(ratio - targetRatio) < Math.abs(bestSize.width / bestSize.height - targetRatio)) {
-                bestSize = org.opencv.core.Size(size.width.toDouble(), size.height.toDouble())
+                bestSize = Size(size.width.toDouble(), size.height.toDouble())
             }
         }
 
         return bestSize
     }
 
-
-
-
-
+    // Abrir la cámara
     private fun openCamera() {
         startCamera()
     }
 
+    // Verificar permiso de la cámara
     private fun checkCameraPermission(): Boolean {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
@@ -177,6 +169,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         return true
     }
 
+    // Solicitar permiso de la cámara
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -195,66 +188,84 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         }
     }
 
+    // Alternar el escaneo
     private fun toggleScanning() {
         isScanning = !isScanning
         if (isScanning) {
             Toast.makeText(this, "Escaneando...", Toast.LENGTH_SHORT).show()
+            startTimer()
         } else {
-            Toast.makeText(this, "Escaneo terminado", Toast.LENGTH_SHORT).show()
+            stopTimer()
+            if (timerStoppedManual) {
+                Toast.makeText(this, "Escaneo detenido manualmente", Toast.LENGTH_SHORT).show()
+                timerStoppedManual = false // Restablecer la bandera
+            }
         }
     }
 
-    override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
+    // Iniciar temporizador
+    private fun startTimer() {
+        timer = object : CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsRemaining = millisUntilFinished / 1000
+                Toast.makeText(this@Escanea, "Tiempo restante: $secondsRemaining segundos", Toast.LENGTH_SHORT).show()
+            }
 
-        // Verificar si el escaneo está activado
+            override fun onFinish() {
+                isScanning = false
+                Toast.makeText(this@Escanea, "Tiempo de escaneo agotado", Toast.LENGTH_SHORT).show()
+            }
+        }.start()
+    }
+
+    // Detener temporizador
+    private fun stopTimer() {
+        runOnUiThread {
+            timer?.cancel()
+            timerStoppedManual = true
+            if (!detecto) {
+                Toast.makeText(this@Escanea, "Escaneo detenido manualmente", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // Método llamado cuando se recibe un fotograma de la cámara
+    override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
         if (!isScanning) return
 
-        // Crear un nuevo hilo para el procesamiento de la imagen
         Thread {
-            // Obtener el tamaño de la imagen de la vista previa de la cámara
             val parameters = camera?.parameters
             val width = parameters?.previewSize?.width ?: 0
             val height = parameters?.previewSize?.height ?: 0
 
-            // Crear una matriz para los datos de la imagen en formato YUV
             val yuvMat = Mat(height + height / 2, width, org.opencv.core.CvType.CV_8UC1)
             yuvMat.put(0, 0, data)
 
-            // Crear una matriz para la imagen en formato RGBA
             val rgbaMat = Mat()
-            // Convertir la imagen de YUV a RGBA
             Imgproc.cvtColor(yuvMat, rgbaMat, Imgproc.COLOR_YUV2RGBA_NV21, 4)
 
-            // Detectar rostros en la imagen
             val faces = MatOfRect()
             cascadeClassifier.detectMultiScale(rgbaMat, faces, 1.1, 2, 2, Size(150.0, 150.0), Size())
 
-            // Obtener la lista de rostros detectados
             val facesArray = faces.toArray()
-            // Iterar sobre cada rostro detectado y dibujar un rectángulo alrededor de él
-            for (faceRect in facesArray) {
-                // Dibujar el rectángulo con las coordenadas ajustadas
-                Imgproc.rectangle(rgbaMat, Point(faceRect.x.toDouble(), faceRect.y.toDouble()), Point((faceRect.x + faceRect.width).toDouble(), (faceRect.y + faceRect.height).toDouble()), Scalar(255.0, 0.0, 0.0), 3)
-                // Mostrar un mensaje indicando que se detectó un rostro
-                runOnUiThread {
-                    Toast.makeText(this, "Rostro detectado", Toast.LENGTH_SHORT).show()
-                    detecto=true
-                }
+            if (facesArray.isNotEmpty() || detecto) {
+                timer?.cancel()
+                detecto = true
             }
 
-            // Liberar la matriz de datos de YUV
             yuvMat.release()
 
-            // Actualizar la vista previa de la cámara en el hilo principal
             runOnUiThread {
-                // Aquí puedes actualizar la vista previa de la cámara si es necesario
+                // Actualizar la vista previa de la cámara si es necesario
             }
         }.start()
-        if(detecto){
+
+        if (detecto) {
             siguiente()
         }
     }
 
+    // Cargar el clasificador de cascada para la detección de rostros
     private fun loadFaceCascade() {
         try {
             val resourceId = R.raw.lbpcascade_frontalface_improved
@@ -281,9 +292,10 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
             e.printStackTrace()
         }
     }
-    fun siguiente(){
+
+    // Ir a la siguiente actividad cuando se detecta un rostro
+    private fun siguiente() {
         val intent = Intent(applicationContext, RegistroExitoso::class.java)
         startActivity(intent)
-
     }
 }

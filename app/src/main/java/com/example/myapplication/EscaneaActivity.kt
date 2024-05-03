@@ -83,6 +83,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         )
         buttonParams.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
         addContentView(buttonScan, buttonParams)
+
     }
 
     override fun onResume() {
@@ -204,7 +205,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
             buttonScan.text = "Detener Escaneo"
         } else {
             stopTimer()
-            handleScanTimeout()
+            showToastOnUiThread("Escaneo detenido manualmente")
         }
     }
 
@@ -214,7 +215,6 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     private fun handleScanTimeout() {
         isScanning = false
-        stopCamera()
         updateButtonState()
         if (!detecto && !timeUpToastShown) {
             showToastOnUiThread("Tiempo de escaneo agotado")
@@ -226,7 +226,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
-                if (!detecto && secondsRemaining <= 3) {
+                if (!detecto && secondsRemaining <= 10) {
                     showToastOnUiThread("Tiempo restante: $secondsRemaining segundos")
                 }
             }
@@ -272,13 +272,12 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                     stopTimer()
                     if (facesArray.isNotEmpty()) {
                         val faceMat = extractFaceFrame(rgbaMat, facesArray[0])
-                        enviarMatrizComoHTTPRequest(faceMat)
+                        enviarMatrizComoHTTPRequest(faceMat)//funcion que manda la matriz de la cara en http request
                         lastRequestTimeMillis = currentTimeMillis // Actualizar el tiempo de la última solicitud
-                    } else {
-                        showToastOnUiThread("No se detectó ningún rostro")
                     }
                 }
-                return@Thread
+                siguiente()//llama a la siguiente pantalla
+                return@Thread//corta el hilo
             }
             yuvMat.release()
         }.start()

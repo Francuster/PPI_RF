@@ -3,22 +3,18 @@ package com.example.myapplication
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-class AnteEscanea: AppCompatActivity() {
+class RegistroExitosoActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.escanear)
-
+        setContentView(R.layout.ingreso_exitoso)
     }
+
     fun Siguiente(view : View){
         if(deviceIsConnected(applicationContext)){
-            val intent = Intent(applicationContext, EscaneaActivity::class.java)
+            val intent = Intent(applicationContext, MainActivity::class.java)
             startActivity(intent)
-        }else{
-            Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
-            finish()
         }
 
     }

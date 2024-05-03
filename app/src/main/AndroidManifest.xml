@@ -6,7 +6,7 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.CAMERA"/>
@@ -33,17 +33,31 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <activity android:name=".Escanea" android:label="Escanea" >
+        <activity android:name=".EscaneaActivity" android:label="Escanea" >
 
         </activity>
 
-        <activity android:name=".RegistroExitoso" android:label="RegistroExitoso" ></activity>
+        <activity android:name=".RegistroExitosoActivity" android:label="RegistroExitoso" ></activity>
         <activity android:name=".AnteEscanea" android:label="AnteEscanea" >
 
         </activity>
-        <activity android:name=".FormularioOffline" android:label="FormularioOffline" >
+        <activity android:name=".FormularioOfflineActivity" android:label="FormularioOffline" >
 
         </activity>
+        <!-- Declara tu servicio dentro de la sección <application> -->
+
+        <service
+            android:name=".utils.NetworkChangeService"
+            android:enabled="true"
+            android:exported="false" />
+        <receiver
+            android:name=".utils.NetworkChangeReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

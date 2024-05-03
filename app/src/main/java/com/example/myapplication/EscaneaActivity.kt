@@ -37,7 +37,7 @@ import java.io.ByteArrayOutputStream
 
 import java.util.concurrent.TimeUnit
 
-class Escanea : AppCompatActivity(), Camera.PreviewCallback {
+class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier
@@ -328,15 +328,14 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
             e.printStackTrace()
         }
     }
-
-    private fun siguiente() {
-        val intent = Intent(applicationContext, RegistroExitoso::class.java)
+    fun siguiente(){
+        val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
         startActivity(intent)
     }
 
     private fun showToastOnUiThread(message: String) {
         runOnUiThread {
-            Toast.makeText(this@Escanea, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@EscaneaActivity, message, Toast.LENGTH_SHORT).show()
         }
     }
 }

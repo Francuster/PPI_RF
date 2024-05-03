@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapplication.model.Persona
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Mat
 import org.opencv.core.MatOfRect
@@ -191,7 +192,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                 return
             }
             else -> {
-                // Handle other permission cases if necessary
+                // Manejar otros permisos si es necesario
             }
         }
     }
@@ -226,7 +227,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
-                if (!detecto && secondsRemaining <= 10) {
+                if (!detecto && secondsRemaining <= 5) { //manejar tiempo que se muestra en toast
                     showToastOnUiThread("Tiempo restante: $secondsRemaining segundos")
                 }
             }
@@ -241,46 +242,79 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
     }
 
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
+        // Verificar si el escaneo está activo
         if (!isScanning) return
 
+        // Obtener el tiempo actual
         val currentTimeMillis = System.currentTimeMillis()
+
+        // Verificar si ha pasado el intervalo entre solicitudes
         if (currentTimeMillis - lastRequestTimeMillis < requestIntervalMillis) {
             // Si el intervalo entre solicitudes no ha pasado aún, salir sin enviar otra solicitud
             return
         }
 
+        // Iniciar un hilo para procesar el fotograma de vista previa
         Thread {
+            // Obtener los parámetros de la cámara
             val parameters = camera?.parameters
             val width = parameters?.previewSize?.width ?: 0
             val height = parameters?.previewSize?.height ?: 0
 
+            // Crear una matriz para la vista previa YUV
             val yuvMat = Mat(height + height / 2, width, org.opencv.core.CvType.CV_8UC1)
             yuvMat.put(0, 0, data)
 
+            // Convertir la matriz YUV a una matriz RGBA
             val rgbaMat = Mat()
             Imgproc.cvtColor(yuvMat, rgbaMat, Imgproc.COLOR_YUV2RGBA_NV21, 4)
 
+            // Detectar rostros en la matriz RGBA
             val faces = MatOfRect()
             cascadeClassifier.detectMultiScale(rgbaMat, faces, 1.1, 2, 2, Size(150.0, 150.0), Size())
 
+            // Convertir la matriz de rectángulos a un array de rectángulos
             val facesArray = faces.toArray()
+
+            // Verificar si se detectaron rostros o si ya se ha detectado un rostro
             if (facesArray.isNotEmpty() || detecto) {
+                // Cancelar el temporizador
                 timer?.cancel()
+
+                // Marcar que se ha detectado un rostro
                 detecto = true
+
+                // Liberar la matriz YUV
                 yuvMat.release()
+
+                // Ejecutar en el subproceso de interfaz de usuario principal
                 runOnUiThread {
+                    // Detener el temporizador
                     stopTimer()
+
+                    // Verificar si se detectó al menos un rostro
                     if (facesArray.isNotEmpty()) {
+                        // Extraer el fotograma del rostro
                         val faceMat = extractFaceFrame(rgbaMat, facesArray[0])
-                        enviarMatrizComoHTTPRequest(faceMat)//funcion que manda la matriz de la cara en http request
-                        lastRequestTimeMillis = currentTimeMillis // Actualizar el tiempo de la última solicitud
+
+                        // Enviar la matriz del rostro como una solicitud HTTP
+                        enviarMatrizComoHTTPRequest(faceMat)
+
+                        // Actualizar el tiempo de la última solicitud
+                        lastRequestTimeMillis = currentTimeMillis
                     }
                 }
-                siguiente()//llama a la siguiente pantalla
-                return@Thread//corta el hilo
+
+                // Ir a la siguiente pantalla
+                siguiente()
+
+                // Salir del hilo
+                return@Thread
             }
+
+            // Liberar la matriz YUV
             yuvMat.release()
-        }.start()
+        }.start() // Iniciar el hilo
     }
 
 
@@ -348,7 +382,7 @@ val client = OkHttpClient.Builder()
     .build()
 
 private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
-    // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (por ejemplo, JPEG)
+    // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej, JPEG,JPG)
     val byteStream = ByteArrayOutputStream()
     val imageMat = MatOfByte()
     Imgcodecs.imencode(".jpg", faceMat, imageMat)
@@ -357,7 +391,7 @@ private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
     val requestBody = byteStream.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
 
     val request = Request.Builder()
-        .url("http://tu_servidor.com/api/upload")
+        .url("http://tu_servidor.com/api/upload") //link de nosotros
         .post(requestBody)
         .build()
 
@@ -365,9 +399,17 @@ private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
         override fun onResponse(call: Call, response: Response) {
             // Manejar la respuesta del servidor aquí
             if (response.isSuccessful) {
-                // La solicitud fue exitosa
-                val responseBody = response.body?.string()
-                // Acà deberia extraer los datos que me devuevle la solicitud y pasarlos a una clase
+                // La solicitud fue exitosa // DATOS HARDCODEADOS
+                val responseBody = response.body?.bytes() // Obtener la imagen como un ByteArray
+                val numeroDocumento = responseBody?.toString(Charsets.UTF_8) ?: "12345678" // Suponiendo que el número de documento está codificado en UTF-8 en la respuesta
+                val nombre = "Cosme" // Por ahora, asumimos que recibimos un nombre fijo
+                val apellido = "Fulanito" // Por ahora, asumimos que recibimos un apellido fijo
+                val lugaresAcceso = listOf("Modulo 1", "Modulo 2") // Por ahora, asumimos que recibimos una lista fija de lugares de acceso
+
+                val persona = Persona(numeroDocumento, nombre, apellido, lugaresAcceso, responseBody ?: byteArrayOf())
+
+            // Manejar la instancia de Persona
+                mostrarPersona(persona)
             } else {
                 // La solicitud no fue exitosa
                 // Manejar el error
@@ -379,4 +421,9 @@ private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
             e.printStackTrace()
         }
     })
+}
+
+private fun mostrarPersona(persona: Persona) {
+    // Actualizar la interfaz de usuario con los datos de la persona
+
 }

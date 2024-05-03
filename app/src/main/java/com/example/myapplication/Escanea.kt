@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Mat
 import org.opencv.core.MatOfRect
+import org.opencv.core.Rect
 import org.opencv.core.Size
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
@@ -26,18 +27,32 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 
+
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.opencv.core.MatOfByte
+import org.opencv.imgcodecs.Imgcodecs
+import java.io.ByteArrayOutputStream
+
+import java.util.concurrent.TimeUnit
+
 class Escanea : AppCompatActivity(), Camera.PreviewCallback {
 
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier
+    private lateinit var buttonScan: Button
     private var isScanning = false
     private var detecto = false
-
     private var surfaceView: SurfaceView? = null
-
     private var timer: CountDownTimer? = null
-    private var timerStoppedManual = false
+    private var timeUpToastShown = false
 
+
+
+    //variables del tiempo en las request
+    private var lastRequestTimeMillis = 0L
+    private val requestIntervalMillis = 1000L // 1 segundo
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
@@ -46,7 +61,6 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
-        // Configurar la vista de superficie para la vista previa de la cámara
         surfaceView = SurfaceView(this)
         surfaceView?.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
@@ -57,8 +71,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
             FrameLayout.LayoutParams.MATCH_PARENT
         ))
 
-        // Agregar un botón para iniciar el escaneo
-        val buttonScan = Button(this)
+        buttonScan = Button(this)
         buttonScan.text = "Escanear"
         buttonScan.setOnClickListener {
             toggleScanning()
@@ -88,7 +101,6 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         stopCamera()
     }
 
-    // Detener y liberar la cámara
     private fun stopCamera() {
         camera?.apply {
             setPreviewCallback(null)
@@ -98,7 +110,6 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         camera = null
     }
 
-    // Iniciar la cámara
     private fun startCamera() {
         if (!checkCameraPermission()) return
 
@@ -132,12 +143,11 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
                     e.printStackTrace()
                 }
             } else {
-                Toast.makeText(this, "No se pudo abrir la cámara frontal", Toast.LENGTH_SHORT).show()
+                showToastOnUiThread("No se pudo abrir la cámara frontal")
             }
         }
     }
 
-    // Obtener el mejor tamaño de vista previa de la cámara
     private fun getBestPreviewSize(parameters: Camera.Parameters?): Size {
         var bestSize = parameters?.supportedPreviewSizes?.get(0)?.let {
             Size(it.width.toDouble(), it.height.toDouble())
@@ -155,12 +165,10 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         return bestSize
     }
 
-    // Abrir la cámara
     private fun openCamera() {
         startCamera()
     }
 
-    // Verificar permiso de la cámara
     private fun checkCameraPermission(): Boolean {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION)
@@ -169,7 +177,6 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         return true
     }
 
-    // Solicitar permiso de la cámara
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
@@ -178,7 +185,7 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     openCamera()
                 } else {
-                    Toast.makeText(this, "Permiso de la cámara denegado", Toast.LENGTH_SHORT).show()
+                    showToastOnUiThread("Permiso de la cámara denegado")
                 }
                 return
             }
@@ -188,50 +195,59 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         }
     }
 
-    // Alternar el escaneo
     private fun toggleScanning() {
         isScanning = !isScanning
+        updateButtonState()
         if (isScanning) {
-            Toast.makeText(this, "Escaneando...", Toast.LENGTH_SHORT).show()
             startTimer()
+            showToastOnUiThread("Escaneando 30 segundos...")
+            buttonScan.text = "Detener Escaneo"
         } else {
             stopTimer()
-            if (timerStoppedManual) {
-                Toast.makeText(this, "Escaneo detenido manualmente", Toast.LENGTH_SHORT).show()
-                timerStoppedManual = false // Restablecer la bandera
-            }
+            handleScanTimeout()
         }
     }
 
-    // Iniciar temporizador
+    private fun updateButtonState() {
+        buttonScan.text = if (isScanning) "Detener Escaneo" else "Escanear"
+    }
+
+    private fun handleScanTimeout() {
+        isScanning = false
+        stopCamera()
+        updateButtonState()
+        if (!detecto && !timeUpToastShown) {
+            showToastOnUiThread("Tiempo de escaneo agotado")
+            timeUpToastShown = true
+        }
+    }
+
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
-                Toast.makeText(this@Escanea, "Tiempo restante: $secondsRemaining segundos", Toast.LENGTH_SHORT).show()
+                if (!detecto && secondsRemaining <= 3) {
+                    showToastOnUiThread("Tiempo restante: $secondsRemaining segundos")
+                }
             }
-
             override fun onFinish() {
-                isScanning = false
-                Toast.makeText(this@Escanea, "Tiempo de escaneo agotado", Toast.LENGTH_SHORT).show()
+                handleScanTimeout()
             }
         }.start()
     }
 
-    // Detener temporizador
     private fun stopTimer() {
-        runOnUiThread {
-            timer?.cancel()
-            timerStoppedManual = true
-            if (!detecto) {
-                Toast.makeText(this@Escanea, "Escaneo detenido manualmente", Toast.LENGTH_SHORT).show()
-            }
-        }
+        timer?.cancel()
     }
 
-    // Método llamado cuando se recibe un fotograma de la cámara
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
         if (!isScanning) return
+
+        val currentTimeMillis = System.currentTimeMillis()
+        if (currentTimeMillis - lastRequestTimeMillis < requestIntervalMillis) {
+            // Si el intervalo entre solicitudes no ha pasado aún, salir sin enviar otra solicitud
+            return
+        }
 
         Thread {
             val parameters = camera?.parameters
@@ -251,21 +267,41 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
             if (facesArray.isNotEmpty() || detecto) {
                 timer?.cancel()
                 detecto = true
+                yuvMat.release()
+                runOnUiThread {
+                    stopTimer()
+                    if (facesArray.isNotEmpty()) {
+                        val faceMat = extractFaceFrame(rgbaMat, facesArray[0])
+                        enviarMatrizComoHTTPRequest(faceMat)
+                        lastRequestTimeMillis = currentTimeMillis // Actualizar el tiempo de la última solicitud
+                    } else {
+                        showToastOnUiThread("No se detectó ningún rostro")
+                    }
+                }
+                return@Thread
             }
-
             yuvMat.release()
-
-            runOnUiThread {
-                // Actualizar la vista previa de la cámara si es necesario
-            }
         }.start()
-
-        if (detecto) {
-            siguiente()
-        }
     }
 
-    // Cargar el clasificador de cascada para la detección de rostros
+
+    private fun extractFaceFrame(rgbaMat: Mat, faceRect: Rect): Mat {
+        // Obtener las coordenadas de la cara
+        val x = faceRect.x
+        val y = faceRect.y
+        val width = faceRect.width
+        val height = faceRect.height
+
+        // Crear un rectángulo que delimita la cara en la imagen original
+        val faceROI = Rect(x, y, width, height)
+
+        // Extraer la región de interés (ROI) que contiene la cara
+        val faceMat = Mat(rgbaMat, faceROI)
+
+        // Clonar la región de interés para evitar problemas de memoria
+        return faceMat.clone()
+    }
+
     private fun loadFaceCascade() {
         try {
             val resourceId = R.raw.lbpcascade_frontalface_improved
@@ -293,9 +329,56 @@ class Escanea : AppCompatActivity(), Camera.PreviewCallback {
         }
     }
 
-    // Ir a la siguiente actividad cuando se detecta un rostro
     private fun siguiente() {
         val intent = Intent(applicationContext, RegistroExitoso::class.java)
         startActivity(intent)
     }
+
+    private fun showToastOnUiThread(message: String) {
+        runOnUiThread {
+            Toast.makeText(this@Escanea, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
+
+
+val client = OkHttpClient.Builder()
+    .connectTimeout(5, TimeUnit.SECONDS)
+    .writeTimeout(5, TimeUnit.SECONDS)
+    .readTimeout(5, TimeUnit.SECONDS)
+    .build()
+
+private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
+    // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (por ejemplo, JPEG)
+    val byteStream = ByteArrayOutputStream()
+    val imageMat = MatOfByte()
+    Imgcodecs.imencode(".jpg", faceMat, imageMat)
+    byteStream.write(imageMat.toArray())
+
+    val requestBody = byteStream.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+
+    val request = Request.Builder()
+        .url("http://tu_servidor.com/api/upload")
+        .post(requestBody)
+        .build()
+
+    client.newCall(request).enqueue(object : Callback {
+        override fun onResponse(call: Call, response: Response) {
+            // Manejar la respuesta del servidor aquí
+            if (response.isSuccessful) {
+                // La solicitud fue exitosa
+                val responseBody = response.body?.string()
+                // Acà deberia extraer los datos que me devuevle la solicitud y pasarlos a una clase
+            } else {
+                // La solicitud no fue exitosa
+                // Manejar el error
+            }
+        }
+
+        override fun onFailure(call: Call, e: IOException) {
+            // Manejar el fallo de la solicitud aquí
+            e.printStackTrace()
+        }
+    })
 }

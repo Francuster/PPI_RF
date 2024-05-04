@@ -4,10 +4,14 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Camera
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Gravity
 import android.view.SurfaceView
+import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
@@ -27,15 +31,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-
-
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.opencv.core.MatOfByte
 import org.opencv.imgcodecs.Imgcodecs
 import java.io.ByteArrayOutputStream
-
 import java.util.concurrent.TimeUnit
 
 class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
@@ -48,12 +49,12 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
     private var surfaceView: SurfaceView? = null
     private var timer: CountDownTimer? = null
     private var timeUpToastShown = false
-
-
+    private var ovalFrameView: View? = null // Vista del marco ovalado
 
     //variables del tiempo en las request
     private var lastRequestTimeMillis = 0L
     private val requestIntervalMillis = 1000L // 1 segundo
+
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
@@ -84,11 +85,39 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         )
         buttonParams.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
         addContentView(buttonScan, buttonParams)
+    }
 
+
+    private fun drawOvalFrame() {
+        val ovalPaint = Paint().apply {
+            color = Color.WHITE
+            style = Paint.Style.STROKE
+            strokeWidth = 8f
+        }
+
+        val frameView = object : View(this) {
+            override fun onDraw(canvas: Canvas) {
+                super.onDraw(canvas)
+                //medidas del ovalo
+                val left = 650f
+                val top = 200f
+                val right = 50f
+                val bottom = 1300f
+
+                canvas.drawOval(left, top, right, bottom, ovalPaint)
+            }
+        }
+        val layoutParams = FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        )
+        addContentView(frameView, layoutParams)
+        ovalFrameView = frameView // Asignar la vista del ovalo
     }
 
     override fun onResume() {
         super.onResume()
+        drawOvalFrame()
         OpenCVLoader.initDebug()
         loadFaceCascade()
     }

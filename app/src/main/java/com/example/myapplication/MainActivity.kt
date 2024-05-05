@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.activity.CameraxActivity
 import com.example.myapplication.utils.NetworkChangeService
 
 
@@ -17,21 +18,23 @@ class MainActivity: AppCompatActivity() {
             }
             setContentView(R.layout.activity_main)
 
-            checkConnection()
+//            checkConnection()
 
         }
 
     fun Siguiente(view: View) {
-        if (!deviceIsConnected(applicationContext)) {
-            Toast.makeText(applicationContext, "No estás conectado a Internet", Toast.LENGTH_SHORT)
-                .show()
-            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
-            startActivity(intent)
-        }else{
-            val intent = Intent(applicationContext, AnteEscanea::class.java)
-            startActivity(intent)
-        }
+//        if (!deviceIsConnected(applicationContext)) {
+//            Toast.makeText(applicationContext, "No estás conectado a Internet", Toast.LENGTH_SHORT)
+//                .show()
+//            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
+//            startActivity(intent)
+//        }else{
+//            val intent = Intent(applicationContext, AnteEscanea::class.java)
+//            startActivity(intent)
+//        }
 
+        val intent = Intent(applicationContext, CameraxActivity::class.java)
+        startActivity(intent)
 
     }
 

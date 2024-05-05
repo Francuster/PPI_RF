@@ -73,4 +73,26 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    var camerax_version = "1.2.2"
+    implementation ("androidx.camera:camera-core:${camerax_version}")
+    implementation ("androidx.camera:camera-camera2:${camerax_version}")
+    implementation ("androidx.camera:camera-lifecycle:${camerax_version}")
+    implementation ("androidx.camera:camera-video:${camerax_version}")
+
+    implementation ("androidx.camera:camera-view:${camerax_version}")
+    implementation ("androidx.camera:camera-extensions:${camerax_version}")
+
+    // Use this dependency to bundle the model with your app - ML KIT Google
+    implementation ("com.google.mlkit:face-detection:16.1.6")
+    implementation ("com.google.code.gson:gson:2.8.6")
+
+    // tflite
+    implementation ("org.tensorflow:tensorflow-lite:2.4.0")
+    implementation ("org.tensorflow:tensorflow-lite-gpu:2.4.0")
+    implementation ("org.tensorflow:tensorflow-lite-support:0.2.0")
+
+    //ML KIT Google
+//    implementation ("com.google.android.gms:play-services-mlkit:17.0.0")
+
 }

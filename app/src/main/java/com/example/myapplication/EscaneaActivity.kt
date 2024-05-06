@@ -420,7 +420,7 @@ private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
     val requestBody = byteStream.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
 
     val request = Request.Builder()
-        .url("http://tu_servidor.com/api/upload") //link de nosotros
+        .url("https://flask-backend-log3r.vercel.app/api/authentication") //link de nosotros        
         .post(requestBody)
         .build()
 

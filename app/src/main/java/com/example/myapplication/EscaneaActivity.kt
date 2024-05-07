@@ -20,23 +20,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myapplication.model.Persona
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Mat
+import org.opencv.core.MatOfByte
 import org.opencv.core.MatOfRect
 import org.opencv.core.Rect
 import org.opencv.core.Size
+import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
 import org.opencv.objdetect.CascadeClassifier
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.opencv.core.MatOfByte
-import org.opencv.imgcodecs.Imgcodecs
-import java.io.ByteArrayOutputStream
 import java.util.concurrent.TimeUnit
 
 class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
@@ -55,6 +55,15 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
     private var lastRequestTimeMillis = 0L
     private val requestIntervalMillis = 1000L // 1 segundo
 
+    // Cliente HTTP
+    private val client = OkHttpClient.Builder()
+        .connectTimeout(5, TimeUnit.SECONDS)
+        .writeTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(5, TimeUnit.SECONDS)
+        .build()
+
+
+    //FUNCIONES
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
     }
@@ -63,6 +72,10 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         super.onCreate(savedInstanceState)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
+        setupUI()
+    }
+
+    private fun setupUI() {
         surfaceView = SurfaceView(this)
         surfaceView?.layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
@@ -85,9 +98,11 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         )
         buttonParams.gravity = Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL
         addContentView(buttonScan, buttonParams)
+
+        drawOvalFrame()
     }
 
-
+    //metodo para dibujar el ovalo en la vista previa de la camara
     private fun drawOvalFrame() {
         val ovalPaint = Paint().apply {
             color = Color.WHITE
@@ -117,7 +132,6 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     override fun onResume() {
         super.onResume()
-        drawOvalFrame()
         OpenCVLoader.initDebug()
         loadFaceCascade()
     }
@@ -232,7 +246,6 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         if (isScanning) {
             startTimer()
             showToastOnUiThread("Escaneando 30 segundos...")
-            buttonScan.text = "Detener Escaneo"
         } else {
             stopTimer()
             showToastOnUiThread("Escaneo detenido manualmente")
@@ -270,6 +283,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         timer?.cancel()
     }
 
+    //metodo principal de deteccion de rostros en la vista previa de la camara, se ejecuta en otro hilo para optimizar recursos
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
         // Verificar si el escaneo está activo
         if (!isScanning) return
@@ -364,6 +378,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         return faceMat.clone()
     }
 
+    //metodo que carga el clasificador en cascada para deteccion de rostros
     private fun loadFaceCascade() {
         try {
             val resourceId = R.raw.lbpcascade_frontalface_improved
@@ -390,69 +405,64 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
             e.printStackTrace()
         }
     }
-    fun siguiente(){
+
+    private fun siguiente() {
         val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
         startActivity(intent)
     }
 
+    //metodo para los toasts en el hilo principal
     private fun showToastOnUiThread(message: String) {
         runOnUiThread {
             Toast.makeText(this@EscaneaActivity, message, Toast.LENGTH_SHORT).show()
         }
     }
-}
 
 
+    private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
+        // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej, JPEG,JPG)
+        val byteStream = ByteArrayOutputStream()
+        val imageMat = MatOfByte()
+        Imgcodecs.imencode(".jpg", faceMat, imageMat)
+        byteStream.write(imageMat.toArray())
 
-val client = OkHttpClient.Builder()
-    .connectTimeout(5, TimeUnit.SECONDS)
-    .writeTimeout(5, TimeUnit.SECONDS)
-    .readTimeout(5, TimeUnit.SECONDS)
-    .build()
+        val requestBody = byteStream.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
 
-private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
-    // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej, JPEG,JPG)
-    val byteStream = ByteArrayOutputStream()
-    val imageMat = MatOfByte()
-    Imgcodecs.imencode(".jpg", faceMat, imageMat)
-    byteStream.write(imageMat.toArray())
+        val request = Request.Builder()
+            .url("https://flask-backend-log3r.vercel.app/api/authentication") //link de nosotros
+            .post(requestBody)
+            .build()
 
-    val requestBody = byteStream.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                // Manejar la respuesta del servidor aquí
+                if (response.isSuccessful) {
+                    // La solicitud fue exitosa // DATOS HARDCODEADOS
+                    val responseBody = response.body?.bytes() // Obtener la imagen como un ByteArray
+                    val numeroDocumento = responseBody?.toString(Charsets.UTF_8) ?: "12345678" // Suponiendo que el número de documento está codificado en UTF-8 en la respuesta
+                    val nombre = "Cosme" // Por ahora, asumimos que recibimos un nombre fijo
+                    val apellido = "Fulanito" // Por ahora, asumimos que recibimos un apellido fijo
+                    val lugaresAcceso = listOf("Modulo 1", "Modulo 2") // Por ahora, asumimos que recibimos una lista fija de lugares de acceso
 
-    val request = Request.Builder()
-        .url("https://flask-backend-log3r.vercel.app/api/authentication") //link de nosotros        
-        .post(requestBody)
-        .build()
+                    val persona = Persona(numeroDocumento, nombre, apellido, lugaresAcceso, responseBody ?: byteArrayOf())
 
-    client.newCall(request).enqueue(object : Callback {
-        override fun onResponse(call: Call, response: Response) {
-            // Manejar la respuesta del servidor aquí
-            if (response.isSuccessful) {
-                // La solicitud fue exitosa // DATOS HARDCODEADOS
-                val responseBody = response.body?.bytes() // Obtener la imagen como un ByteArray
-                val numeroDocumento = responseBody?.toString(Charsets.UTF_8) ?: "12345678" // Suponiendo que el número de documento está codificado en UTF-8 en la respuesta
-                val nombre = "Cosme" // Por ahora, asumimos que recibimos un nombre fijo
-                val apellido = "Fulanito" // Por ahora, asumimos que recibimos un apellido fijo
-                val lugaresAcceso = listOf("Modulo 1", "Modulo 2") // Por ahora, asumimos que recibimos una lista fija de lugares de acceso
-
-                val persona = Persona(numeroDocumento, nombre, apellido, lugaresAcceso, responseBody ?: byteArrayOf())
-
-            // Manejar la instancia de Persona
-                mostrarPersona(persona)
-            } else {
-                // La solicitud no fue exitosa
-                // Manejar el error
+                    // Manejar la instancia de Persona
+                    mostrarPersona(persona)
+                }
             }
-        }
 
-        override fun onFailure(call: Call, e: IOException) {
-            // Manejar el fallo de la solicitud aquí
-            e.printStackTrace()
-        }
-    })
-}
+            override fun onFailure(call: Call, e: IOException) {
+                // Manejar el fallo de la solicitud aquí puede ser mostrar un mensaje
+                // de error de conexión o volver a intentar la solicitud en algún intervalo de segundos
+                e.printStackTrace()
+                showToastOnUiThread("Error en la solicitud HTTP")
+            }
+        })
+    }
 
-private fun mostrarPersona(persona: Persona) {
-    // Actualizar la interfaz de usuario con los datos de la persona
-
+    private fun mostrarPersona(persona: Persona) {
+        // Actualizar la interfaz de usuario con los datos de la persona
+        // val intent = Intent(applicationContext, MostrarPersonaActivity::class.java)
+        // startActivity(intent)
+    }
 }

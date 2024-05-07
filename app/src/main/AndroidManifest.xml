@@ -21,6 +21,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
+<!--        <service-->
+<!--            android:name=".service.FaceRecognitionService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"></service>-->
+
         <activity
             android:name=".OfflineFaceRecognitionActivity"
             android:exported="false"
@@ -43,21 +48,19 @@
 
         <activity
             android:name=".EscaneaActivity"
-            android:label="Escanea"></activity>
+            android:label="Escanea" />
         <activity
             android:name=".RegistroExitosoActivity"
             android:label="RegistroExitoso" />
         <activity
             android:name=".AnteEscanea"
-            android:label="AnteEscanea"></activity>
+            android:label="AnteEscanea" />
         <activity
             android:name=".FormularioOfflineActivity"
-            android:label="FormularioOffline"></activity>
+            android:label="FormularioOffline" />
         <activity
             android:name=".activity.CameraxActivity"
-            android:label="CameraX"></activity>
-
-        <!-- Declara tu servicio dentro de la sección <application> -->
+            android:label="CameraX" /> <!-- Declara tu servicio dentro de la sección <application> -->
         <service
             android:name=".utils.NetworkChangeService"
             android:enabled="true"

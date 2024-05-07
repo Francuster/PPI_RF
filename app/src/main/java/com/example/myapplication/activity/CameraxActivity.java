@@ -3,6 +3,7 @@ package com.example.myapplication.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
@@ -40,13 +41,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.R;
+import com.example.myapplication.service.FaceRecognitionUtils;
 import com.example.myapplication.utils.GraphicOverlay;
 import com.example.myapplication.utils.SimilarityClassifier;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
-import com.google.mlkit.vision.face.FaceDetection;
-import com.google.mlkit.vision.face.FaceDetector;
 
 import org.tensorflow.lite.Interpreter;
 
@@ -90,6 +90,8 @@ public class CameraxActivity extends AppCompatActivity {
     private static final int INPUT_SIZE = 112;
     private static final int OUTPUT_SIZE=192;
 
+    private FaceRecognitionUtils faceRecognitionUtils;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +110,7 @@ public class CameraxActivity extends AppCompatActivity {
         switchCamBtn.setOnClickListener((view -> switchCamera()));
 
         loadModel();
+        faceRecognitionUtils = new FaceRecognitionUtils(this);
     }
 
     @Override
@@ -203,13 +206,17 @@ public class CameraxActivity extends AppCompatActivity {
             cameraProvider.unbind(analysisUseCase);
         }
 
+        //creates a thread to analyze frames
         Executor cameraExecutor = Executors.newSingleThreadExecutor();
 
         ImageAnalysis.Builder builder = new ImageAnalysis.Builder();
         builder.setTargetAspectRatio(AspectRatio.RATIO_4_3);
         builder.setTargetRotation(getRotation());
 
+//        ImageAnalysis anal = new ImageAnalysis.Analyzer()
+
         analysisUseCase = builder.build();
+        //The analyzer will signal that the camera should begin sending data
         analysisUseCase.setAnalyzer(cameraExecutor, this::analyze);
 
         try {
@@ -240,19 +247,23 @@ public class CameraxActivity extends AppCompatActivity {
     /** Face detection processor */
     @SuppressLint("UnsafeOptInUsageError")
     private void analyze(@NonNull ImageProxy image) {
-        if (image.getImage() == null) return;
+//        if (image.getImage() == null) return;
+//
+//        InputImage inputImage = InputImage.fromMediaImage(
+//                image.getImage(),
+//                image.getImageInfo().getRotationDegrees()
+//        );
+//
+//        FaceDetector faceDetector = FaceDetection.getClient();
+//
+//        faceDetector.process(inputImage)
+//                .addOnSuccessListener(faces -> onSuccessListener(faces, inputImage))
+//                .addOnFailureListener(e -> Log.e(TAG, "Barcode process failure", e))
+//                .addOnCompleteListener(task -> image.close());
 
-        InputImage inputImage = InputImage.fromMediaImage(
-                image.getImage(),
-                image.getImageInfo().getRotationDegrees()
-        );
-
-        FaceDetector faceDetector = FaceDetection.getClient();
-
-        faceDetector.process(inputImage)
-                .addOnSuccessListener(faces -> onSuccessListener(faces, inputImage))
-                .addOnFailureListener(e -> Log.e(TAG, "Barcode process failure", e))
-                .addOnCompleteListener(task -> image.close());
+        this.faceRecognitionUtils.analizeImage(image,
+                previewView.getWidth(),
+                previewView.getHeight());
     }
 
     private void onSuccessListener(List<Face> faces, InputImage inputImage) {

@@ -42,11 +42,15 @@ import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.R;
 import com.example.myapplication.service.FaceRecognitionUtils;
+import com.example.myapplication.service.FaceRecognitionV2;
+import com.example.myapplication.service.LabelEmbeddingsTuple;
 import com.example.myapplication.utils.GraphicOverlay;
 import com.example.myapplication.utils.SimilarityClassifier;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
+import com.google.mlkit.vision.face.FaceDetection;
+import com.google.mlkit.vision.face.FaceDetector;
 
 import org.tensorflow.lite.Interpreter;
 
@@ -83,14 +87,14 @@ public class CameraxActivity extends AppCompatActivity {
     private Interpreter tfLite;
     private boolean flipX = false;
     private boolean start = true;
-    private float[][] embeddings;
+    private float[]embeddings;
 
     private static final float IMAGE_MEAN = 128.0f;
     private static final float IMAGE_STD = 128.0f;
     private static final int INPUT_SIZE = 112;
     private static final int OUTPUT_SIZE=192;
 
-    private FaceRecognitionUtils faceRecognitionUtils;
+    private FaceRecognitionV2 faceRecognitionV2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,8 +113,8 @@ public class CameraxActivity extends AppCompatActivity {
         ImageButton switchCamBtn = findViewById(R.id.switch_camera);
         switchCamBtn.setOnClickListener((view -> switchCamera()));
 
-        loadModel();
-        faceRecognitionUtils = new FaceRecognitionUtils(this);
+//        loadModel();
+        faceRecognitionV2 = new FaceRecognitionV2();
     }
 
     @Override
@@ -247,23 +251,21 @@ public class CameraxActivity extends AppCompatActivity {
     /** Face detection processor */
     @SuppressLint("UnsafeOptInUsageError")
     private void analyze(@NonNull ImageProxy image) {
-//        if (image.getImage() == null) return;
-//
-//        InputImage inputImage = InputImage.fromMediaImage(
-//                image.getImage(),
-//                image.getImageInfo().getRotationDegrees()
-//        );
-//
-//        FaceDetector faceDetector = FaceDetection.getClient();
-//
-//        faceDetector.process(inputImage)
-//                .addOnSuccessListener(faces -> onSuccessListener(faces, inputImage))
-//                .addOnFailureListener(e -> Log.e(TAG, "Barcode process failure", e))
-//                .addOnCompleteListener(task -> image.close());
+        if (image.getImage() == null) return;
 
-        this.faceRecognitionUtils.analizeImage(image,
-                previewView.getWidth(),
-                previewView.getHeight());
+        InputImage inputImage = InputImage.fromMediaImage(
+                image.getImage(),
+                image.getImageInfo().getRotationDegrees()
+        );
+
+        FaceDetector faceDetector = FaceDetection.getClient();
+
+        faceDetector.process(inputImage)
+                .addOnSuccessListener(faces -> onSuccessListener(faces, inputImage))
+                .addOnFailureListener(e -> Log.e(TAG, "Barcode process failure", e))
+                .addOnCompleteListener(task -> image.close());
+
+
     }
 
     private void onSuccessListener(List<Face> faces, InputImage inputImage) {
@@ -286,8 +288,12 @@ public class CameraxActivity extends AppCompatActivity {
                     inputImage.getRotationDegrees(),
                     boundingBox);
 
-            if(start) name = recognizeImage(bitmap);
-            if(name != null) detectionTextView.setText(name);
+//            if(start) name = recognizeImage(bitmap);
+
+            LabelEmbeddingsTuple labelEmbeddingsTuple = faceRecognitionV2.faceRecognition(bitmap, this);
+            name = labelEmbeddingsTuple.getLabel();
+            embeddings = labelEmbeddingsTuple.getEmbeddings();
+            if(!name.isEmpty()) detectionTextView.setText(name);
         }
         else {
             detectionTextView.setText(R.string.no_face_detected);
@@ -314,11 +320,13 @@ public class CameraxActivity extends AppCompatActivity {
             //Toast.makeText(context, input.getText().toString(), Toast.LENGTH_SHORT).show();
 
             //Create and Initialize new object with Face embeddings and Name.
-            SimilarityClassifier.Recognition result = new SimilarityClassifier.Recognition(
-                    "0", "", -1f);
-            result.setExtra(embeddings);
+//            SimilarityClassifier.Recognition result = new SimilarityClassifier.Recognition(
+//                    "0", "", -1f);
+//            result.setExtra(embeddings);
+//
+//            registered.put( input.getText().toString(),result);
+            faceRecognitionV2.addEmbedding(embeddings, input.getText().toString());
 
-            registered.put( input.getText().toString(),result);
             start = true;
 
         });
@@ -330,90 +338,90 @@ public class CameraxActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public String recognizeImage(final Bitmap bitmap) {
-        // set image to preview
-        previewImg.setImageBitmap(bitmap);
-
-        //Create ByteBuffer to store normalized image
-
-        ByteBuffer imgData = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * 3 * 4);
-
-        imgData.order(ByteOrder.nativeOrder());
-
-        int[] intValues = new int[INPUT_SIZE * INPUT_SIZE];
-
-        //get pixel values from Bitmap to normalize
-        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-
-        imgData.rewind();
-
-        for (int i = 0; i < INPUT_SIZE; ++i) {
-            for (int j = 0; j < INPUT_SIZE; ++j) {
-                int pixelValue = intValues[i * INPUT_SIZE + j];
-                imgData.putFloat((((pixelValue >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
-                imgData.putFloat((((pixelValue >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
-                imgData.putFloat(((pixelValue & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
-            }
-        }
-        //imgData is input to our model
-        Object[] inputArray = {imgData};
-
-        Map<Integer, Object> outputMap = new HashMap<>();
-
-
-        embeddings = new float[1][OUTPUT_SIZE]; //output of model will be stored in this variable
-
-        outputMap.put(0, embeddings);
-
-        tfLite.runForMultipleInputsOutputs(inputArray, outputMap); //Run model
-
-
-
-        float distance;
-
-        //Compare new face with saved Faces.
-        if (registered.size() > 0) {
-
-            final Pair<String, Float> nearest = findNearest(embeddings[0]);//Find closest matching face
-
-            if (nearest != null) {
-
-                final String name = nearest.first;
-                distance = nearest.second;
-                if(distance<1.000f) //If distance between Closest found face is more than 1.000 ,then output UNKNOWN face.
-                    return name;
-                else
-                    return "unknown";
-            }
-        }
-
-        return null;
-    }
-
-    //Compare Faces by distance between face embeddings
-    private Pair<String, Float> findNearest(float[] emb) {
-
-        Pair<String, Float> ret = null;
-        for (Map.Entry<String, SimilarityClassifier.Recognition> entry : registered.entrySet()) {
-
-            final String name = entry.getKey();
-            final float[] knownEmb = ((float[][]) entry.getValue().getExtra())[0];
-
-            float distance = 0;
-            for (int i = 0; i < emb.length; i++) {
-                float diff = emb[i] - knownEmb[i];
-                distance += diff*diff;
-            }
-            distance = (float) Math.sqrt(distance);
-            if (ret == null || distance < ret.second) {
-                ret = new Pair<>(name, distance);
-            }
-        }
-
-        return ret;
-
-    }
-
+//    public String recognizeImage(final Bitmap bitmap) {
+//        // set image to preview
+//        previewImg.setImageBitmap(bitmap);
+//
+//        //Create ByteBuffer to store normalized image
+//
+//        ByteBuffer imgData = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * 3 * 4);
+//
+//        imgData.order(ByteOrder.nativeOrder());
+//
+//        int[] intValues = new int[INPUT_SIZE * INPUT_SIZE];
+//
+//        //get pixel values from Bitmap to normalize
+//        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+//
+//        imgData.rewind();
+//
+//        for (int i = 0; i < INPUT_SIZE; ++i) {
+//            for (int j = 0; j < INPUT_SIZE; ++j) {
+//                int pixelValue = intValues[i * INPUT_SIZE + j];
+//                imgData.putFloat((((pixelValue >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+//                imgData.putFloat((((pixelValue >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+//                imgData.putFloat(((pixelValue & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+//            }
+//        }
+//        //imgData is input to our model
+//        Object[] inputArray = {imgData};
+//
+//        Map<Integer, Object> outputMap = new HashMap<>();
+//
+//
+//        embeddings = new float[1][OUTPUT_SIZE]; //output of model will be stored in this variable
+//
+//        outputMap.put(0, embeddings);
+//
+//        tfLite.runForMultipleInputsOutputs(inputArray, outputMap); //Run model
+//
+//
+//
+//        float distance;
+//
+//        //Compare new face with saved Faces.
+//        if (registered.size() > 0) {
+//
+//            final Pair<String, Float> nearest = findNearest(embeddings[0]);//Find closest matching face
+//
+//            if (nearest != null) {
+//
+//                final String name = nearest.first;
+//                distance = nearest.second;
+//                if(distance<1.000f) //If distance between Closest found face is more than 1.000 ,then output UNKNOWN face.
+//                    return name;
+//                else
+//                    return "unknown";
+//            }
+//        }
+//
+//        return null;
+//    }
+//
+//    //Compare Faces by distance between face embeddings
+//    private Pair<String, Float> findNearest(float[] emb) {
+//
+//        Pair<String, Float> ret = null;
+//        for (Map.Entry<String, SimilarityClassifier.Recognition> entry : registered.entrySet()) {
+//
+//            final String name = entry.getKey();
+//            final float[] knownEmb = ((float[][]) entry.getValue().getExtra())[0];
+//
+//            float distance = 0;
+//            for (int i = 0; i < emb.length; i++) {
+//                float diff = emb[i] - knownEmb[i];
+//                distance += diff*diff;
+//            }
+//            distance = (float) Math.sqrt(distance);
+//            if (ret == null || distance < ret.second) {
+//                ret = new Pair<>(name, distance);
+//            }
+//        }
+//
+//        return ret;
+//
+//    }
+//
     /** Bitmap Converter */
     private Bitmap mediaImgToBmp(Image image, int rotation, Rect boundingBox) {
         //Convert media image to Bitmap
@@ -583,25 +591,25 @@ public class CameraxActivity extends AppCompatActivity {
 
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
-
-    /** Model loader */
-    @SuppressWarnings("deprecation")
-    private void loadModel() {
-        try {
-            //model name
-            String modelFile = "mobile_face_net.tflite";
-            tfLite = new Interpreter(loadModelFile(CameraxActivity.this, modelFile));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private MappedByteBuffer loadModelFile(Activity activity, String MODEL_FILE) throws IOException {
-        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(MODEL_FILE);
-        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
-        FileChannel fileChannel = inputStream.getChannel();
-        long startOffset = fileDescriptor.getStartOffset();
-        long declaredLength = fileDescriptor.getDeclaredLength();
-        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
-    }
+//
+//    /** Model loader */
+//    @SuppressWarnings("deprecation")
+//    private void loadModel() {
+//        try {
+//            //model name
+//            String modelFile = "mobile_face_net.tflite";
+//            tfLite = new Interpreter(loadModelFile(CameraxActivity.this, modelFile));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private MappedByteBuffer loadModelFile(Activity activity, String MODEL_FILE) throws IOException {
+//        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(MODEL_FILE);
+//        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+//        FileChannel fileChannel = inputStream.getChannel();
+//        long startOffset = fileDescriptor.getStartOffset();
+//        long declaredLength = fileDescriptor.getDeclaredLength();
+//        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+//    }
 }

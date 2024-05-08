@@ -39,13 +39,11 @@ import kotlin.math.sqrt
 class FaceRecognitionUtils(conte: Context) {
 
 
-
     private var context: Context? = conte
 
     init {
         loadModel()
     }
-
 
     private var tfLite: Interpreter? = null
     private val registered = HashMap<String, Recognition>() //saved Faces

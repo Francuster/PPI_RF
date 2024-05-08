@@ -13,7 +13,7 @@ class FaceRecognitionV2
 // Define the input image size expected by the model
 private const val INPUT_IMAGE_SIZE = 160
 
-private val THRESHOLD = 1
+private const val THRESHOLD = 1
 
 private val knownEmbeddingsList: List<FloatArray> = listOf()
 private val labelsList: List<String> = listOf()

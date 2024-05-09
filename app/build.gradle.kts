@@ -65,7 +65,10 @@ dependencies {
     implementation("com.google.android.material:material:1.13.0-alpha01")
     implementation("org.opencv:opencv:4.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1") // Cambia la versión si es necesario
-    implementation("androidx.core:core-ktx:1.10.1") // Cambia la versión si es necesario
+    implementation("androidx.core:core-ktx:1.10.1")
+    implementation(libs.core.ktx)
+    implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.runner) // Cambia la versión si es necesario
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -91,6 +94,8 @@ dependencies {
     implementation ("org.tensorflow:tensorflow-lite:2.4.0")
     implementation ("org.tensorflow:tensorflow-lite-gpu:2.4.0")
     implementation ("org.tensorflow:tensorflow-lite-support:0.2.0")
+
+
 
     //ML KIT Google
 //    implementation ("com.google.android.gms:play-services-mlkit:17.0.0")

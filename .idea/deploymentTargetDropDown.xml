@@ -2,6 +2,12 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="ExampleInstrumentedTest">
+        <State />
+      </entry>
+      <entry key="addition_isCorrect()">
+        <State />
+      </entry>
       <entry key="app">
         <State>
           <targetSelectedWithDropDown>
@@ -17,6 +23,9 @@
           </targetSelectedWithDropDown>
           <timeTargetWasSelectedWithDropDown value="2024-05-01T19:33:12.336986214Z" />
         </State>
+      </entry>
+      <entry key="testAddFacesFromPhotosFolder()">
+        <State />
       </entry>
     </value>
   </component>

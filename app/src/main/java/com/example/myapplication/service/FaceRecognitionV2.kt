@@ -2,6 +2,8 @@ package com.example.myapplication.service
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
+import com.example.myapplication.database.TAG
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import java.nio.ByteBuffer
@@ -51,7 +53,7 @@ public class FaceRecognitionV2{
 
     private fun getFaceEmbeddings(inputImage: Bitmap, context: Context): FloatArray {
         // 1. Load the TensorFlow Lite model for face recognition
-        val tfliteModel = loadModelFile("your_model.tflite", context)
+        val tfliteModel = loadModelFile("mobile_face_net.tflite", context)
 
         // 2. Initialize the interpreter
         val interpreter = Interpreter(tfliteModel, Interpreter.Options())
@@ -74,7 +76,7 @@ public class FaceRecognitionV2{
 
     // Function to load the TensorFlow Lite model file
     private fun loadModelFile(modelPath: String, context: Context): MappedByteBuffer {
-        return FileUtil.loadMappedFile(context!!,"mobile_face_net.tflite")
+        return FileUtil.loadMappedFile(context!!,modelPath)
     }
 
     // Function to preprocess the input image
@@ -124,7 +126,7 @@ public class FaceRecognitionV2{
         val maxSimilarityIndex = similarities.indices.maxByOrNull { similarities[it] } ?: -1
 
         // Return the label corresponding to the most similar known face
-        return if (maxSimilarityIndex != -1 && similarities[maxSimilarityIndex] > THRESHOLD) {
+        return if ( maxSimilarityIndex!= -1 && similarities[maxSimilarityIndex] > THRESHOLD) {
             labels[maxSimilarityIndex]
         } else {
             "Unknown"
@@ -143,6 +145,16 @@ public class FaceRecognitionV2{
         }
         val cosineSimilarity = dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2))
         return cosineSimilarity.toFloat()
+    }
+
+    public fun printEmbeddings(){
+
+        val i = 0;
+        for (embedding in knownEmbeddingsList){
+            Log.i("Embeddin", labelsList[i] + " [" + embedding.joinToString(", ") + " ]")
+        }
+
+
     }
 
 }

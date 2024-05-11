@@ -109,6 +109,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
     }
 
     //metodo para dibujar el ovalo en la vista previa de la camara
+    // Método para dibujar el óvalo en la vista previa de la cámara de manera centrada y responsive
     private fun drawOvalFrame() {
         val ovalPaint = Paint().apply {
             color = Color.WHITE
@@ -119,22 +120,34 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         val frameView = object : View(this) {
             override fun onDraw(canvas: Canvas) {
                 super.onDraw(canvas)
-                //medidas del ovalo
-                val left = 650f
-                val top = 200f
-                val right = 50f
-                val bottom = 1300f
 
+                // Obtener las dimensiones de la pantalla
+                val displayMetrics = resources.displayMetrics
+                val screenWidth = displayMetrics.widthPixels.toFloat()
+                val screenHeight = displayMetrics.heightPixels.toFloat()
+
+                // Calcular las coordenadas del óvalo para que esté centrado en la pantalla
+                val ovalWidth = screenWidth * 0.8f // Ancho relativo del óvalo
+                val ovalHeight = screenHeight * 0.8f // Altura relativa del óvalo
+                val left = (screenWidth - ovalWidth) / 2 // Coordenada X izquierda del óvalo
+                val top = (screenHeight - ovalHeight) / 2 // Coordenada Y superior del óvalo
+                val right = left + ovalWidth // Coordenada X derecha del óvalo
+                val bottom = top + ovalHeight // Coordenada Y inferior del óvalo
+
+                // Dibujar el óvalo en el lienzo
                 canvas.drawOval(left, top, right, bottom, ovalPaint)
             }
         }
+
+        // Añadir la vista del óvalo al FrameLayout de la actividad
         val layoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.MATCH_PARENT,
             FrameLayout.LayoutParams.MATCH_PARENT
         )
         addContentView(frameView, layoutParams)
-        ovalFrameView = frameView // Asignar la vista del ovalo
+        ovalFrameView = frameView // Asignar la vista del óvalo para referencia futura
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -459,8 +472,8 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
             override fun onFailure(call: Call, e: IOException) {
                 // Manejar el fallo de la solicitud aquí PANTALLA ERROR INGRESO
                 e.printStackTrace()
-                showToastOnUiThread("Rostro detectado no registrado en la base de datos/n" +
-                        "Por favor registrese y vuelva a intentarlo/n"+
+                showToastOnUiThread("Rostro detectado no registrado en la base de datos" +
+                        "Por favor registrese y vuelva a intentarlo"+
                         "Error en la solicitud HTTP")
             }
         })

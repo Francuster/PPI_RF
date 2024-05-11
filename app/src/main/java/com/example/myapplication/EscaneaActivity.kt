@@ -3,6 +3,8 @@ package com.example.myapplication
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.hardware.Camera
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,11 +12,13 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Gravity
+import android.view.Surface
 import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -24,6 +28,9 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.opencv.android.OpenCVLoader
+import org.opencv.android.Utils
+import org.opencv.core.Core
+import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.MatOfByte
 import org.opencv.core.MatOfRect
@@ -269,7 +276,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
-                if (!detecto && secondsRemaining <= 5) { //manejar tiempo que se muestra en toast
+                if (!detecto && secondsRemaining <= 3) { //manejar tiempo que se muestra en toast
                     showToastOnUiThread("Tiempo restante: $secondsRemaining segundos")
                 }
             }
@@ -283,8 +290,20 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         timer?.cancel()
     }
 
+    private fun siguiente() {
+        val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
+        startActivity(intent)
+    }
+
+    //metodo para los toasts en el hilo principal
+    private fun showToastOnUiThread(message: String) {
+        runOnUiThread {
+            Toast.makeText(this@EscaneaActivity, message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     //metodo principal de deteccion de rostros en la vista previa de la camara, se ejecuta en otro hilo para optimizar recursos
-    override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
+    override fun onPreviewFrame(data: ByteArray, camera: Camera?) {
         // Verificar si el escaneo está activo
         if (!isScanning) return
 
@@ -312,15 +331,13 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
             val rgbaMat = Mat()
             Imgproc.cvtColor(yuvMat, rgbaMat, Imgproc.COLOR_YUV2RGBA_NV21, 4)
 
+
             // Detectar rostros en la matriz RGBA
             val faces = MatOfRect()
             cascadeClassifier.detectMultiScale(rgbaMat, faces, 1.1, 2, 2, Size(150.0, 150.0), Size())
 
-            // Convertir la matriz de rectángulos a un array de rectángulos
-            val facesArray = faces.toArray()
-
             // Verificar si se detectaron rostros o si ya se ha detectado un rostro
-            if (facesArray.isNotEmpty() || detecto) {
+            if (faces.toArray().isNotEmpty() || detecto) {
                 // Cancelar el temporizador
                 timer?.cancel()
 
@@ -336,16 +353,23 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                     stopTimer()
 
                     // Verificar si se detectó al menos un rostro
-                    if (facesArray.isNotEmpty()) {
-                        // Extraer el fotograma del rostro
-                        val faceMat = extractFaceFrame(rgbaMat, facesArray[0])
-
-                        // Enviar la matriz del rostro como una solicitud HTTP
-                        enviarMatrizComoHTTPRequest(faceMat)
+                    if (faces.toArray().isNotEmpty()) {
+                        // Enviar la matriz RGBA completa como una solicitud HTTP
+                        enviarMatrizComoHTTPRequest(rgbaMat)
 
                         // Actualizar el tiempo de la última solicitud
                         lastRequestTimeMillis = currentTimeMillis
                     }
+
+                    // Mostrar la imagen en un Toast
+                    val bitmap = Bitmap.createBitmap(rgbaMat.cols(), rgbaMat.rows(), Bitmap.Config.ARGB_8888)
+                    Utils.matToBitmap(rgbaMat, bitmap)
+
+                    val toast = Toast.makeText(applicationContext, "", Toast.LENGTH_SHORT)
+                    val imageView = ImageView(applicationContext)
+                    imageView.setImageBitmap(bitmap)
+                    toast.view = imageView
+                    toast.show()
                 }
 
                 // Ir a la siguiente pantalla
@@ -361,8 +385,98 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
     }
 
 
+
+    private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
+
+        // Rotar la imagen 90 grados en sentido antihorario
+        Core.rotate(faceMat, faceMat, Core.ROTATE_90_COUNTERCLOCKWISE)
+
+        // Verificar el tipo de la matriz de OpenCV
+        if (faceMat.type() != CvType.CV_8UC3) {
+            // Si la matriz no es de 3 canales (RGB), convertirla a RGB
+            Imgproc.cvtColor(faceMat, faceMat, Imgproc.COLOR_BGR2RGB)
+        }
+
+        // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej, JPEG,JPG)
+        val byteStream = ByteArrayOutputStream()
+        val imageMat = MatOfByte()
+        Imgcodecs.imencode(".png", faceMat, imageMat)
+        byteStream.write(imageMat.toArray())
+
+        // Crear el cuerpo de la solicitud HTTP
+        val requestBody = MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart("image", "filename.png", byteStream.toByteArray().toRequestBody("image/png".toMediaTypeOrNull()))
+            .build()
+
+        // Construir y enviar la solicitud HTTP
+        val request = Request.Builder()
+            .url("http:/192.168.1.34:5000/api/authentication")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                // Manejar la respuesta del servidor aquí
+                if (response.isSuccessful) {
+                    // La solicitud fue exitosa // DATOS HARDCODEADOS
+                    showToastOnUiThread("La solicitud fue exitosa")
+                    val responseBody = response.body?.bytes() // Obtener la imagen como un ByteArray
+                    val numeroDocumento = responseBody?.toString(Charsets.UTF_8) ?: "12345678" // Suponiendo que el número de documento está codificado en UTF-8 en la respuesta
+                    val nombre = "Cosme" // Por ahora, asumimos que recibimos un nombre fijo
+                    val apellido = "Fulanito" // Por ahora, asumimos que recibimos un apellido fijo
+                    val lugaresAcceso = listOf("Modulo 1", "Modulo 2") // Por ahora, asumimos que recibimos una lista fija de lugares de acceso
+
+                    val persona = Persona(numeroDocumento, nombre, apellido, lugaresAcceso, responseBody ?: byteArrayOf())
+
+                    // Manejar la instancia de Persona
+                    mostrarPersona(persona)
+                }
+
+                // Cerrar el cuerpo de la respuesta
+                response.body?.close()
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                // Manejar el fallo de la solicitud aquí
+                e.printStackTrace()
+                showToastOnUiThread("Error en la solicitud HTTP")
+            }
+        })
+    }
+
+
     private fun extractFaceFrame(rgbaMat: Mat, faceRect: Rect): Mat {
         // Obtener las coordenadas de la cara
+        val x = faceRect.x
+        val y = faceRect.y
+        val width = faceRect.width
+        val height = faceRect.height
+
+        // Ajustar las coordenadas para incluir la cabeza hasta el cuello
+        val headX = x
+        val headY = y - height / 2 // Mover hacia arriba para incluir la parte superior de la cabeza
+        val headWidth = width
+        val headHeight = height + height / 2 // Aumentar la altura para incluir la parte inferior de la cabeza
+
+        // Verificar límites para asegurarse de que no se salga de los límites de la imagen
+        val imgWidth = rgbaMat.width()
+        val imgHeight = rgbaMat.height()
+
+        val safeHeadX = headX.coerceAtLeast(0)
+        val safeHeadY = headY.coerceAtLeast(0)
+        val safeHeadWidth = (headWidth + (headX - safeHeadX)).coerceAtMost(imgWidth - safeHeadX)
+        val safeHeadHeight = (headHeight + (headY - safeHeadY)).coerceAtMost(imgHeight - safeHeadY)
+
+        // Crear un rectángulo que delimita la cabeza en la imagen original
+        val headROI = Rect(safeHeadX, safeHeadY, safeHeadWidth, safeHeadHeight)
+
+        // Extraer la región de interés (ROI) que contiene la cabeza
+        val headMat = Mat(rgbaMat, headROI)
+
+        // Clonar la región de interés para evitar problemas de memoria
+        return headMat.clone()
+        /* Obtener las coordenadas de la cara
         val x = faceRect.x
         val y = faceRect.y
         val width = faceRect.width
@@ -375,16 +489,16 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         val faceMat = Mat(rgbaMat, faceROI)
 
         // Clonar la región de interés para evitar problemas de memoria
-        return faceMat.clone()
+        return faceMat.clone()*/
     }
 
     //metodo que carga el clasificador en cascada para deteccion de rostros
     private fun loadFaceCascade() {
         try {
-            val resourceId = R.raw.lbpcascade_frontalface_improved
+            val resourceId = R.raw.haarcascade_frontalface_default
             val isStream: InputStream = resources.openRawResource(resourceId)
             val cascadeDir: File = cacheDir
-            val cascadeFile: File = File(cascadeDir, "lbpcascade_frontalface_improved.xml")
+            val cascadeFile: File = File(cascadeDir, "haarcascade_frontalface_default.xml")
             val os = FileOutputStream(cascadeFile)
 
             val buffer = ByteArray(4096)
@@ -406,59 +520,6 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         }
     }
 
-    private fun siguiente() {
-        val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
-        startActivity(intent)
-    }
-
-    //metodo para los toasts en el hilo principal
-    private fun showToastOnUiThread(message: String) {
-        runOnUiThread {
-            Toast.makeText(this@EscaneaActivity, message, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-
-    private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
-        // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej, JPEG,JPG)
-        val byteStream = ByteArrayOutputStream()
-        val imageMat = MatOfByte()
-        Imgcodecs.imencode(".jpg", faceMat, imageMat)
-        byteStream.write(imageMat.toArray())
-
-        val requestBody = byteStream.toByteArray().toRequestBody("image/jpeg".toMediaTypeOrNull())
-
-        val request = Request.Builder()
-            .url("https://flask-backend-log3r.vercel.app/api/authentication") //link de nosotros
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                // Manejar la respuesta del servidor aquí
-                if (response.isSuccessful) {
-                    // La solicitud fue exitosa // DATOS HARDCODEADOS
-                    val responseBody = response.body?.bytes() // Obtener la imagen como un ByteArray
-                    val numeroDocumento = responseBody?.toString(Charsets.UTF_8) ?: "12345678" // Suponiendo que el número de documento está codificado en UTF-8 en la respuesta
-                    val nombre = "Cosme" // Por ahora, asumimos que recibimos un nombre fijo
-                    val apellido = "Fulanito" // Por ahora, asumimos que recibimos un apellido fijo
-                    val lugaresAcceso = listOf("Modulo 1", "Modulo 2") // Por ahora, asumimos que recibimos una lista fija de lugares de acceso
-
-                    val persona = Persona(numeroDocumento, nombre, apellido, lugaresAcceso, responseBody ?: byteArrayOf())
-
-                    // Manejar la instancia de Persona
-                    mostrarPersona(persona)
-                }
-            }
-
-            override fun onFailure(call: Call, e: IOException) {
-                // Manejar el fallo de la solicitud aquí puede ser mostrar un mensaje
-                // de error de conexión o volver a intentar la solicitud en algún intervalo de segundos
-                e.printStackTrace()
-                showToastOnUiThread("Error en la solicitud HTTP")
-            }
-        })
-    }
 
     private fun mostrarPersona(persona: Persona) {
         // Actualizar la interfaz de usuario con los datos de la persona

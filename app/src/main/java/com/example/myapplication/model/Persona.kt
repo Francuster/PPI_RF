@@ -5,5 +5,5 @@ data class Persona(
     val nombre: String,
     val apellido: String,
     val lugaresAcceso: List<String>, //lista de lugares a donde puede ir tal persona
-    val imagen: ByteArray // imagen en formato ByteArray
+    val imagen: ByteArray? // imagen en formato ByteArray
 )

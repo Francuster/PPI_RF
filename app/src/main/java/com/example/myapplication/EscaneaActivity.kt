@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.hardware.Camera
 import android.graphics.Canvas
 import android.graphics.Color
@@ -12,7 +11,6 @@ import android.graphics.Paint
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Gravity
-import android.view.Surface
 import android.view.SurfaceView
 import android.view.View
 import android.view.WindowManager
@@ -27,6 +25,7 @@ import com.example.myapplication.model.Persona
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.Core
@@ -66,7 +65,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
     private val client = OkHttpClient.Builder()
         .connectTimeout(5, TimeUnit.SECONDS)
         .writeTimeout(5, TimeUnit.SECONDS)
-        .readTimeout(5, TimeUnit.SECONDS)
+        .readTimeout(20, TimeUnit.SECONDS)
         .build()
 
 
@@ -421,13 +420,33 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                 if (response.isSuccessful) {
                     // La solicitud fue exitosa // DATOS HARDCODEADOS
                     showToastOnUiThread("La solicitud fue exitosa")
-                    val responseBody = response.body?.bytes() // Obtener la imagen como un ByteArray
-                    val numeroDocumento = responseBody?.toString(Charsets.UTF_8) ?: "12345678" // Suponiendo que el número de documento está codificado en UTF-8 en la respuesta
-                    val nombre = "Cosme" // Por ahora, asumimos que recibimos un nombre fijo
-                    val apellido = "Fulanito" // Por ahora, asumimos que recibimos un apellido fijo
-                    val lugaresAcceso = listOf("Modulo 1", "Modulo 2") // Por ahora, asumimos que recibimos una lista fija de lugares de acceso
+                    val responseBody = response.body?.string() // Obtener la respuesta como una cadena
+                    val jsonObject = JSONObject(responseBody) // Convertir la cadena JSON a un objeto JSONObject
 
-                    val persona = Persona(numeroDocumento, nombre, apellido, lugaresAcceso, responseBody ?: byteArrayOf())
+                    // Obtener el objeto "data" que contiene los datos de la persona
+                    val dataObject = jsonObject.getJSONObject("data")
+
+                    // Extraer los datos de la persona del objeto "data"
+                    val nombre = dataObject.getString("nombre")
+                    val apellido = dataObject.getString("apellido")
+                    val dni = dataObject.getInt("dni")
+                    val rolArray = dataObject.getJSONArray("rol")
+
+                    // Convertir el JSONArray de roles a una lista de cadenas
+                    val roles = mutableListOf<String>()
+                    for (i in 0 until rolArray.length()) {
+                        roles.add(rolArray.getString(i))
+                    }
+
+                    // Crear la instancia de Persona con los datos obtenidos
+                    val persona = Persona(dni.toString(), nombre, apellido, roles, null)
+
+                    // Mostrar los datos de la persona en un Toast para pruebas
+                    val personaInfo = "Nombre: $nombre\n" +
+                            "Apellido: $apellido\n" +
+                            "DNI: $dni\n" +
+                            "Roles: ${roles.joinToString(", ")}"
+                    showToastOnUiThread(personaInfo)
 
                     // Manejar la instancia de Persona
                     mostrarPersona(persona)
@@ -438,7 +457,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                // Manejar el fallo de la solicitud aquí
+                // Manejar el fallo de la solicitud aquí PANTALLA ERROR INGRESO
                 e.printStackTrace()
                 showToastOnUiThread("Error en la solicitud HTTP")
             }
@@ -446,51 +465,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
     }
 
 
-    private fun extractFaceFrame(rgbaMat: Mat, faceRect: Rect): Mat {
-        // Obtener las coordenadas de la cara
-        val x = faceRect.x
-        val y = faceRect.y
-        val width = faceRect.width
-        val height = faceRect.height
 
-        // Ajustar las coordenadas para incluir la cabeza hasta el cuello
-        val headX = x
-        val headY = y - height / 2 // Mover hacia arriba para incluir la parte superior de la cabeza
-        val headWidth = width
-        val headHeight = height + height / 2 // Aumentar la altura para incluir la parte inferior de la cabeza
-
-        // Verificar límites para asegurarse de que no se salga de los límites de la imagen
-        val imgWidth = rgbaMat.width()
-        val imgHeight = rgbaMat.height()
-
-        val safeHeadX = headX.coerceAtLeast(0)
-        val safeHeadY = headY.coerceAtLeast(0)
-        val safeHeadWidth = (headWidth + (headX - safeHeadX)).coerceAtMost(imgWidth - safeHeadX)
-        val safeHeadHeight = (headHeight + (headY - safeHeadY)).coerceAtMost(imgHeight - safeHeadY)
-
-        // Crear un rectángulo que delimita la cabeza en la imagen original
-        val headROI = Rect(safeHeadX, safeHeadY, safeHeadWidth, safeHeadHeight)
-
-        // Extraer la región de interés (ROI) que contiene la cabeza
-        val headMat = Mat(rgbaMat, headROI)
-
-        // Clonar la región de interés para evitar problemas de memoria
-        return headMat.clone()
-        /* Obtener las coordenadas de la cara
-        val x = faceRect.x
-        val y = faceRect.y
-        val width = faceRect.width
-        val height = faceRect.height
-
-        // Crear un rectángulo que delimita la cara en la imagen original
-        val faceROI = Rect(x, y, width, height)
-
-        // Extraer la región de interés (ROI) que contiene la cara
-        val faceMat = Mat(rgbaMat, faceROI)
-
-        // Clonar la región de interés para evitar problemas de memoria
-        return faceMat.clone()*/
-    }
 
     //metodo que carga el clasificador en cascada para deteccion de rostros
     private fun loadFaceCascade() {

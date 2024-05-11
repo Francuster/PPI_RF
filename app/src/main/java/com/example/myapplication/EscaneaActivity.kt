@@ -446,7 +446,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                             "DNI: $dni\n" +
                             "Roles: ${roles.joinToString(", ")}"
                     showToastOnUiThread(personaInfo)
-// Ir a la siguiente pantalla
+                    // Ir a la siguiente pantalla
                     siguiente()
                     // Manejar la instancia de Persona
                     //mostrarPersona(persona)
@@ -459,7 +459,9 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
             override fun onFailure(call: Call, e: IOException) {
                 // Manejar el fallo de la solicitud aquí PANTALLA ERROR INGRESO
                 e.printStackTrace()
-                showToastOnUiThread("Error en la solicitud HTTP")
+                showToastOnUiThread("Rostro detectado no registrado en la base de datos/n" +
+                        "Por favor registrese y vuelva a intentarlo/n"+
+                        "Error en la solicitud HTTP")
             }
         })
     }

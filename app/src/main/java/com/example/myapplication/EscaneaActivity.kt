@@ -270,7 +270,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
             showToastOnUiThread("Escaneo detenido manualmente")
         }
     }
-
+    //cambia el estado del boton
     private fun updateButtonState() {
         buttonScan.text = if (isScanning) "Detener Escaneo" else "Escanear"
     }
@@ -392,6 +392,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
             // Liberar la matriz YUV
             yuvMat.release()
+            lastRequestTimeMillis = currentTimeMillis
         }.start() // Iniciar el hilo
     }
 

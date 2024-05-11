@@ -288,7 +288,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
-                if (!detecto && secondsRemaining <= 3) { //manejar tiempo que se muestra en toast
+                if (!detecto && (secondsRemaining <= 3&& secondsRemaining >2 ||secondsRemaining <= 15&& secondsRemaining >14 )) { //manejar tiempo que se muestra en toast
                     showToastOnUiThread("Tiempo restante: $secondsRemaining segundos")
                 }
             }
@@ -392,7 +392,6 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
             // Liberar la matriz YUV
             yuvMat.release()
-            lastRequestTimeMillis = currentTimeMillis
         }.start() // Iniciar el hilo
     }
 

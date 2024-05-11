@@ -361,18 +361,17 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                     }
 
                     // Mostrar la imagen en un Toast
-                    val bitmap = Bitmap.createBitmap(rgbaMat.cols(), rgbaMat.rows(), Bitmap.Config.ARGB_8888)
+                    /*val bitmap = Bitmap.createBitmap(rgbaMat.cols(), rgbaMat.rows(), Bitmap.Config.ARGB_8888)
                     Utils.matToBitmap(rgbaMat, bitmap)
 
                     val toast = Toast.makeText(applicationContext, "", Toast.LENGTH_SHORT)
                     val imageView = ImageView(applicationContext)
                     imageView.setImageBitmap(bitmap)
                     toast.view = imageView
-                    toast.show()
+                    toast.show()*/
                 }
 
-                // Ir a la siguiente pantalla
-                siguiente()
+
 
                 // Salir del hilo
                 return@Thread
@@ -439,7 +438,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                     }
 
                     // Crear la instancia de Persona con los datos obtenidos
-                    val persona = Persona(dni.toString(), nombre, apellido, roles, null)
+                    //val persona = Persona(dni.toString(), nombre, apellido, roles, null)
 
                     // Mostrar los datos de la persona en un Toast para pruebas
                     val personaInfo = "Nombre: $nombre\n" +
@@ -447,9 +446,10 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                             "DNI: $dni\n" +
                             "Roles: ${roles.joinToString(", ")}"
                     showToastOnUiThread(personaInfo)
-
+// Ir a la siguiente pantalla
+                    siguiente()
                     // Manejar la instancia de Persona
-                    mostrarPersona(persona)
+                    //mostrarPersona(persona)
                 }
 
                 // Cerrar el cuerpo de la respuesta

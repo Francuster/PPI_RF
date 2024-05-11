@@ -59,7 +59,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     //variables del tiempo en las request
     private var lastRequestTimeMillis = 0L
-    private val requestIntervalMillis = 1000L // 1 segundo
+    private val requestIntervalMillis = 15000L // 1000=1 segundo
 
     // Cliente HTTP
     private val client = OkHttpClient.Builder()

@@ -45,7 +45,7 @@
         <activity android:name=".RegistroExitosoActivity" android:label="RegistroExitoso" />
         <activity android:name=".AnteEscanea" android:label="AnteEscanea" />
         <activity android:name=".FormularioOfflineActivity" android:label="FormularioOffline" />
-
+        <activity android:name=".RegistroDenegadoActivity" android:label="RegistroDenegado" />
         <!-- Declara tu servicio dentro de la sección <application> -->
 
         <service

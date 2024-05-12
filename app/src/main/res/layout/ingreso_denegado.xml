@@ -63,6 +63,7 @@
             android:layout_height="162dp"
             android:layout_marginBottom="108dp"
             android:background="@drawable/elipse_rojo"
+
             app:layout_constraintBottom_toTopOf="@+id/boton_siguiente"
             app:layout_constraintEnd_toEndOf="parent"
 
@@ -83,6 +84,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/elipse_incorrecto"
             app:layout_constraintEnd_toEndOf="@+id/elipse_incorrecto"
             app:layout_constraintHorizontal_bias="0.49"
+
             app:layout_constraintStart_toStartOf="@+id/elipse_incorrecto"
             app:layout_constraintTop_toTopOf="@+id/elipse_incorrecto"
             app:layout_constraintVertical_bias="0.48"

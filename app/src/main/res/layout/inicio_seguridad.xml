@@ -15,11 +15,11 @@
         android:background="@drawable/rectangulo_celeste"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.9"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHeight_percent="0.8"
+        app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
+        app:layout_constraintVertical_bias="0.431"
         app:layout_constraintWidth_percent="0.93">
 
 
@@ -35,18 +35,31 @@
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/logo_ingresoegreso"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.065"
+            app:layout_constraintVertical_bias="0.027"
             tools:ignore="MissingConstraints" />
 
+        <ImageView
+            android:id="@+id/logo_ingresoegreso"
+            android:layout_width="62dp"
+            android:layout_height="44dp"
+
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.026"
+            app:srcCompat="@drawable/sort_arrow" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/tipo_cuenta"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rectangulo_alerta"
+            android:id="@+id/ingreso"
+            android:layout_width="361dp"
+            android:layout_height="61dp"
+            android:background="@drawable/rectangulo_celeste_ingreso"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
 
@@ -54,7 +67,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintVertical_bias="0.177"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -63,138 +76,102 @@
                 android:layout_width="268dp"
                 android:layout_height="40dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:text="TIPO DE CUENTA"
+                android:text="Persona ingreso"
                 android:textAlignment="center"
                 android:textSize="20dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.644"
+                app:layout_constraintHorizontal_bias="0.207"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.615"
+                app:layout_constraintVertical_bias="0.5"
                 tools:ignore="MissingConstraints" />
 
             <ImageView
-                android:id="@+id/imagen_tipo_cuenta"
-                android:layout_width="62dp"
-                android:layout_height="44dp"
+                android:id="@+id/imagen_ingreso"
+                android:layout_width="37dp"
+                android:layout_height="29dp"
 
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.007"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tipo_cuenta_texto"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.5"
-                app:srcCompat="@drawable/cuenta" />
+                app:srcCompat="@drawable/check" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/alerta"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rectangulo_alerta"
+            android:id="@+id/egreso"
+            android:layout_width="361dp"
+            android:layout_height="61dp"
+            android:background="@drawable/rectangulo_verde"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
 
-            app:layout_constraintHeight_percent="0.30"
+            app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.83"
+            app:layout_constraintTop_toBottomOf="@+id/ingreso"
+            app:layout_constraintVertical_bias="0.032"
             app:layout_constraintWidth_percent="0.90">
 
+
             <TextView
-                android:id="@+id/cartel_primera_linea"
-                android:layout_width="284dp"
-                android:layout_height="38dp"
+                android:id="@id/tipo_cuenta_texto"
+                android:layout_width="268dp"
+                android:layout_height="40dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:text="ACCESO A:"
+                android:text="Persona egreso"
                 android:textAlignment="center"
                 android:textSize="20dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imagen_egreso"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.071"
+                app:layout_constraintVertical_bias="0.5"
                 tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imagen_egreso"
+                android:layout_width="52dp"
+                android:layout_height="50dp"
+
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tipo_cuenta_texto"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5"
+                app:srcCompat="@drawable/done_all_round" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
-            android:id="@+id/boton_registrar"
-            android:layout_width="162dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:background="@drawable/boton_verde"
-            android:fontFamily="@font/inter_extrabold"
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            android:onClick="Siguiente"
-            android:text="REGISTRAR"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.895"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/alerta"
-            app:layout_constraintVertical_bias="0.826"
-            app:layout_constraintWidth_percent="0.48" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/nav"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:background="@drawable/rectangulo_nav"
 
-        <Button
-            android:id="@+id/boton_rechazar"
-            android:layout_width="162dp"
-            android:layout_height="50dp"
-            android:layout_weight="1"
-            android:background="@drawable/boton_rojo"
-            android:fontFamily="@font/inter_extrabold"
-
-            android:onClick="Siguiente"
-            android:text="RECHAZAR"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.113"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/alerta"
-            app:layout_constraintVertical_bias="0.826"
-            app:layout_constraintWidth_percent="0.48" />
-
-        <View
-            android:id="@+id/elipse_correcto"
-            android:layout_width="144dp"
-            android:layout_height="137dp"
-            android:background="@drawable/elipse_celeste"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.20"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.264"
-            app:layout_constraintWidth_percent="0.38">
-
-
-        </View>
-
-        <ImageView
-            android:id="@+id/escaneo"
-            android:layout_width="110dp"
-            android:layout_height="95dp"
-
-
-            app:layout_constraintBottom_toBottomOf="@+id/elipse_correcto"
-            app:layout_constraintEnd_toEndOf="@+id/elipse_correcto"
-            app:layout_constraintHorizontal_bias="0.47"
-            app:layout_constraintStart_toStartOf="@+id/elipse_correcto"
-            app:layout_constraintTop_toTopOf="@+id/elipse_correcto"
-            app:layout_constraintVertical_bias="0.523"
-            app:srcCompat="@drawable/escaneo" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.00"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintWidth_percent="0.90"
+        tools:layout_editor_absoluteX="0dp">
+        
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

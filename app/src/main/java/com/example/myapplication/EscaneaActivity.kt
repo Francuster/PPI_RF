@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.hardware.Camera
 import android.graphics.Canvas
 import android.graphics.Color
@@ -307,25 +308,17 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
 
     //funcion para pasar los datos a otra activity
-    private fun registro_exitoso_antesala(nombre: String, apellido: String, dni: Int, roles: List<String>, imagen: Mat) {
-        // Convertir la matriz Mat a un formato que pueda ser enviado en un Intent
-        val stream = ByteArrayOutputStream()
-        val bitmap = Bitmap.createBitmap(imagen.cols(), imagen.rows(), Bitmap.Config.RGB_565)
-        Utils.matToBitmap(imagen, bitmap)
-
-        // Comprimir el bitmap en formato JPG y convertirlo en un arreglo de bytes
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-        val byteArray = stream.toByteArray()
+    private fun registro_exitoso_antesala(nombre: String, apellido: String, dni: Int, roles: String) {
 
         // Crear el Intent y pasar los datos
         val intent = Intent(this, RegistroExitosoAntesala::class.java)
         intent.putExtra("nombre", nombre)
         intent.putExtra("apellido", apellido)
         intent.putExtra("dni", dni)
-        intent.putStringArrayListExtra("roles", ArrayList(roles))
-        intent.putExtra("imagen", byteArray)
+        intent.putExtra("roles", roles)
         startActivity(intent)
     }
+
 
 
 
@@ -466,31 +459,18 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                     val apellido = dataObject.getString("apellido")
                     val dni = dataObject.getInt("dni")
                     val rolArray = dataObject.getJSONArray("rol")
-                    val jsonArray = dataObject.getJSONArray("image")
-                    // Extraer la imagen del JSON
-                    val imagenArray = dataObject.getJSONArray("image")
-                    val imagenDoubleList = mutableListOf<Double>()
-                    for (i in 0 until imagenArray.length()) {
-                        imagenDoubleList.add(imagenArray.getDouble(i))
-                    }
-                    val imagenByteArray = procesarRepresentacionVectorial(imagenDoubleList)
-
-
 
                     // Convertir el JSONArray de roles a una lista de cadenas
-                    val roles = mutableListOf<String>()
-                    for (i in 0 until rolArray.length()) {
-                        roles.add(rolArray.getString(i))
-                    }
+                    val primerRol = rolArray.getString(0)
 
 
-                    registro_exitoso_antesala(nombre, apellido, dni, roles, imagenByteArray)
+                    registro_exitoso_antesala(nombre, apellido, dni, primerRol)
                     // Mostrar los datos de la persona en un Toast para pruebas
-                    val personaInfo = "Nombre: $nombre\n" +
+                    /*val personaInfo = "Nombre: $nombre\n" +
                             "Apellido: $apellido\n" +
                             "DNI: $dni\n" +
                             "Roles: ${roles.joinToString(", ")}"
-                    showToastOnUiThread(personaInfo)
+                    showToastOnUiThread(personaInfo)*/
 
 
                 }
@@ -508,33 +488,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         })
     }
 
-    fun procesarRepresentacionVectorial(representacionVectorial: List<Double>): Mat {
-        val anchoImagen = 150
-        val altoImagen = 150
 
-        // Crear una matriz OpenCV para almacenar la imagen
-        val imagen = Mat(altoImagen, anchoImagen, CvType.CV_8UC1)
-
-        // Iterar sobre la representación vectorial y asignar los valores a la matriz de la imagen
-        var index = 0
-        for (y in 0 until altoImagen) {
-            for (x in 0 until anchoImagen) {
-                // Asegurarse de que el índice esté dentro del rango de la representación vectorial
-                if (index < representacionVectorial.size) {
-                    // Obtener el valor de píxel de la representación vectorial
-                    val pixelValue = representacionVectorial[index]
-
-                    // Asignar el valor del píxel a la matriz de la imagen
-                    imagen.put(y, x, pixelValue)
-
-                    // Incrementar el índice
-                    index++
-                }
-            }
-        }
-
-        return imagen
-    }
 
 
 

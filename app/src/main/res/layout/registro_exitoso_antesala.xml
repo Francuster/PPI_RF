@@ -57,7 +57,7 @@
 
 
             <TextView
-                android:id="@id/tipo_cuenta"
+                android:id="@+id/tipo_cuenta_texto"
                 android:layout_width="268dp"
                 android:layout_height="40dp"
                 android:fontFamily="@font/inter_extrabold"
@@ -70,8 +70,8 @@
                 app:layout_constraintHorizontal_bias="0.644"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.615"
-                tools:ignore="MissingConstraints" />
+                app:layout_constraintVertical_bias="0.423"
+                tools:ignore="DuplicateIds,MissingConstraints" />
 
             <ImageView
                 android:id="@+id/imagen_tipo_cuenta"

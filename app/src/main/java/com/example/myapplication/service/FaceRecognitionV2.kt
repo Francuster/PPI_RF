@@ -21,10 +21,12 @@ public class FaceRecognitionV2{
 //    private var knownEmbeddingsList: List<FloatArray> = listOf()
     private var knownEmbeddingsList: List<FloatArray> = listOf()
     private var labelsList: List<String> = listOf()
+    private var usuarioList: List<Usuario> = listOf()
 
 
     init {
         loadEmbeddings()
+        loadUsuarios()
     }
 
 
@@ -49,8 +51,12 @@ public class FaceRecognitionV2{
         val recognizedFaceEmbeddings = getFaceEmbeddings(inputImage, context)
 
         // 6. Match the embeddings with known faces or perform clustering to identify faces
-        val label = matchFaceEmbeddings(recognizedFaceEmbeddings)
+        var label = matchFaceEmbeddings(recognizedFaceEmbeddings)
         //Label can be "Unknown"
+        if(!label.equals("Unknown")){
+            val usuario = getUsarioByLabel(label.toInt())
+            label = usuario.nombre + " " + usuario.apellido
+        }
         val embeddingsTuple =  LabelEmbeddingsTuple(label, recognizedFaceEmbeddings)
         return embeddingsTuple
     }
@@ -221,6 +227,22 @@ public class FaceRecognitionV2{
         knownEmbeddingsList = knownEmbeddingsList.plus(addStringToFloatArray("[-0.009675461, 0.0201725, 0.004273694, 3.481492E-4, -0.031674206, 0.11465148, -0.08342278, 0.21253476, -0.017112786, 0.31757122, -0.01742536, -9.205094E-4, -0.006070004, 0.009991664, -9.317859E-4, 0.08051171, -0.0069647236, -2.2141366E-4, 0.004229354, 0.00208865, -0.07743978, 0.05589617, -0.04257982, 0.011028375, 0.09487301, -0.009714139, -0.018343287, -0.15777566, 0.23070772, -0.09776374, -0.005219233, 0.08189062, 0.16852576, 0.0036842152, -0.12545092, -0.07602671, 0.05868675, -0.01358918, 0.0063961553, -0.13825437, 0.00353272, 0.0022990913, 0.010286735, -0.007872975, 0.013418693, -0.007279978, 0.24882787, 0.1019381, -0.0016985255, 0.024167549, 0.010360295, 3.706954E-4, -0.03854993, -0.0037967393, -0.013354351, 0.00859902, -0.0928251, 0.0029846309, -0.075377494, 0.011787224, 0.017306738, -0.13440815, 0.04513258, 0.05657071, -0.008337644, -0.07291615, -0.006500385, 0.014576017, 0.0063340585, -0.0061791423, -0.025134724, -0.032635488, -0.18486871, 0.0017742433, 0.080689326, -9.431642E-4, -0.0038744586, -0.0055881436, 0.14306886, -0.054120403, 0.0021242152, -0.087805636, -0.004382201, 0.09999416, -0.016948707, -0.0034940436, -8.968626E-4, 0.12042994, -0.082687035, 0.1039427, -0.07255347, -8.4869214E-4, 0.0021696659, 8.4479083E-4, -0.08141325, -0.1595503, -0.07299017, -0.06075177, -0.0056309397, -0.0067108944, 0.0025206855, -5.109802E-4, -0.0022800749, 0.0030453876, -0.002228921, 0.005650616, 0.010620659, 0.0039042383, -0.014867365, 0.009111159, -0.13303778, 0.004903593, -0.0044007474, 0.20985563, 0.0047107227, -0.06272191, 0.0040944177, -0.018731989, 0.022611193, 0.0047825244, -0.106127396, -0.023998633, -0.18938248, 0.003590469, 0.0040922156, -0.0034713247, 0.002082117, -0.0013504305, 0.0044021965, -0.07346872, 0.0025757698, 0.0043711895, -0.0020175, -0.08368542, -0.027547503, -0.008550562, -0.01739526, -0.026057804, -0.006944272, -0.003232811, 0.0085983435, 7.7184953E-4, -0.0043471875, -0.20138687, 0.021947253, 0.08819503, -0.017952288, -0.013252783, -0.004369782, -0.007837635, 0.0021605687, 0.01095454, 0.023714736, -0.006197257, -0.0050373417, 0.005732935, -4.8339798E-4, 0.0094811125, -0.11073198, 4.0159817E-4, -0.020472612, -6.495201E-4, -0.0047929436, 1.5596986E-4, 0.008072937, 0.009801245, 0.0015454346, 0.10488876, 1.4404545E-4, -0.00295547, 0.27139065, 0.058681443, -0.0032138992, 0.03883977, 0.0042545684, 0.0029886728, -0.024729002, -0.05686846, 2.142061E-4, 4.3226063E-4, -0.0762009, 0.01548433, 0.004413769, 0.0049478356, 0.1756497, 0.053498868, 0.019476868, -0.0013511046, 0.1399647, -0.09856821, -0.024939902, 0.0011987768 ]"))
         labelsList = labelsList.plus("6")
 
+    }
+
+    private fun loadUsuarios(){
+        usuarioList = usuarioList.plus(Usuario(0, "12123123", "Alfonzo", "Lombardi", listOf("estudiante"), "0900", "1800"))
+        usuarioList = usuarioList.plus(Usuario(1, "12123123", "Esteban Ezequiel", "Lucero", listOf("seguridad"), "0900", "1800"))
+        usuarioList = usuarioList.plus(Usuario(2, "12123123", "Manuel", "Acosta", listOf("rrhh"), "0900", "1800"))
+        usuarioList = usuarioList.plus(Usuario(3, "12123123", "Guillermo", "Arditti", listOf("estudiante"), "0900", "1800"))
+        usuarioList = usuarioList.plus(Usuario(4, "12123123", "Gabriel", "Althaparro", listOf("estudiante"), "0900", "1800"))
+        usuarioList = usuarioList.plus(Usuario(5, "12123123", "Matias", "Suarez", listOf("estudiante"), "0900", "1800"))
+        usuarioList = usuarioList.plus(Usuario(6, "12123123", "Franco", "Disabato", listOf("administrador", "profesor"), "0900", "1800"))
+
+
+    }
+
+    public fun getUsarioByLabel(label: Int): Usuario {
+        return usuarioList.get(label)
     }
 
 

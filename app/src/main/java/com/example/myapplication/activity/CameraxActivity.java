@@ -41,7 +41,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.R;
-import com.example.myapplication.service.FaceRecognitionUtils;
 import com.example.myapplication.service.FaceRecognitionV2;
 import com.example.myapplication.service.LabelEmbeddingsTuple;
 import com.example.myapplication.utils.GraphicOverlay;

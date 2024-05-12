@@ -57,11 +57,11 @@
             app:layout_constraintWidth_percent="0.48" />
 
         <View
-            android:id="@+id/elipse_incorrecto"
+            android:id="@+id/elipse_correcto"
             android:layout_width="165dp"
             android:layout_height="162dp"
             android:layout_marginBottom="108dp"
-            android:background="@drawable/elipse_rojo"
+            android:background="@drawable/elipse_ingreso_exitoso"
             app:layout_constraintBottom_toTopOf="@+id/boton_siguiente"
             app:layout_constraintEnd_toEndOf="parent"
 
@@ -79,12 +79,12 @@
             android:layout_height="wrap_content"
 
 
-            app:layout_constraintBottom_toBottomOf="@+id/elipse_incorrecto"
-            app:layout_constraintEnd_toEndOf="@+id/elipse_incorrecto"
+            app:layout_constraintBottom_toBottomOf="@+id/elipse_correcto"
+            app:layout_constraintEnd_toEndOf="@+id/elipse_correcto"
             app:layout_constraintHorizontal_bias="0.487"
-            app:layout_constraintStart_toStartOf="@+id/elipse_incorrecto"
-            app:layout_constraintTop_toTopOf="@+id/elipse_incorrecto"
-            app:srcCompat="@drawable/close_round" />
+            app:layout_constraintStart_toStartOf="@+id/elipse_correcto"
+            app:layout_constraintTop_toTopOf="@+id/elipse_correcto"
+            app:srcCompat="@drawable/check" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

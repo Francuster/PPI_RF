@@ -47,4 +47,9 @@ class RegistroExitosoAntesala: AppCompatActivity() {
         val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
         startActivity(intent)
     }
+    fun rechazarClick(view: View) {
+        //ACA LO DEJO ASI PORQ LA CLASE DENEGADO ME ESTA DANDO ERROR
+        val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
+        startActivity(intent)
+    }
 }

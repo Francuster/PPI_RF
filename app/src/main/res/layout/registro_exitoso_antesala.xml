@@ -159,8 +159,9 @@
             android:background="@drawable/boton_rojo"
             android:fontFamily="@font/inter_extrabold"
 
-            android:onClick="Siguiente"
             android:text="RECHAZAR"
+            android:onClick="rechazarClick"
+
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -16,12 +16,10 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.myapplication.model.Persona
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -33,7 +31,6 @@ import org.opencv.core.CvType
 import org.opencv.core.Mat
 import org.opencv.core.MatOfByte
 import org.opencv.core.MatOfRect
-import org.opencv.core.Rect
 import org.opencv.core.Size
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
@@ -76,6 +73,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.registro_exitoso_antesala)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setupUI()
@@ -307,6 +305,31 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         startActivity(intent)
     }
 
+
+    //funcion para pasar los datos a otra activity
+    private fun registro_exitoso_antesala(nombre: String, apellido: String, dni: Int, roles: List<String>, imagen: Mat) {
+        // Convertir la matriz Mat a un formato que pueda ser enviado en un Intent
+        val stream = ByteArrayOutputStream()
+        val bitmap = Bitmap.createBitmap(imagen.cols(), imagen.rows(), Bitmap.Config.RGB_565)
+        Utils.matToBitmap(imagen, bitmap)
+
+        // Comprimir el bitmap en formato JPG y convertirlo en un arreglo de bytes
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        val byteArray = stream.toByteArray()
+
+        // Crear el Intent y pasar los datos
+        val intent = Intent(this, RegistroExitosoAntesala::class.java)
+        intent.putExtra("nombre", nombre)
+        intent.putExtra("apellido", apellido)
+        intent.putExtra("dni", dni)
+        intent.putStringArrayListExtra("roles", ArrayList(roles))
+        intent.putExtra("imagen", byteArray)
+        startActivity(intent)
+    }
+
+
+
+
     //metodo para los toasts en el hilo principal
     private fun showToastOnUiThread(message: String) {
         runOnUiThread {
@@ -422,7 +445,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
         // Construir y enviar la solicitud HTTP
         val request = Request.Builder()
-            .url("http:/192.168.1.34:5000/api/authentication")
+            .url("http:/192.168.1.34:5000/api/authentication")//cambiar por ip local para prueba o ip online
             .post(requestBody)
             .build()
 
@@ -430,7 +453,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
             override fun onResponse(call: Call, response: Response) {
                 // Manejar la respuesta del servidor aquí
                 if (response.isSuccessful) {
-                    // La solicitud fue exitosa // DATOS HARDCODEADOS
+                    // La solicitud fue exitosa //
                     showToastOnUiThread("La solicitud fue exitosa")
                     val responseBody = response.body?.string() // Obtener la respuesta como una cadena
                     val jsonObject = JSONObject(responseBody) // Convertir la cadena JSON a un objeto JSONObject
@@ -443,6 +466,16 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                     val apellido = dataObject.getString("apellido")
                     val dni = dataObject.getInt("dni")
                     val rolArray = dataObject.getJSONArray("rol")
+                    val jsonArray = dataObject.getJSONArray("image")
+                    // Extraer la imagen del JSON
+                    val imagenArray = dataObject.getJSONArray("image")
+                    val imagenDoubleList = mutableListOf<Double>()
+                    for (i in 0 until imagenArray.length()) {
+                        imagenDoubleList.add(imagenArray.getDouble(i))
+                    }
+                    val imagenByteArray = procesarRepresentacionVectorial(imagenDoubleList)
+
+
 
                     // Convertir el JSONArray de roles a una lista de cadenas
                     val roles = mutableListOf<String>()
@@ -450,21 +483,17 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                         roles.add(rolArray.getString(i))
                     }
 
-                    // Crear la instancia de Persona con los datos obtenidos
-                    //val persona = Persona(dni.toString(), nombre, apellido, roles, null)
 
+                    registro_exitoso_antesala(nombre, apellido, dni, roles, imagenByteArray)
                     // Mostrar los datos de la persona en un Toast para pruebas
                     val personaInfo = "Nombre: $nombre\n" +
                             "Apellido: $apellido\n" +
                             "DNI: $dni\n" +
                             "Roles: ${roles.joinToString(", ")}"
                     showToastOnUiThread(personaInfo)
-                    // Ir a la siguiente pantalla
-                    siguiente()
-                    // Manejar la instancia de Persona
-                    //mostrarPersona(persona)
-                }
 
+
+                }
                 // Cerrar el cuerpo de la respuesta
                 response.body?.close()
             }
@@ -472,13 +501,40 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
             override fun onFailure(call: Call, e: IOException) {
                 // Manejar el fallo de la solicitud aquí PANTALLA ERROR INGRESO
                 e.printStackTrace()
-                showToastOnUiThread("Rostro detectado no registrado en la base de datos" +
-                        "Por favor registrese y vuelva a intentarlo"+
+                showToastOnUiThread("Rostro detectado no registrado en la base de datos\n" +
+                        "Por favor regístrese y vuelva a intentarlo\n" +
                         "Error en la solicitud HTTP")
             }
         })
     }
 
+    fun procesarRepresentacionVectorial(representacionVectorial: List<Double>): Mat {
+        val anchoImagen = 150
+        val altoImagen = 150
+
+        // Crear una matriz OpenCV para almacenar la imagen
+        val imagen = Mat(altoImagen, anchoImagen, CvType.CV_8UC1)
+
+        // Iterar sobre la representación vectorial y asignar los valores a la matriz de la imagen
+        var index = 0
+        for (y in 0 until altoImagen) {
+            for (x in 0 until anchoImagen) {
+                // Asegurarse de que el índice esté dentro del rango de la representación vectorial
+                if (index < representacionVectorial.size) {
+                    // Obtener el valor de píxel de la representación vectorial
+                    val pixelValue = representacionVectorial[index]
+
+                    // Asignar el valor del píxel a la matriz de la imagen
+                    imagen.put(y, x, pixelValue)
+
+                    // Incrementar el índice
+                    index++
+                }
+            }
+        }
+
+        return imagen
+    }
 
 
 
@@ -510,10 +566,4 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
         }
     }
 
-
-    private fun mostrarPersona(persona: Persona) {
-        // Actualizar la interfaz de usuario con los datos de la persona
-        // val intent = Intent(applicationContext, MostrarPersonaActivity::class.java)
-        // startActivity(intent)
-    }
 }

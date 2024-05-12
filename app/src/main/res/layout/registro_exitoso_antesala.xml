@@ -35,12 +35,10 @@
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.065"
+            app:layout_constraintVertical_bias="0.056"
             tools:ignore="MissingConstraints" />
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/tipo_cuenta"
@@ -59,7 +57,7 @@
 
 
             <TextView
-                android:id="@id/tipo_cuenta_texto"
+                android:id="@id/tipo_cuenta"
                 android:layout_width="268dp"
                 android:layout_height="40dp"
                 android:fontFamily="@font/inter_extrabold"
@@ -101,10 +99,10 @@
             app:layout_constraintEnd_toEndOf="parent"
 
             app:layout_constraintHeight_percent="0.30"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.578"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.83"
+            app:layout_constraintVertical_bias="0.828"
             app:layout_constraintWidth_percent="0.90">
 
             <TextView
@@ -122,6 +120,14 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.071"
                 tools:ignore="MissingConstraints" />
+
+            <LinearLayout
+                android:id="@+id/lugares"
+                android:layout_width="286dp"
+                android:layout_height="121dp"
+                android:orientation="vertical"
+                tools:layout_editor_absoluteX="28dp"
+                tools:layout_editor_absoluteY="48dp"></LinearLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -184,8 +190,9 @@
 
         <ImageView
             android:id="@+id/escaneo"
-            android:layout_width="110dp"
-            android:layout_height="95dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:scaleType="fitCenter"
 
 
             app:layout_constraintBottom_toBottomOf="@+id/elipse_correcto"

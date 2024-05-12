@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
@@ -22,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -32,26 +32,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".RegistroExitosoAntesala"
+            android:label="Registro Exitoso Antesala" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <activity android:name=".EscaneaActivity" android:label="Escanea" >
 
-        </activity>
+        <activity android:name=".EscaneaActivity" android:label="Escanea" />
+        <activity android:name=".RegistroExitosoActivity" android:label="RegistroExitoso" />
+        <activity android:name=".AnteEscanea" android:label="AnteEscanea" />
+        <activity android:name=".FormularioOfflineActivity" android:label="FormularioOffline" />
 
-        <activity android:name=".RegistroExitosoActivity" android:label="RegistroExitoso" ></activity>
-        <activity android:name=".AnteEscanea" android:label="AnteEscanea" >
-
-        </activity>
-        <activity android:name=".FormularioOfflineActivity" android:label="FormularioOffline" >
-
-        </activity>
         <!-- Declara tu servicio dentro de la sección <application> -->
 
         <service
             android:name=".utils.NetworkChangeService"
             android:enabled="true"
             android:exported="false" />
+
         <receiver
             android:name=".utils.NetworkChangeReceiver"
             android:enabled="true"

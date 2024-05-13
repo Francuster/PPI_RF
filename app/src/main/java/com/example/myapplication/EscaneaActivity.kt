@@ -435,7 +435,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
         // Construir y enviar la solicitud HTTP
         val request = Request.Builder()
-            .url("http:/192.168.1.34:5000/api/authentication")//cambiar por ip local para prueba o ip online
+            .url("https://log3r.up.railway.app/api/authentication")//cambiar por ip local para prueba o ip online
             .post(requestBody)
             .build()
 
@@ -444,7 +444,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
                 // Manejar la respuesta del servidor aquí
                 if (response.isSuccessful) {
                     // La solicitud fue exitosa //
-                    showToastOnUiThread("La solicitud fue exitosa")
+                    //showToastOnUiThread("La solicitud fue exitosa")
                     val responseBody = response.body?.string() // Obtener la respuesta como una cadena
                     val jsonObject = JSONObject(responseBody) // Convertir la cadena JSON a un objeto JSONObject
 

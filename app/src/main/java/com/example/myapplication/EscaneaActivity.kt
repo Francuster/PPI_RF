@@ -438,7 +438,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
         // Construir y enviar la solicitud HTTP
         val request = Request.Builder()
-            .url("http:/192.168.0.107:5000/api/authentication")//cambiar por ip local para prueba o ip online
+            .url("https://log3r.up.railway.app/api/authentication")//cambiar por ip local para prueba o ip online
             .post(requestBody)
             .build()
 

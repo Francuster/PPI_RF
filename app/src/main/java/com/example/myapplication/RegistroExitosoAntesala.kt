@@ -60,7 +60,7 @@ class RegistroExitosoAntesala: AppCompatActivity() {
     fun Siguiente(view: View) {
         // Iniciar la actividad RegistroExitosoActivity
         val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
-         val formato = SimpleDateFormat("dd-MM-yyyy hh:mm:ss a", Locale.ENGLISH)
+         val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
            val horario = formato.format(Date())
             enviarDatosAlBackend(nombre,apellido,dni, horario )
         startActivity(intent)
@@ -68,7 +68,7 @@ class RegistroExitosoAntesala: AppCompatActivity() {
 
     private fun enviarDatosAlBackend(nombre: String, apellido: String, dni: String, horario: String) {
         // URL
-        val url = "http://192.168.0.107:5000/api/authentication/logs"
+        val url = "https://log3r.up.railway.app/api/authentication/logs"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)
@@ -78,7 +78,7 @@ class RegistroExitosoAntesala: AppCompatActivity() {
 
         // Crear el cuerpo de la solicitud HTTP
         val requestBody = FormBody.Builder()
-            .add("mensaje","ingreso ${nombre}${apellido}")
+            .add("mensaje","ingreso ${nombre} ${apellido}")
             .add("horario", horario)
             .add("dni",dni)
             .build()

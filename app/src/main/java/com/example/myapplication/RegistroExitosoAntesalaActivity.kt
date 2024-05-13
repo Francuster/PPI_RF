@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class RegistroExitosoAntesala: AppCompatActivity() {
+class RegistroExitosoAntesalaActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.registro_exitoso_antesala)
@@ -18,6 +18,8 @@ class RegistroExitosoAntesala: AppCompatActivity() {
             val rol = extras.getString("roles")
             val dni = extras.getInt("dni")
             val rolArray = extras.getStringArrayList("roles")
+
+
             //val byteArray = extras.getByteArray("imagen")
 
             // IMAGEN --- Decodificar el byteArray a un bitmap
@@ -38,7 +40,7 @@ class RegistroExitosoAntesala: AppCompatActivity() {
 
             // NOMBRE Y APELLIDO --- Actualizar TextViews con el nombre y apellido
             val textoNombreUsuario = findViewById<TextView>(R.id.ingreso_exitoso)
-            textoNombreUsuario.text = "$nombre $apellido"
+            textoNombreUsuario.text = "$nombre $apellido \n"+"DNI:$dni"
         }
     }
 

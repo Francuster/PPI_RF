@@ -3,8 +3,6 @@ package com.example.myapplication
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.hardware.Camera
 import android.graphics.Canvas
 import android.graphics.Color
@@ -26,7 +24,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import org.opencv.android.OpenCVLoader
-import org.opencv.android.Utils
 import org.opencv.core.Core
 import org.opencv.core.CvType
 import org.opencv.core.Mat
@@ -311,7 +308,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
     private fun registro_exitoso_antesala(nombre: String, apellido: String, dni: Int, roles: String) {
 
         // Crear el Intent y pasar los datos
-        val intent = Intent(this, RegistroExitosoAntesala::class.java)
+        val intent = Intent(this, RegistroExitosoAntesalaActivity::class.java)
         intent.putExtra("nombre", nombre)
         intent.putExtra("apellido", apellido)
         intent.putExtra("dni", dni)

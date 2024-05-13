@@ -34,7 +34,7 @@
         </activity>
 
         <activity
-            android:name=".RegistroExitosoAntesala"
+            android:name=".RegistroExitosoAntesalaActivity"
             android:label="Registro Exitoso Antesala" />
 
         <meta-data

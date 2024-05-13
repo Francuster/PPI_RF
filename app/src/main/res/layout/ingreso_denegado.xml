@@ -47,7 +47,7 @@
             android:background="@drawable/boton"
             android:fontFamily="@font/inter_extrabold"
             android:onClick="Siguiente"
-            android:text="SIGUIENTE"
+            android:text="VOLVER A ESCANEAR"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

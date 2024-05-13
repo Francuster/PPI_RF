@@ -11,11 +11,14 @@ class RegistroExitosoActivity: AppCompatActivity() {
         setContentView(R.layout.ingreso_exitoso)
     }
 
-    fun Siguiente(view : View){
-        if(deviceIsConnected(applicationContext)){
+    fun Siguiente(view : View) {
+        if (deviceIsConnected(applicationContext)) {
             val intent = Intent(applicationContext, MainActivity::class.java)
-            startActivity(intent)
-        }
 
+            startActivity(intent)
+
+        }
     }
+
+
 }

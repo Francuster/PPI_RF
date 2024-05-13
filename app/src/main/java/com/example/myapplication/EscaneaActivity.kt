@@ -3,12 +3,10 @@ package com.example.myapplication
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.hardware.Camera
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.hardware.Camera
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Gravity
@@ -21,12 +19,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import org.json.JSONObject
 import org.opencv.android.OpenCVLoader
-import org.opencv.android.Utils
 import org.opencv.core.Core
 import org.opencv.core.CvType
 import org.opencv.core.Mat
@@ -321,8 +323,6 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
 
 
-
-
     //metodo para los toasts en el hilo principal
     private fun showToastOnUiThread(message: String) {
         runOnUiThread {
@@ -438,7 +438,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
         // Construir y enviar la solicitud HTTP
         val request = Request.Builder()
-            .url("http:/192.168.1.34:5000/api/authentication")//cambiar por ip local para prueba o ip online
+            .url("http:/192.168.0.107:5000/api/authentication")//cambiar por ip local para prueba o ip online
             .post(requestBody)
             .build()
 
@@ -465,6 +465,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
 
 
                     registro_exitoso_antesala(nombre, apellido, dni, primerRol)
+
                     // Mostrar los datos de la persona en un Toast para pruebas
                     /*val personaInfo = "Nombre: $nombre\n" +
                             "Apellido: $apellido\n" +

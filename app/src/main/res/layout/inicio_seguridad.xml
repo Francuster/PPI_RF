@@ -291,7 +291,7 @@
         tools:layout_editor_absoluteX="0dp">
 
         <TextView
-            android:id="@id/loger"
+            android:id="@+id/loger"
             android:layout_width="82dp"
             android:layout_height="24dp"
             android:background="#00ECE6D9"
@@ -312,7 +312,7 @@
             tools:ignore="MissingConstraints" />
 
         <TextView
-            android:id="@id/usuario"
+            android:id="@+id/usuario"
             android:layout_width="96dp"
             android:layout_height="27dp"
             android:background="#00ECE6D9"

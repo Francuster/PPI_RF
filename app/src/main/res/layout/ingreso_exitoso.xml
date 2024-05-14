@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EscaneaActivity"
+    tools:context=".CameraIngresoEgresoActivity"
     android:background="@drawable/fondo_blanco">
 
     <androidx.constraintlayout.widget.ConstraintLayout

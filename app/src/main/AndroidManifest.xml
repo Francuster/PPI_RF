@@ -41,11 +41,13 @@
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
-        <activity android:name=".EscaneaActivity" android:label="Escanea" />
+        <activity android:name=".CameraIngresoEgresoActivity" android:label="Escanea" />
         <activity android:name=".RegistroExitosoActivity" android:label="RegistroExitoso" />
-        <activity android:name=".AnteEscanea" android:label="AnteEscanea" />
+        <activity android:name=".AnteEscaneaActivity" android:label="AnteEscanea" />
         <activity android:name=".FormularioOfflineActivity" android:label="FormularioOffline" />
         <activity android:name=".RegistroDenegadoActivity" android:label="RegistroDenegado" />
+        <activity android:name=".CameraLoginActivity" android:label="CameraLoginActivity" />
+        <activity android:name=".InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
         <!-- Declara tu servicio dentro de la sección <application> -->
 
         <service

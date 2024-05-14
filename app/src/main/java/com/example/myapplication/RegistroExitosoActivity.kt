@@ -13,7 +13,7 @@ class RegistroExitosoActivity: AppCompatActivity() {
 
     fun Siguiente(view : View){
         if(deviceIsConnected(applicationContext)){
-            val intent = Intent(applicationContext, MainActivity::class.java)
+            val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
             startActivity(intent)
         }
 

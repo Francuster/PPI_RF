@@ -40,7 +40,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 
-class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
+class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier
@@ -323,7 +323,7 @@ class EscaneaActivity : AppCompatActivity(), Camera.PreviewCallback {
     //metodo para los toasts en el hilo principal
     private fun showToastOnUiThread(message: String) {
         runOnUiThread {
-            Toast.makeText(this@EscaneaActivity, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@CameraIngresoEgresoActivity, message, Toast.LENGTH_SHORT).show()
         }
     }
 

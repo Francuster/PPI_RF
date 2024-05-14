@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
-class AnteEscanea: AppCompatActivity() {
+class AnteEscaneaActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.escanear)
@@ -14,7 +14,7 @@ class AnteEscanea: AppCompatActivity() {
     }
     fun Siguiente(view : View){
         if(deviceIsConnected(applicationContext)){
-            val intent = Intent(applicationContext, EscaneaActivity::class.java)
+            val intent = Intent(applicationContext, CameraIngresoEgresoActivity::class.java)
             startActivity(intent)
         }else{
             Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()

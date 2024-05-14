@@ -7,7 +7,6 @@ import android.hardware.Camera
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.hardware.Camera
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Gravity

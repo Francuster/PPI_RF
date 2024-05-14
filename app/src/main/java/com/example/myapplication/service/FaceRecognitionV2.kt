@@ -53,12 +53,26 @@ public class FaceRecognitionV2{
         // 6. Match the embeddings with known faces or perform clustering to identify faces
         var label = matchFaceEmbeddings(recognizedFaceEmbeddings)
         //Label can be "Unknown"
+        var usuario = Usuario(-1, "", "", "", listOf(), "", "")
         if(!label.equals("Unknown")){
-            val usuario = getUsarioByLabel(label.toInt())
-            label = usuario.nombre + " " + usuario.apellido
+            usuario = getUsarioByLabel(label.toInt())
         }
-        val embeddingsTuple =  LabelEmbeddingsTuple(label, recognizedFaceEmbeddings)
+        val embeddingsTuple =  LabelEmbeddingsTuple(usuario, recognizedFaceEmbeddings)
         return embeddingsTuple
+    }
+
+    public fun faceRecognitionGetUser(inputImage: Bitmap, context: Context): Usuario {
+
+        val recognizedFaceEmbeddings = getFaceEmbeddings(inputImage, context)
+
+        // 6. Match the embeddings with known faces or perform clustering to identify faces
+        var label = matchFaceEmbeddings(recognizedFaceEmbeddings)
+        //Label can be "Unknown"
+        var usuario = Usuario(-1, "Unknown", "Unknown", "Unknown", listOf(), "", "")
+        if(!label.equals("Unknown")){
+            usuario = getUsarioByLabel(label.toInt())
+        }
+        return usuario
     }
 
     private fun getFaceEmbeddings(inputImage: Bitmap, context: Context): FloatArray {

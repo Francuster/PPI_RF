@@ -40,6 +40,7 @@ import androidx.camera.view.PreviewView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.myapplication.InicioSeguridadActivity;
 import com.example.myapplication.R;
 import com.example.myapplication.service.FaceRecognitionV2;
 import com.example.myapplication.service.LabelEmbeddingsTuple;
@@ -94,6 +95,8 @@ public class CameraxActivity extends AppCompatActivity {
     private static final int OUTPUT_SIZE=192;
 
     private FaceRecognitionV2 faceRecognitionV2;
+
+    private boolean loading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -259,6 +262,7 @@ public class CameraxActivity extends AppCompatActivity {
 
         FaceDetector faceDetector = FaceDetection.getClient();
 
+
         faceDetector.process(inputImage)
                 .addOnSuccessListener(faces -> onSuccessListener(faces, inputImage))
                 .addOnFailureListener(e -> Log.e(TAG, "Barcode process failure", e))
@@ -290,9 +294,30 @@ public class CameraxActivity extends AppCompatActivity {
 //            if(start) name = recognizeImage(bitmap);
 
             LabelEmbeddingsTuple labelEmbeddingsTuple = faceRecognitionV2.faceRecognition(bitmap, this);
-            name = labelEmbeddingsTuple.getLabel();
+            name = labelEmbeddingsTuple.getUsuario().getNombre();
             embeddings = labelEmbeddingsTuple.getEmbeddings();
-            if(!name.isEmpty()) detectionTextView.setText(name);
+            if(labelEmbeddingsTuple.getUsuario().getLabel() != -1) {
+
+
+                if(!loading){
+                    loading = true;
+                    // Create an Intent to start the NewActivity
+                    Intent intent = new Intent(CameraxActivity.this, InicioSeguridadActivity.class);
+
+                    // Optionally add extra data
+                    intent.putExtra("key", "value");
+
+
+                    // Start the new activity
+                    startActivity(intent);
+
+                }
+
+
+            }
+            detectionTextView.setText(name);
+
+
         }
         else {
             detectionTextView.setText(R.string.no_face_detected);

@@ -18,32 +18,17 @@ class MainActivity: AppCompatActivity() {
             }
             setContentView(R.layout.activity_main)
 
-            checkConnection()
 
         }
 
     fun Siguiente(view: View) {
-        if (!deviceIsConnected(applicationContext)) {
-            Toast.makeText(applicationContext, "No estás conectado a Internet", Toast.LENGTH_SHORT)
-                .show()
-            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
-            startActivity(intent)
-        }else{
-            val intent = Intent(applicationContext, CameraLoginActivity::class.java)
-            startActivity(intent)
-        }
+
+        val intent = Intent(applicationContext, CameraxActivity::class.java)
+        startActivity(intent)
 
 
     }
 
-    fun checkConnection() {
-        if (!deviceIsConnected(applicationContext)) {
-            Toast.makeText(applicationContext, "No estás conectado a Internet", Toast.LENGTH_SHORT)
-                .show()
-            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
-            startActivity(intent)
-        }
-    }
 
 
 }

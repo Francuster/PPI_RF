@@ -3,8 +3,15 @@ package com.example.myapplication.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
 //import com.example.myapplication.entities.Usuario
 /*
@@ -15,8 +22,48 @@ object API {
 
   fun salidaUsuario(ingreso: Ingreso usuario: Usuario)
 }*/
+fun registrarIngresoYVisitante(context: Context, legajo: String, nombreApellido: String, dni: Int, detalles: String) {
+    val idUsuario = obtenerIdUsuarioPorLegajo(context, legajo)
+    val databaseConnection = Connection(context)
+    val db = databaseConnection.writableDatabase
 
-fun entradaVisitante(context: Context, usuarioID: Int, fechaHoraEntrada: String, entradaSalidaOnline: Int) {
+    try {
+        // Registrar el ingreso en la tabla de ingresos
+        insertIntoIngresos(context, idUsuario, obtenerFechaActualISO(), 0)
+
+        // Obtener el id del ingreso recién creado
+        val cursor = db.rawQuery("SELECT last_insert_rowid()", null)
+        cursor.moveToFirst()
+        val idIngreso = cursor.getInt(0)
+        cursor.close()
+
+        // Registrar el visitante en la tabla de visitantes
+        val queryVisitante = "INSERT INTO visitantes (id_ingreso, nombre_apellido, dni, detalles) VALUES (?, ?, ?, ?)"
+        db.execSQL(queryVisitante, arrayOf(idIngreso, nombreApellido, dni, detalles))
+
+    } catch (e: Exception) {
+        // Manejar cualquier excepción
+        Log.e(TAG, "Error al registrar ingreso y visitante", e)
+    } finally {
+        // Cerrar la conexión a la base de datos
+        db.close()
+    }
+}
+
+fun obtenerFechaActualISO(): String {
+    // Crear un objeto Calendar para obtener la fecha y hora actual
+    val calendar = Calendar.getInstance()
+
+    // Crear un formato de fecha ISO 8601
+    val formatoISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+
+    // Obtener la fecha actual en formato ISO 8601
+    val fechaActualISO = formatoISO.format(calendar.time)
+
+    // Retornar la fecha en formato ISO
+    return fechaActualISO
+}
+fun insertIntoIngresos(context: Context, usuarioID: Int?, fechaHoraEntrada: String, entradaSalidaOnline: Int) {
     val databaseConnection = Connection(context)
     val db: SQLiteDatabase = databaseConnection.writableDatabase
 
@@ -118,3 +165,4 @@ fun obtenerIdUsuarioPorLegajo(context: Context, legajo: String): Int? {
     // Devolver el id_usuario (o null si no se encontró)
     return idUsuario
 }
+

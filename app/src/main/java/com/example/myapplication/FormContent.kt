@@ -1,8 +1,10 @@
 package com.example.myapplication
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,13 +25,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import com.example.myapplication.database.TAG
-import com.example.myapplication.database.entradaVisitante
+import com.example.myapplication.database.insertIntoIngresos
 import com.example.myapplication.database.obtenerIdUsuarioPorLegajo
+import com.example.myapplication.database.registrarIngresoYVisitante
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Locale
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun MainContent(context: Context) {
@@ -50,36 +54,17 @@ fun MainContent(context: Context) {
                     .padding(2.dp) // Espacio interno
             ) {
                 Formulario ({ nombre, mail, dni, categoria ->
-                    var idUsuario = obtenerIdUsuarioPorLegajo(context, dni)
 
                     println("NOMBRE VISITANTE: $nombre, MAIL: $mail, DNI: $dni, TIPO DE CUENTA: $categoria")
-                    if(idUsuario !== null) {
-                        entradaVisitante(context, idUsuario, obtenerFechaActualISO(), 0)
-                        Toast.makeText(context, "Usuario ingresado exitosamente", Toast.LENGTH_LONG).show()
-                    }else{
-                        Log.e(TAG, "Error de registro: No se encontro el legajo del visitante en la base local.")
-                        Toast.makeText(context, "Error de registro.", Toast.LENGTH_LONG).show()
-                    }
+                    Toast.makeText(context, "Usuario ingresado exitosamente", Toast.LENGTH_LONG).show()
+                    registrarIngresoYVisitante(context, "legajo1234", nombre, Integer.parseInt(dni), "Estos son los detalles 1")
+
                     // Opcionalmente, puedes cerrar el formulario después de enviarlo
                     showForm = false
                 }, {showForm = false})
             }
         }
     }
-}
-
-fun obtenerFechaActualISO(): String {
-    // Crear un objeto Calendar para obtener la fecha y hora actual
-    val calendar = Calendar.getInstance()
-
-    // Crear un formato de fecha ISO 8601
-    val formatoISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-
-    // Obtener la fecha actual en formato ISO 8601
-    val fechaActualISO = formatoISO.format(calendar.time)
-
-    // Retornar la fecha en formato ISO
-    return fechaActualISO
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

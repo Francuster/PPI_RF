@@ -17,5 +17,7 @@ class RegistroExitosoActivity: AppCompatActivity() {
             startActivity(intent)
         }
 
+            startActivity(intent)
+
+        }
     }
-}

@@ -46,7 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.database.TAG
 import com.example.myapplication.database.entradaVisitante
-import com.example.myapplication.database.obtenerIdUsuarioPorLegajo
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -71,11 +70,11 @@ fun RenderFormulario(context: Context) {
                     .padding(2.dp) // Espacio interno
             ) {
                 Formulario ({ nombre, mail, dni, categoria ->
-                    var idUsuario = obtenerIdUsuarioPorLegajo(context, dni)
+                    //var idUsuario = obtenerIdUsuarioPorLegajo(context, dni)
 
                     println("NOMBRE VISITANTE: $nombre, MAIL: $mail, DNI: $dni, TIPO DE CUENTA: $categoria")
-                    if(idUsuario !== null) {
-                        entradaVisitante(context, idUsuario, obtenerFechaActualISO(), 0)
+                    if(dni.toInt() !== null) {
+                        entradaVisitante(context, dni.toInt(), obtenerFechaActualISO(), 0)
                         Toast.makeText(context, "Usuario ingresado exitosamente", Toast.LENGTH_LONG).show()
                     }else{
                         Log.e(TAG, "Error de registro: No se encontro el legajo del visitante en la base local.")

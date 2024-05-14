@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.activity.CameraxActivity
 import com.example.myapplication.utils.NetworkChangeService
 
 
@@ -17,7 +18,7 @@ class MainActivity: AppCompatActivity() {
             }
             setContentView(R.layout.activity_main)
 
-            checkConnection()
+//            checkConnection()
 
         }
 
@@ -32,6 +33,8 @@ class MainActivity: AppCompatActivity() {
             startActivity(intent)
         }
 
+        val intent = Intent(applicationContext, CameraxActivity::class.java)
+        startActivity(intent)
 
     }
 

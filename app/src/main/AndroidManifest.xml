@@ -5,10 +5,11 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -21,7 +22,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
+<!--        <service-->
+<!--            android:name=".service.FaceRecognitionService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"></service>-->
 
+        <activity
+            android:name=".OfflineFaceRecognitionActivity"
+            android:exported="false"
+            android:label="@string/title_activity_offline_face_recognition"
+            android:theme="@style/Theme.MyApplication" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -37,19 +47,24 @@
             android:name=".RegistroExitosoAntesalaActivity"
             android:label="Registro Exitoso Antesala" />
 
-        <meta-data
-            android:name="preloaded_fonts"
-            android:resource="@array/preloaded_fonts" />
-
         <activity android:name=".CameraIngresoEgresoActivity" android:label="Escanea" />
-        <activity android:name=".RegistroExitosoActivity" android:label="RegistroExitoso" />
         <activity android:name=".AnteEscaneaActivity" android:label="AnteEscanea" />
         <activity android:name=".FormularioOfflineActivity" android:label="FormularioOffline" />
         <activity android:name=".RegistroDenegadoActivity" android:label="RegistroDenegado" />
         <activity android:name=".CameraLoginActivity" android:label="CameraLoginActivity" />
         <activity android:name=".InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
         <!-- Declara tu servicio dentro de la sección <application> -->
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
+        <activity
+            android:name=".RegistroExitosoActivity"
+            android:label="RegistroExitoso" />
+
+        <activity
+            android:name=".activity.CameraxActivity"
+            android:label="CameraX" /> <!-- Declara tu servicio dentro de la sección <application> -->
         <service
             android:name=".utils.NetworkChangeService"
             android:enabled="true"
@@ -63,7 +78,6 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

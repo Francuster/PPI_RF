@@ -18,7 +18,7 @@ class MainActivity: AppCompatActivity() {
             }
             setContentView(R.layout.activity_main)
 
-//            checkConnection()
+            checkConnection()
 
         }
 
@@ -33,8 +33,6 @@ class MainActivity: AppCompatActivity() {
             startActivity(intent)
         }
 
-        val intent = Intent(applicationContext, CameraxActivity::class.java)
-        startActivity(intent)
 
     }
 

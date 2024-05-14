@@ -66,6 +66,8 @@ dependencies {
     implementation("org.opencv:opencv:4.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1") // Cambia la versión si es necesario
     implementation("androidx.core:core-ktx:1.10.1") // Cambia la versión si es necesario
+    implementation ("com.squareup.okhttp3:okhttp:4.9.2")// OKhttp para peticiones y solicitudes
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

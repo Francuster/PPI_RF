@@ -25,12 +25,12 @@
 
         <TextView
             android:id="@+id/ingreso_exitoso"
-            android:layout_width="300dp"
-            android:layout_height="38dp"
+            android:layout_width="336dp"
+            android:layout_height="97dp"
             android:fontFamily="@font/inter_extrabold"
-            android:text="INGRESOS/EGRESOS"
+            android:text="NOMBRE DE USUARIO"
             android:textAlignment="center"
-            android:textSize="27sp"
+            android:textSize="34sp"
             android:textStyle="bold"
 
             app:layout_constraintBottom_toBottomOf="parent"
@@ -72,7 +72,7 @@
 
 
             <TextView
-                android:id="@id/tipo_cuenta_texto"
+                android:id="@+id/tipo_cuenta_texto"
                 android:layout_width="268dp"
                 android:layout_height="40dp"
                 android:fontFamily="@font/inter_extrabold"
@@ -86,7 +86,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.5"
-                tools:ignore="MissingConstraints" />
+                tools:ignore="DuplicateIds,MissingConstraints" />
 
             <ImageView
                 android:id="@+id/imagen_ingreso"
@@ -130,6 +130,7 @@
                 android:textAlignment="center"
                 android:textSize="20dp"
                 android:textStyle="bold"
+                android:text="ACCESO A:"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/imagen_egreso"
@@ -154,8 +155,96 @@
                 app:srcCompat="@drawable/done_all_round" />
 
 
+            <TextView
+                android:id="@+id/lugares_text"
+                android:layout_width="277dp"
+                android:layout_height="120dp"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="Modulo 7 ej"
+                android:textAlignment="center"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.447"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.649" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <Button
+            android:id="@+id/boton_registrar"
+            android:layout_width="162dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/boton_verde"
+            android:fontFamily="@font/inter_extrabold"
+
+            android:onClick="Siguiente"
+            android:text="REGISTRAR"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.895"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/alerta"
+            app:layout_constraintVertical_bias="0.826"
+            app:layout_constraintWidth_percent="0.48" />
+
+        <Button
+            android:id="@+id/boton_rechazar"
+            android:layout_width="162dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/boton_rojo"
+            android:fontFamily="@font/inter_extrabold"
+
+            android:text="RECHAZAR"
+            android:onClick="rechazarClick"
+
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.113"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/alerta"
+            app:layout_constraintVertical_bias="0.826"
+            app:layout_constraintWidth_percent="0.48" />
+
+        <View
+            android:id="@+id/elipse_correcto"
+            android:layout_width="144dp"
+            android:layout_height="137dp"
+            android:background="@drawable/elipse_celeste"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.20"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.264"
+            app:layout_constraintWidth_percent="0.38">
+
+
+        </View>
+
+        <ImageView
+            android:id="@+id/escaneo"
+            android:layout_width="135dp"
+            android:layout_height="130dp"
+            android:scaleType="fitCenter"
+
+
+            app:layout_constraintBottom_toBottomOf="@+id/elipse_correcto"
+            app:layout_constraintEnd_toEndOf="@+id/elipse_correcto"
+            app:layout_constraintHorizontal_bias="0.444"
+            app:layout_constraintStart_toStartOf="@+id/elipse_correcto"
+            app:layout_constraintTop_toTopOf="@+id/elipse_correcto"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="@drawable/escaneo" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

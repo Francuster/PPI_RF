@@ -35,6 +35,7 @@ class RegistroExitosoAntesalaActivity: AppCompatActivity() {
             val rol = extras.getString("roles")
             val rolArray = extras.getStringArrayList("roles")
             dni = extras.getInt("dni").toString()
+            val lugares=extras.getString("lugares")
             //val byteArray = extras.getByteArray("imagen")
 
             // IMAGEN --- Decodificar el byteArray a un bitmap
@@ -57,6 +58,8 @@ class RegistroExitosoAntesalaActivity: AppCompatActivity() {
             // NOMBRE Y APELLIDO --- Actualizar TextViews con el nombre y apellido
             val textoNombreUsuario = findViewById<TextView>(R.id.ingreso_exitoso)
             textoNombreUsuario.text = "$nombre $apellido \n"+"DNI:$dni"
+            val textoLugares= findViewById<TextView>(R.id.lugares_text)
+            textoLugares.text = lugares
         }
     }
 

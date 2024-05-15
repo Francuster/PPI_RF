@@ -11,31 +11,39 @@
         android:layout_height="match_parent"
         android:background="#1C6E93">
 
-        <ImageButton
+
+        <Button
             android:id="@+id/botonIngresar"
-            android:layout_width="374dp"
-            android:layout_height="113dp"
-            android:backgroundTint="#1C6E92"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/boton"
+            android:fontFamily="@font/inter_extrabold"
             android:onClick="Siguiente"
-            android:src="@drawable/botoningreso"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="INGRESAR"
+            android:textColor="#7D7A73"
+            app:layout_constraintBottom_toTopOf="@+id/imageView3"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.488"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.668" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintWidth_percent="0.68"
+            app:layout_constraintHeight_percent="0.1"
+            android:textSize="18sp"/>
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:src="@drawable/imagelogo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintHeight_percent="0.30"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.406" />
+            app:layout_constraintTop_toBottomOf="@+id/imageView2"
+            app:layout_constraintVertical_bias="0.179"
+
+            app:layout_constraintWidth_percent="0.50" />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -55,7 +63,7 @@
             android:src="@drawable/_alpha"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.964" />

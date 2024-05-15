@@ -396,22 +396,22 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                     // Verificar si se detectó al menos un rostro
                     if (faces.toArray().isNotEmpty()) {
 
-                        if(!deviceIsConnected(applicationContext)){
-                            val bitmap = convertNV21ToBitmap(data, width, height)
-                            if(bitmap != null){
-                                val usuario = faceRecognitionV2?.faceRecognitionGetUser(bitmap, this)
-                                if(usuario?.label != -1){
-                                    // Crear el Intent y pasar los datos
-                                    val intent = Intent(this, InicioSeguridadActivity::class.java)
-                                    intent.putExtra("nombre", usuario?.nombre)
-                                    intent.putExtra("apellido", usuario?.apellido)
-                                    intent.putExtra("dni", usuario?.dni)
-                                    intent.putExtra("roles", usuario?.rol.toString())
-                                    startActivity(intent)
-                                }
-                            }
-
-                        }
+//                        if(!deviceIsConnected(applicationContext)){
+//                            val bitmap = convertNV21ToBitmap(data, width, height)
+//                            if(bitmap != null){
+//                                val usuario = faceRecognitionV2?.faceRecognitionGetUser(bitmap, this)
+//                                if(usuario?.label != -1){
+//                                    // Crear el Intent y pasar los datos
+//                                    val intent = Intent(this, InicioSeguridadActivity::class.java)
+//                                    intent.putExtra("nombre", usuario?.nombre)
+//                                    intent.putExtra("apellido", usuario?.apellido)
+//                                    intent.putExtra("dni", usuario?.dni)
+//                                    intent.putExtra("roles", usuario?.rol.toString())
+//                                    startActivity(intent)
+//                                }
+//                            }
+//
+//                        }
                         // Enviar la matriz RGBA completa como una solicitud HTTP
                         enviarMatrizComoHTTPRequest(rgbaMat)
 

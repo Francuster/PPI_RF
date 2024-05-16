@@ -76,7 +76,7 @@ public class CameraxActivity extends AppCompatActivity {
     private PreviewView previewView;
     private CameraSelector cameraSelector;
     private ProcessCameraProvider cameraProvider;
-    private int lensFacing = CameraSelector.LENS_FACING_BACK;
+    private int lensFacing = CameraSelector.LENS_FACING_FRONT;
     private Preview previewUseCase;
     private ImageAnalysis analysisUseCase;
     private GraphicOverlay graphicOverlay;

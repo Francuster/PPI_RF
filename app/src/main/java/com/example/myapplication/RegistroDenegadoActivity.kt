@@ -12,7 +12,7 @@ class RegistroDenegadoActivity: AppCompatActivity() {
     }
 
     fun Siguiente(view : View){
-            val intent = Intent(applicationContext, MainActivity::class.java)
+            val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
             startActivity(intent)
     }
 }

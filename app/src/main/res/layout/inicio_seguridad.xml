@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fondo_blanco"
+    tools:context=".Escanea">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_hijo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/rectangulo_celeste"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.8"
+        app:layout_constraintHorizontal_bias="0.482"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.431"
+        app:layout_constraintWidth_percent="0.93">
+
+
+        <TextView
+            android:id="@+id/ingreso_exitoso"
+            android:layout_width="300dp"
+            android:layout_height="38dp"
+            android:fontFamily="@font/inter_extrabold"
+            android:text="INGRESOS/EGRESOS"
+            android:textAlignment="center"
+            android:textSize="17sp"
+            android:textStyle="bold"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.341"
+            app:layout_constraintStart_toEndOf="@+id/logo_ingresoegreso"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.026"
+            tools:ignore="MissingConstraints" />
+
+        <ImageView
+            android:id="@+id/logo_ingresoegreso"
+            android:layout_width="62dp"
+            android:layout_height="44dp"
+
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.026"
+            app:srcCompat="@drawable/sort_arrow" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ingreso"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_celeste_ingreso"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.177"
+            app:layout_constraintWidth_percent="0.9">
+
+
+            <TextView
+                android:id="@id/tipo_cuenta_texto"
+                android:layout_width="248dp"
+                android:layout_height="40dp"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="Persona ingreso"
+                android:textAlignment="center"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.064"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imagen_ingreso"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.60"
+                app:layout_constraintHorizontal_bias="0.553"
+                app:layout_constraintStart_toEndOf="@+id/tipo_cuenta_texto"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.521"
+                app:layout_constraintWidth_percent="0.10"
+                app:srcCompat="@drawable/check" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/egreso"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_verde"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ingreso"
+            app:layout_constraintVertical_bias="0.032"
+            app:layout_constraintWidth_percent="0.90">
+
+
+            <TextView
+                android:id="@id/tipo_cuenta_texto"
+                android:layout_width="248dp"
+                android:layout_height="40dp"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="Persona egreso"
+                android:textAlignment="center"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/imagen_egreso"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imagen_egreso"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/tipo_cuenta_texto"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5"
+                app:srcCompat="@drawable/done_all_round"
+                app:layout_constraintWidth_percent="0.13"
+                app:layout_constraintHeight_percent="0.80"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/nav"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:background="@drawable/rectangulo_nav"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.00"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintWidth_percent="0.90"
+        tools:layout_editor_absoluteX="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cuenta_nav"
+            android:layout_width="132dp"
+            android:layout_height="47dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.942"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5">
+
+            <TextView
+                android:id="@id/cuenta"
+                android:layout_width="64dp"
+                android:layout_height="14dp"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="Cuenta"
+                android:textAlignment="center"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.787"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imagen_nav_cuenta"
+                android:layout_width="28dp"
+                android:layout_height="25dp"
+
+
+                app:layout_constraintBottom_toTopOf="@+id/cuenta"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/menu" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ingreso_egreso_nav"
+            android:layout_width="132dp"
+            android:layout_height="47dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.059"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5">
+
+            <TextView
+                android:id="@id/nav_ingresoegreso"
+                android:layout_width="107dp"
+                android:layout_height="20dp"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="Ingreso/Egreso"
+                android:textAlignment="center"
+                android:textSize="12dp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imagen_nav_ingresoegreso"
+                android:layout_width="28dp"
+                android:layout_height="25dp"
+
+
+                app:layout_constraintBottom_toTopOf="@+id/nav_ingresoegreso"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/sort_arrow" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+        android:id="@+id/elipse_scan"
+        android:layout_width="68dp"
+        android:layout_height="65dp"
+        android:background="@drawable/elipse_nav"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent">
+    </View>
+
+    <ImageView
+        android:id="@+id/imagen_scan"
+        android:layout_width="49dp"
+        android:layout_height="47dp"
+
+
+        android:onClick="goToAnteEscanea"
+        app:layout_constraintBottom_toBottomOf="@+id/elipse_scan"
+        app:layout_constraintEnd_toEndOf="@+id/elipse_scan"
+        app:layout_constraintStart_toStartOf="@+id/elipse_scan"
+        app:layout_constraintTop_toTopOf="@+id/elipse_scan"
+        app:srcCompat="@drawable/user_profile_focus__close_geometric_human_person_profile_focus_user" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="53dp"
+        android:background="@drawable/rectangulo_superior"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_percent="0.00"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent="0.90"
+        tools:layout_editor_absoluteX="0dp">
+
+        <TextView
+            android:id="@+id/loger"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            android:background="#00ECE6D9"
+            android:backgroundTint="#ECE6D9"
+            android:fontFamily="@font/lalezar"
+            android:text="LOGER"
+            android:textAlignment="textStart"
+            android:textColor="#ECE6D9"
+            android:textColorLink="#ECE6D9"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.048"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.482"
+            app:layout_constraintWidth_percent="0.18"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/usuario"
+            android:layout_width="0dp"
+            android:layout_height="27dp"
+            android:background="#00ECE6D9"
+            android:backgroundTint="#ECE6D9"
+            android:fontFamily="@font/lalezar"
+            android:text="USUARIO"
+            android:textAlignment="textEnd"
+            android:textColor="#ECE6D9"
+            android:textColorLink="#ECE6D9"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.914"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintWidth_percent="0.23"
+            tools:ignore="MissingConstraints" />
+
+        <Button
+            android:id="@+id/botonIngresar"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/boton"
+            android:fontFamily="@font/inter_extrabold"
+            android:onClick="Siguiente"
+            android:text="RECONECTAR"
+            android:textColor="#7D7A73"
+
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            app:layout_constraintEnd_toStartOf="@+id/usuario"
+            app:layout_constraintHeight_percent="0.49"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/loger"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintWidth_percent="0.33" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

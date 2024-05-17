@@ -1,9 +1,8 @@
 package com.example.myapplication.service
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
+import com.example.myapplication.model.Log
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -17,6 +16,7 @@ class SendDataToBackend (private val context: Context) {
 
     fun  sendLog(log: Log) {
         // URL
+
         val url = "https://log3r.up.railway.app/api/authentication/logs"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
@@ -46,25 +46,19 @@ class SendDataToBackend (private val context: Context) {
             override fun onFailure(call: Call, e: IOException) {
                 // Maneja el fallo de la solicitud
                 e.printStackTrace()
-                showToastOnUiThread("No se ha podido hacer el registro")
+                Toast.makeText(context, "No se ha podido hacer el registro", Toast.LENGTH_SHORT).show()
 
             }
 
             override fun onResponse(call: Call, response: Response) {
                 // Maneja la respuesta del servidor
                 // Manejar la respuesta del servidor aquí
-                if (response.isSuccessful) {
                     // La solicitud fue exitosa //
-                    showToastOnUiThread("Registro exitoso")
-                }
-            }
+                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
 
 
-            private fun showToastOnUiThread(message: String) {
-                Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                }
             }
+
 
 
         })

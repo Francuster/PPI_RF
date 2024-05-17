@@ -1,4 +1,4 @@
-package com.example.myapplication.service
+package com.example.myapplication.model
 
 class Log ( var horario:String,
             var nombre: String,

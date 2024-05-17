@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.example.myapplication.activity
 
 import android.Manifest
 import android.content.Intent
@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapplication.R
 import com.example.myapplication.service.FaceRecognitionV2
 import okhttp3.Call
 import okhttp3.Callback

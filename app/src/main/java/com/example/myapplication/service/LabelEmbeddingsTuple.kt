@@ -1,6 +1,6 @@
 package com.example.myapplication.service
 
-import java.lang.reflect.Array
+import com.example.myapplication.model.Usuario
 
 class LabelEmbeddingsTuple(val usuario: Usuario, val embeddings: FloatArray) {
 

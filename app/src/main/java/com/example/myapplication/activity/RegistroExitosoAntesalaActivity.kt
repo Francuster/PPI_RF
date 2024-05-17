@@ -1,11 +1,12 @@
-package com.example.myapplication
+package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.service.Log
+import com.example.myapplication.R
+import com.example.myapplication.model.Log
 import com.example.myapplication.service.SendDataToBackend
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -61,7 +62,7 @@ class RegistroExitosoAntesalaActivity: AppCompatActivity() {
         val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
         val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
         val horario = formato.format(Date())
-        val log =Log( horario,nombre,apellido,dni,estado ="ingresando/hardodeado",tipo = "online/harcodeado")
+        val log = Log( horario,nombre,apellido,dni,"ingresando","online")
         val logRequest = SendDataToBackend(applicationContext)
         logRequest.sendLog(log)
         startActivity(intent)

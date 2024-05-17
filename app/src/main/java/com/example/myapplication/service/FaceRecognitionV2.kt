@@ -3,7 +3,7 @@ package com.example.myapplication.service
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
-import com.example.myapplication.database.TAG
+import com.example.myapplication.model.Usuario
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
 import java.nio.ByteBuffer
@@ -244,7 +244,7 @@ public class FaceRecognitionV2{
     }
 
     private fun loadUsuarios(){
-        usuarioList = usuarioList.plus(Usuario(0, "12123123", "Alfonzo", "Lombardi", listOf("estudiante"), "0900", "1800"))
+        usuarioList = usuarioList.plus(Usuario(0, "12123123", "Alfonso", "Lombardi", listOf("estudiante"), "0900", "1800"))
         usuarioList = usuarioList.plus(Usuario(1, "12123123", "Esteban Ezequiel", "Lucero", listOf("seguridad"), "0900", "1800"))
         usuarioList = usuarioList.plus(Usuario(2, "12123123", "Manuel", "Acosta", listOf("rrhh"), "0900", "1800"))
         usuarioList = usuarioList.plus(Usuario(3, "12123123", "Guillermo", "Arditti", listOf("estudiante"), "0900", "1800"))

@@ -6,7 +6,6 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.IBinder
 import android.widget.Toast
-import com.example.myapplication.fallos_conexion
 
 
 class NetworkChangeService : Service() {

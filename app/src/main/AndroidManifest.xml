@@ -28,12 +28,12 @@
 <!--            android:exported="true"></service>-->
 
         <activity
-            android:name=".OfflineFaceRecognitionActivity"
+            android:name=".activity.OfflineFaceRecognitionActivity"
             android:exported="false"
             android:label="@string/title_activity_offline_face_recognition"
             android:theme="@style/Theme.MyApplication" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MyApplication">
             <intent-filter>
@@ -44,22 +44,22 @@
         </activity>
 
         <activity
-            android:name=".RegistroExitosoAntesalaActivity"
+            android:name=".activity.RegistroExitosoAntesalaActivity"
             android:label="Registro Exitoso Antesala" />
 
-        <activity android:name=".CameraIngresoEgresoActivity" android:label="Escanea" />
-        <activity android:name=".AnteEscaneaActivity" android:label="AnteEscanea" />
-        <activity android:name=".FormularioOfflineActivity" android:label="FormularioOffline" />
-        <activity android:name=".RegistroDenegadoActivity" android:label="RegistroDenegado" />
-        <activity android:name=".CameraLoginActivity" android:label="CameraLoginActivity" />
-        <activity android:name=".InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
+        <activity android:name=".activity.CameraIngresoEgresoActivity" android:label="Escanea" />
+        <activity android:name=".activity.AnteEscaneaActivity" android:label="AnteEscanea" />
+        <activity android:name=".activity.FormularioOfflineActivity" android:label="FormularioOffline" />
+        <activity android:name=".activity.RegistroDenegadoActivity" android:label="RegistroDenegado" />
+        <activity android:name=".activity.CameraLoginActivity" android:label="CameraLoginActivity" />
+        <activity android:name=".activity.InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
         <!-- Declara tu servicio dentro de la sección <application> -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".RegistroExitosoActivity"
+            android:name=".activity.RegistroExitosoActivity"
             android:label="RegistroExitoso" />
 
         <activity

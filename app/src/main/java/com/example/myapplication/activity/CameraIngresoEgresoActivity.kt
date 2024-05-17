@@ -1,16 +1,12 @@
-package com.example.myapplication
+package com.example.myapplication.activity
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.hardware.Camera
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.ImageFormat
 import android.graphics.Paint
-import android.graphics.YuvImage
-import android.hardware.Camera
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Gravity
@@ -23,7 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.myapplication.service.FaceRecognitionV2
+import com.example.myapplication.R
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -50,7 +46,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 
-class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
+class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier
@@ -65,14 +61,6 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
     //variables del tiempo en las request
     private var lastRequestTimeMillis = 0L
     private val requestIntervalMillis = 15000L // 1000=1 segundo
-
-    private var faceRecognitionV2: FaceRecognitionV2? = null
-
-
-    init {
-        faceRecognitionV2 = FaceRecognitionV2()
-
-    }
 
     // Cliente HTTP
     private val client = OkHttpClient.Builder()
@@ -91,8 +79,6 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.registro_exitoso_antesala)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-
 
         setupUI()
     }
@@ -318,13 +304,17 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         timer?.cancel()
     }
 
+    private fun siguiente() {
+        val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
+        startActivity(intent)
+    }
 
 
     //funcion para pasar los datos a otra activity
     private fun registro_exitoso_antesala(nombre: String, apellido: String, dni: Int, roles: String) {
 
         // Crear el Intent y pasar los datos
-        val intent = Intent(this, InicioSeguridadActivity::class.java)
+        val intent = Intent(this, RegistroExitosoAntesalaActivity::class.java)
         intent.putExtra("nombre", nombre)
         intent.putExtra("apellido", apellido)
         intent.putExtra("dni", dni)
@@ -334,12 +324,10 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
 
 
-
-
     //metodo para los toasts en el hilo principal
     private fun showToastOnUiThread(message: String) {
         runOnUiThread {
-            Toast.makeText(this@CameraLoginActivity, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@CameraIngresoEgresoActivity, message, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -395,23 +383,6 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
                     // Verificar si se detectó al menos un rostro
                     if (faces.toArray().isNotEmpty()) {
-
-//                        if(!deviceIsConnected(applicationContext)){
-//                            val bitmap = convertNV21ToBitmap(data, width, height)
-//                            if(bitmap != null){
-//                                val usuario = faceRecognitionV2?.faceRecognitionGetUser(bitmap, this)
-//                                if(usuario?.label != -1){
-//                                    // Crear el Intent y pasar los datos
-//                                    val intent = Intent(this, InicioSeguridadActivity::class.java)
-//                                    intent.putExtra("nombre", usuario?.nombre)
-//                                    intent.putExtra("apellido", usuario?.apellido)
-//                                    intent.putExtra("dni", usuario?.dni)
-//                                    intent.putExtra("roles", usuario?.rol.toString())
-//                                    startActivity(intent)
-//                                }
-//                            }
-//
-//                        }
                         // Enviar la matriz RGBA completa como una solicitud HTTP
                         enviarMatrizComoHTTPRequest(rgbaMat)
 
@@ -468,7 +439,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
         // Construir y enviar la solicitud HTTP
         val request = Request.Builder()
-            .url("https://log3r.up.railway.app/api/login")//cambiar por ip local para prueba o ip online
+            .url("https://log3r.up.railway.app/api/authentication")//cambiar por ip local para prueba o ip online
             .post(requestBody)
             .build()
 
@@ -495,6 +466,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
 
                     registro_exitoso_antesala(nombre, apellido, dni, primerRol)
+
                     // Mostrar los datos de la persona en un Toast para pruebas
                     /*val personaInfo = "Nombre: $nombre\n" +
                             "Apellido: $apellido\n" +
@@ -519,22 +491,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
     }
 
 
-    private fun convertNV21ToBitmap(data: ByteArray, width: Int, height: Int): Bitmap? {
-        // Convert the NV21 format byte array to a YuvImage
-        val yuvImage = YuvImage(data, ImageFormat.NV21, width, height, null)
 
-        // Create an output stream to hold the JPEG data
-        val out = ByteArrayOutputStream()
-
-        // Compress the YuvImage to JPEG
-        yuvImage.compressToJpeg(android.graphics.Rect(0, 0, width, height), 100, out)
-
-        // Get the JPEG byte array
-        val jpegData = out.toByteArray()
-
-        // Decode the JPEG byte array to a Bitmap
-        return BitmapFactory.decodeByteArray(jpegData, 0, jpegData.size)
-    }
 
 
     //metodo que carga el clasificador en cascada para deteccion de rostros

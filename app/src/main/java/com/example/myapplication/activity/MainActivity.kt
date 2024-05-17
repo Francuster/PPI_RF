@@ -1,12 +1,13 @@
-package com.example.myapplication
+package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.activity.CameraxActivity
+import com.example.myapplication.R
 import com.example.myapplication.utils.NetworkChangeService
+import com.example.myapplication.utils.deviceIsConnected
+import com.example.myapplication.utils.isServiceRunning
 
 
 class MainActivity: AppCompatActivity() {
@@ -23,15 +24,13 @@ class MainActivity: AppCompatActivity() {
 
     fun Siguiente(view: View) {
 
-        if(deviceIsConnected(applicationContext)){
+        if (deviceIsConnected(applicationContext)) {
             val intent = Intent(applicationContext, CameraLoginActivity::class.java)
             startActivity(intent)
-        }else{
+        } else {
             val intent = Intent(applicationContext, CameraxActivity::class.java)
             startActivity(intent)
         }
-
-
 
     }
 

@@ -311,7 +311,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
 
 
     //funcion para pasar los datos a otra activity
-    private fun registro_exitoso_antesala(nombre: String, apellido: String, dni: Int, roles: String) {
+    private fun registro_exitoso_antesala(nombre: String, apellido: String, dni: Int, roles: String,lugares:String) {
 
         // Crear el Intent y pasar los datos
         val intent = Intent(this, RegistroExitosoAntesalaActivity::class.java)
@@ -319,6 +319,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         intent.putExtra("apellido", apellido)
         intent.putExtra("dni", dni)
         intent.putExtra("roles", roles)
+        intent.putExtra("lugares",lugares)
         startActivity(intent)
     }
 
@@ -463,9 +464,14 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
 
                     // Convertir el JSONArray de roles a una lista de cadenas
                     val primerRol = rolArray.getString(0)
+                    val lugaresArray=dataObject.getJSONArray("lugares")
+                    var lugares = lugaresArray.getString(0)
+                    // Recorrer el JSONArray y almacenar cada elemento en el array
+                    for (i in 1 until lugaresArray.length()) {
+                        lugares="$lugares"+"\n"+"${lugaresArray.getString(i)}"
+                    }
 
-
-                    registro_exitoso_antesala(nombre, apellido, dni, primerRol)
+                    registro_exitoso_antesala(nombre, apellido, dni, primerRol,lugares)
 
                     // Mostrar los datos de la persona en un Toast para pruebas
                     /*val personaInfo = "Nombre: $nombre\n" +

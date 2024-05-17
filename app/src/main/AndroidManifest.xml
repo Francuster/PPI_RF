@@ -53,6 +53,8 @@
         <activity android:name=".activity.RegistroDenegadoActivity" android:label="RegistroDenegado" />
         <activity android:name=".activity.CameraLoginActivity" android:label="CameraLoginActivity" />
         <activity android:name=".activity.InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
+        <activity android:name=".activity.CameraxRecognitionActivity" android:label="CameraxRecognitionActivity" />
+
         <!-- Declara tu servicio dentro de la sección <application> -->
         <meta-data
             android:name="preloaded_fonts"

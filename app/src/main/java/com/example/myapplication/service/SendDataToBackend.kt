@@ -2,6 +2,7 @@ package com.example.myapplication.service
 
 import android.content.Context
 import android.widget.Toast
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.model.Log
 import okhttp3.Call
 import okhttp3.Callback
@@ -17,7 +18,7 @@ class SendDataToBackend (private val context: Context) {
     fun  sendLog(log: Log) {
         // URL
 
-        val url = "https://log3r.up.railway.app/api/authentication/logs"
+        val url = BuildConfig.BASE_URL + "/api/authentication/logs"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)

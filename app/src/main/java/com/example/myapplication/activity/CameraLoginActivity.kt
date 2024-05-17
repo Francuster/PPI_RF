@@ -23,6 +23,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.service.FaceRecognitionV2
 import okhttp3.Call
@@ -469,7 +470,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
         // Construir y enviar la solicitud HTTP
         val request = Request.Builder()
-            .url("https://log3r.up.railway.app/api/login")//cambiar por ip local para prueba o ip online
+            .url(BuildConfig.BASE_URL + "/api/login")//cambiar por ip local para prueba o ip online
             .post(requestBody)
             .build()
 

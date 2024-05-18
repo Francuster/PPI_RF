@@ -22,10 +22,11 @@ android {
 
     buildTypes {
         debug{
-//            buildConfigField("String", "BASE_URL", "\"http://127.0.0.1:5000\"");
+            buildConfigField("String", "BASE_URL", "\"https://log3r.up.railway.app\"");
 
         }
         release {
+            buildConfigField("String", "BASE_URL", "\"https://log3r.up.railway.app\"");
 
             isMinifyEnabled = false
             proguardFiles(

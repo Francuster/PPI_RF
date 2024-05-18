@@ -2,16 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -20,8 +22,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="31">
+<!--        <service-->
+<!--            android:name=".service.FaceRecognitionService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"></service>-->
+
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.OfflineFaceRecognitionActivity"
+            android:exported="false"
+            android:label="@string/title_activity_offline_face_recognition"
+            android:theme="@style/Theme.MyApplication" />
+        <activity
+            android:name=".activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MyApplication">
             <intent-filter>
@@ -30,21 +42,42 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".activity.RegistroExitosoAntesalaActivity"
+            android:label="Registro Exitoso Antesala" />
+
+        <activity android:name=".activity.CameraIngresoEgresoActivity" android:label="Escanea" />
+        <activity android:name=".activity.AnteEscaneaActivity" android:label="AnteEscanea" />
+        <activity android:name=".activity.FormularioOfflineActivity" android:label="FormularioOffline" />
+        <activity android:name=".activity.RegistroDenegadoActivity" android:label="RegistroDenegado" />
+        <activity android:name=".activity.CameraLoginActivity" android:label="CameraLoginActivity" />
+        <activity android:name=".activity.InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
+        <!-- Declara tu servicio dentro de la sección <application> -->
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-        <activity android:name=".Escanea" android:label="Escanea" >
 
-        </activity>
+        <activity
+            android:name=".activity.RegistroExitosoActivity"
+            android:label="RegistroExitoso" />
 
-        <activity android:name=".RegistroExitoso" android:label="RegistroExitoso" ></activity>
-        <activity android:name=".AnteEscanea" android:label="AnteEscanea" >
+        <activity
+            android:name=".activity.CameraxActivity"
+            android:label="CameraX" /> <!-- Declara tu servicio dentro de la sección <application> -->
+        <service
+            android:name=".utils.NetworkChangeService"
+            android:enabled="true"
+            android:exported="false" />
 
-        </activity>
-        <activity android:name=".FormularioOffline" android:label="FormularioOffline" >
-
-        </activity>
-
+        <receiver
+            android:name=".utils.NetworkChangeReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

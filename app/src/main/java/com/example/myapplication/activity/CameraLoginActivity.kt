@@ -297,6 +297,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         updateButtonState()
         if (!detecto && !timeUpToastShown) {
             showToastOnUiThread("Tiempo de escaneo agotado")
+            //agregar pantalla error ?
             timeUpToastShown = true
         }
     }
@@ -515,8 +516,15 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                 showToastOnUiThread("Rostro detectado no registrado en la base de datos\n" +
                         "Por favor regístrese y vuelva a intentarlo\n" +
                         "Error en la solicitud HTTP")
+                mostrarPantallaInicio()
             }
+
         })
+    }
+
+    private fun mostrarPantallaInicio() {
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
     }
 
 

@@ -304,8 +304,8 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         timer?.cancel()
     }
 
-    private fun siguiente() {
-        val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
+    private fun mostrarPantallaErrorIngreso() {
+        val intent = Intent(applicationContext, RegistroDenegadoActivity::class.java)
         startActivity(intent)
     }
 
@@ -492,6 +492,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                 showToastOnUiThread("Rostro detectado no registrado en la base de datos\n" +
                         "Por favor regístrese y vuelva a intentarlo\n" +
                         "Error en la solicitud HTTP")
+                mostrarPantallaErrorIngreso()
             }
         })
     }

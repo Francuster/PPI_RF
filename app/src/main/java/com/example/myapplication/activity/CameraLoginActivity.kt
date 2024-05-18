@@ -505,6 +505,10 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                     showToastOnUiThread(personaInfo)*/
 
 
+                }else if (response.code == 401) {
+                    // Si la solicitud fue no autorizada, mostrar pantalla inicio
+                    mostrarPantallaInicio()
+
                 }
                 // Cerrar el cuerpo de la respuesta
                 response.body?.close()
@@ -513,8 +517,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
             override fun onFailure(call: Call, e: IOException) {
                 // Manejar el fallo de la solicitud aquí PANTALLA ERROR INGRESO
                 e.printStackTrace()
-                showToastOnUiThread("Rostro detectado no registrado en la base de datos\n" +
-                        "Por favor regístrese y vuelva a intentarlo\n" +
+                showToastOnUiThread("Por favor regístrese y vuelva a intentarlo\n" +
                         "Error en la solicitud HTTP")
                 mostrarPantallaInicio()
             }

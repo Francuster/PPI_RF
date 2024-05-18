@@ -460,10 +460,17 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                     val nombre = dataObject.getString("nombre")
                     val apellido = dataObject.getString("apellido")
                     val dni = dataObject.getInt("dni")
-                    val rolArray = dataObject.getJSONArray("rol")
 
+                    //roles
+                    val rolArray = dataObject.getJSONArray("rol")
                     // Convertir el JSONArray de roles a una lista de cadenas
                     val primerRol = rolArray.getString(0)
+                    var roles=rolArray.getString(0)
+                    // Recorrer el JSONArray y almacenar cada elemento en el array
+                    for (i in 1 until rolArray.length()) {
+                        roles="$roles"+"\n"+"${rolArray.getString(i)}"
+                    }
+                    //lugares
                     val lugaresArray=dataObject.getJSONArray("lugares")
                     var lugares = lugaresArray.getString(0)
                     // Recorrer el JSONArray y almacenar cada elemento en el array
@@ -471,15 +478,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                         lugares="$lugares"+"\n"+"${lugaresArray.getString(i)}"
                     }
 
-                    registro_exitoso_antesala(nombre, apellido, dni, primerRol,lugares)
-
-                    // Mostrar los datos de la persona en un Toast para pruebas
-                    /*val personaInfo = "Nombre: $nombre\n" +
-                            "Apellido: $apellido\n" +
-                            "DNI: $dni\n" +
-                            "Roles: ${roles.joinToString(", ")}"
-                    showToastOnUiThread(personaInfo)*/
-
+                    registro_exitoso_antesala(nombre, apellido, dni, roles,lugares)
 
                 }
                 // Cerrar el cuerpo de la respuesta

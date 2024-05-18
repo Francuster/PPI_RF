@@ -44,8 +44,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/tipo_cuenta"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="365dp"
+            android:layout_height="88dp"
             android:background="@drawable/rectangulo_alerta"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -17,7 +17,7 @@ class MainActivity: AppCompatActivity() {
                 val intent = Intent(this, NetworkChangeService::class.java)
                 startService(intent)
             }
-            setContentView(R.layout.activity_main)
+            setContentView(R.layout.inico_rrhh)
 
 
         }

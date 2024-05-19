@@ -3,6 +3,7 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
@@ -30,6 +31,12 @@ class RegistroPrimeraSalaActivity:AppCompatActivity() {
         val adaptador=ArrayAdapter(this,R.layout.desplegable_tipo_cuenta,elementos)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter=adaptador
+
+    }
+    fun Siguiente(view : View){
+
+        val intent = Intent(applicationContext, Denegado::class.java)
+        startActivity(intent)
 
     }
 }

@@ -54,7 +54,7 @@
         <activity android:name=".activity.RegistroDenegadoActivity" android:label="RegistroDenegado" />
         <activity android:name=".activity.CameraLoginActivity" android:label="CameraLoginActivity" />
         <activity android:name=".activity.InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
-        <activity android:name=".activity.RegistroPrimeraSalaActivity" android:label="RegistroPrimeraSalaActivity" android:exported="true"/> >
+        <activity android:name=".activity.RegistroUsuarioActivity" android:label="RegistroUsuarioActivity" android:exported="true"/> >
 
         <activity android:name=".activity.Denegado" android:label="Denegado" />
 

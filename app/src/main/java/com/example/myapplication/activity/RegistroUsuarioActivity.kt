@@ -12,7 +12,7 @@ import com.example.myapplication.utils.isServiceRunning
 import android.widget.Spinner
 
 
-class RegistroPrimeraSalaActivity:AppCompatActivity() {
+class RegistroUsuarioActivity:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(!isServiceRunning(applicationContext, NetworkChangeService ::class.java)){

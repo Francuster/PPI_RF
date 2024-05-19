@@ -65,6 +65,7 @@
                 android:fontFamily="@font/inter_extrabold"
                 android:text="TIPO DE CUENTA"
                 android:textAlignment="center"
+                android:textColor="#36565B"
                 android:textSize="20dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"

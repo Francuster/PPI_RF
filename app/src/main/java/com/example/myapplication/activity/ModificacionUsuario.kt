@@ -15,6 +15,6 @@ class ModificacionUsuario : AppCompatActivity(){
             startService(intent)
         }
 
-        setContentView(R.layout.modificacion_usuario)
+        setContentView(R.layout.modificacion_texto)
 }
 }

@@ -22,30 +22,20 @@ object API {
 
   fun salidaUsuario(ingreso: Ingreso usuario: Usuario)
 }*/
-fun registrarIngresoYVisitante(context: Context, legajo: String, nombreApellido: String, dni: Int, detalles: String) {
-    val idUsuario = obtenerIdUsuarioPorLegajo(context, legajo)
+fun registrarLogs(context: Context, nombre: String, apellido: String, dni: Int, estado: String, tipo: String) {
     val databaseConnection = Connection(context)
     val db = databaseConnection.writableDatabase
-
+    val fechaActual = obtenerFechaActualISO()
     try {
-        // Registrar el ingreso en la tabla de ingresos
-        insertIntoIngresos(context, idUsuario, obtenerFechaActualISO(), 0)
-
-        // Obtener el id del ingreso recién creado
-        val cursor = db.rawQuery("SELECT last_insert_rowid()", null)
-        cursor.moveToFirst()
-        val idIngreso = cursor.getInt(0)
-        cursor.close()
-
-        // Registrar el visitante en la tabla de visitantes
-        val queryVisitante = "INSERT INTO visitantes (id_ingreso, nombre_apellido, dni, detalles) VALUES (?, ?, ?, ?)"
-        db.execSQL(queryVisitante, arrayOf(idIngreso, nombreApellido, dni, detalles))
-
+        // Registrar el visitante en la tabla de Logs
+        val queryLogs = "INSERT INTO logs (horario, nombre, apellido, dni, estado, tipo) VALUES (?, ?, ?, ?, ?, ?)"
+        db.execSQL(queryLogs, arrayOf(fechaActual, nombre, apellido, dni, estado, tipo))
     } catch (e: Exception) {
         // Manejar cualquier excepción
-        Log.e(TAG, "Error al registrar ingreso y visitante", e)
+        Log.e(TAG, "Error al registrar Log", e)
     } finally {
         // Cerrar la conexión a la base de datos
+        Log.i(TAG, "Entrada de usuario insertada correctamente en la tabla LOGS con horario: $fechaActual")
         db.close()
     }
 }

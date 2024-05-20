@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -41,19 +42,20 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.database.TAG
-import com.example.myapplication.database.entradaVisitante
+import com.example.myapplication.database.registrarLogs
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun RenderFormulario(context: Context) {
+fun RenderFormulario(context: Context, onFinish: () -> Unit) {
     var showForm by remember { mutableStateOf(true) }
 
     Column(
@@ -70,20 +72,20 @@ fun RenderFormulario(context: Context) {
                     .background(Color(0xFFC7DEE1)) // Color de fondo celeste (Light Blue)
                     .padding(2.dp) // Espacio interno
             ) {
-                Formulario ({ nombre, mail, dni, categoria ->
-                    //var idUsuario = obtenerIdUsuarioPorLegajo(context, dni)
-
+                Formulario ({ nombre, apellido, mail, dni, categoria, estado ->
                     println("NOMBRE VISITANTE: $nombre, MAIL: $mail, DNI: $dni, TIPO DE CUENTA: $categoria")
-                    if(dni.toInt() !== null) {
-                        entradaVisitante(context, dni.toInt(), obtenerFechaActualISO(), 0)
+                    if(dni.isNotEmpty()) {
+                        registrarLogs(context, nombre, apellido, dni.toInt(), estado, "offline")
                         Toast.makeText(context, "Usuario ingresado exitosamente", Toast.LENGTH_LONG).show()
-                    }else{
-                        Log.e(TAG, "Error de registro: No se encontro el legajo del visitante en la base local.")
+                        Log.println(Log.INFO, TAG,"Ingreso de datos : "+nombre+", "+apellido+", "+dni)
+                    } else {
+                        Log.e(TAG, "Error de registro: No se encontró el legajo del visitante en la base local.")
                         Toast.makeText(context, "Error de registro.", Toast.LENGTH_LONG).show()
                     }
                     // Opcionalmente, puedes cerrar el formulario después de enviarlo
                     showForm = false
-                }, {showForm = false})
+                    onFinish() // Llama a la función de finalizar
+                }, { showForm = false; onFinish() })
             }
         }
     }
@@ -105,13 +107,17 @@ fun obtenerFechaActualISO(): String {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Formulario(onSubmit: (String, String, String, String) -> Unit, onBack: () -> Unit) {
+fun Formulario(onSubmit: (String, String, String, String, String, String) -> Unit, onBack: () -> Unit) {
     var nombre by remember { mutableStateOf("") }
+    var apellido by remember { mutableStateOf("") }
     var categoria by remember { mutableStateOf("") }
     val categorias = listOf("Visitante", "Profesor", "Alumno", "Seguridad")
+    var estado by remember { mutableStateOf("") }
+    val estados = listOf("Ingresando", "Retirando")
     var mail by remember { mutableStateOf("") }
     var dni by remember { mutableStateOf("") }
     var isDropdownExpanded by remember { mutableStateOf(false) }
+    var isDropdownExpanded2 by remember { mutableStateOf(false) }
     val Inter = FontFamily(
         Font(resId = R.font.inter_medium), // Fuente regular
         Font(resId = R.font.inter_bold, weight = FontWeight.Bold) // Fuente en negrita
@@ -190,6 +196,45 @@ fun Formulario(onSubmit: (String, String, String, String) -> Unit, onBack: () ->
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Campo de texto para el apellido
+        OutlinedTextField(
+            value = apellido,
+            onValueChange = { apellido = it },
+            label = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.usuario),
+                        contentDescription = "usuario",
+                        modifier = Modifier
+                            .size(25.dp),
+                        tint = Color(0xFF7D7A73)
+                    )
+                    Spacer(modifier = Modifier.width(25.dp))
+                    Text(
+                        "APELLIDO VISITANTE",
+                        style = TextStyle(
+                            fontFamily = Inter,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp,
+                            color = Color(0xFF7D7A73)
+                        ),
+                    )
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF77BBC6), shape = RoundedCornerShape(12.dp)), // Color celeste y bordes redondeados
+            shape = RoundedCornerShape(12.dp), // Bordes redondeados
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color.Black, // Color negro para el texto cuando está enfocado
+                unfocusedTextColor = Color.Black, // Color de fondo celeste
+                focusedBorderColor = Color(0xFF77BBC6), // Color azul (por ejemplo)
+                unfocusedBorderColor = Color(0xFF77BBC6)
+            )
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         // Campo de texto para mail
         OutlinedTextField(
             value = mail,
@@ -228,10 +273,14 @@ fun Formulario(onSubmit: (String, String, String, String) -> Unit, onBack: () ->
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Campo de texto para mail
+        // Campo de texto para DNI
         OutlinedTextField(
             value = dni,
-            onValueChange = { dni = it },
+            onValueChange = {
+                if (it.all { char -> char.isDigit() }) {
+                    dni = it
+                }
+            },
             label = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -252,6 +301,7 @@ fun Formulario(onSubmit: (String, String, String, String) -> Unit, onBack: () ->
                     )
                 }
             },
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
             modifier = Modifier
                 .fillMaxWidth() // Color celeste y bordes redondeados
                 .background(Color(0xFF77BBC6), shape = RoundedCornerShape(12.dp)), // Color celeste y bordes redondeados
@@ -331,6 +381,66 @@ fun Formulario(onSubmit: (String, String, String, String) -> Unit, onBack: () ->
             }
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Campo de texto para categoria
+        ExposedDropdownMenuBox(
+            expanded = isDropdownExpanded2,
+            onExpandedChange = { isDropdownExpanded2 = !isDropdownExpanded2 }
+        ) {
+            OutlinedTextField(
+                value = estado,
+                onValueChange = { estado = it },
+                label = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Spacer(modifier = Modifier.width(25.dp))
+                        Text(
+                            "ESTADO",
+                            style = TextStyle(
+                                fontFamily = Inter,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 17.sp,
+                                color = Color(0xFF7D7A73)
+                            )
+                        )
+                    }
+                },
+                readOnly = true, // El campo es solo de lectura, el valor se selecciona desde el menú
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor()
+                    .onGloballyPositioned { _ ->
+                        // Ajustar la posición del menú
+                        // Puedes personalizar este código según tu diseño
+                    }
+                    .fillMaxWidth() // Color celeste y bordes redondeados
+                    .background(Color(0xFF77BBC6), shape = RoundedCornerShape(12.dp)), // Color celeste y bordes redondeados
+                shape = RoundedCornerShape(12.dp), // Bordes redondeados
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.Black, // Color negro para el texto cuando está enfocado
+                    unfocusedTextColor = Color.Black, // Color de fondo celeste
+                    focusedBorderColor = Color(0xFF77BBC6), // Color azul (por ejemplo)
+                    unfocusedBorderColor = Color(0xFF77BBC6)
+                )
+            )
+
+            // Menú desplegable con las opciones de estados
+            ExposedDropdownMenu(
+                expanded = isDropdownExpanded2,
+                onDismissRequest = { isDropdownExpanded2 = false }
+            ) {
+                estados.forEach { option ->
+                    DropdownMenuItem(
+                        text = { Text(option) },
+                        onClick = {
+                            estado = option
+                            isDropdownExpanded2 = false
+                        }
+                    )
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         // Botón para enviar el formulario
@@ -344,7 +454,7 @@ fun Formulario(onSubmit: (String, String, String, String) -> Unit, onBack: () ->
                 ),
                 onClick = {
                     // Llamar a la función de envío con los datos ingresados
-                    onSubmit(nombre, mail, dni, categoria)
+                    onSubmit(nombre, apellido, mail, dni, categoria, estado)
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)

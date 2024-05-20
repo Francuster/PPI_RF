@@ -28,7 +28,7 @@ class MainActivity: AppCompatActivity() {
             val intent = Intent(applicationContext, CameraLoginActivity::class.java)
             startActivity(intent)
         } else {
-            val intent = Intent(applicationContext, CameraxRecognitionActivity::class.java)
+            val intent = Intent(applicationContext, CameraxOfllineActivity::class.java)
             startActivity(intent)
         }
 

@@ -7,10 +7,8 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.example.myapplication.activity.CameraxActivity
-import com.example.myapplication.service.FaceRecognitionV2
+import com.example.myapplication.service.FaceRecognition
 import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
@@ -42,7 +40,7 @@ class FaceRecognitionTest{
     @Test
     fun testAddFacesFromPhotosFolder() {
 
-        val faceRecognitionV2 = FaceRecognitionV2();
+        val faceRecognition = FaceRecognition();
 
         val assetManager = context.assets
         val imagesList = mutableListOf<Bitmap>()
@@ -69,7 +67,7 @@ class FaceRecognitionTest{
                     if(cropedBitmap != null){
                         // Add the Bitmap to the list
                         imagesList.add(cropedBitmap)
-                        faceRecognitionV2.addFace(cropedBitmap, folderName, context)
+                        faceRecognition.addFace(cropedBitmap, folderName, context)
                     }
 
                     // Close the InputStream
@@ -77,7 +75,7 @@ class FaceRecognitionTest{
                 }
             }
 
-            faceRecognitionV2.printEmbeddings();
+            faceRecognition.printEmbeddings();
         } catch (e: IOException) {
             e.printStackTrace()
         }

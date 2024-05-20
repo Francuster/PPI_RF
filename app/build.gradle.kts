@@ -23,6 +23,7 @@ android {
     buildTypes {
         debug{
             buildConfigField("String", "BASE_URL", "\"https://log3r.up.railway.app\"");
+//            buildConfigField("String", "BASE_URL", "\"http://192.168.68.112:5000\"");
 
         }
         release {
@@ -105,6 +106,9 @@ dependencies {
     implementation ("org.tensorflow:tensorflow-lite-gpu:2.4.0")
     implementation ("org.tensorflow:tensorflow-lite-support:0.2.0")
 
+    // json
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
 
     //ML KIT Google

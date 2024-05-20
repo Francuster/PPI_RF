@@ -53,7 +53,8 @@
         <activity android:name=".activity.RegistroDenegadoActivity" android:label="RegistroDenegado" />
         <activity android:name=".activity.CameraLoginActivity" android:label="CameraLoginActivity" />
         <activity android:name=".activity.InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
-        <activity android:name=".activity.CameraxRecognitionActivity" android:label="CameraxRecognitionActivity" />
+        <activity android:name=".activity.CameraxOfllineActivity" android:label="CameraxOfllineActivity" />
+        <activity android:name=".activity.CameraxLoginActivity" android:label="CameraxLoginActivity" />
 
         <!-- Declara tu servicio dentro de la sección <application> -->
         <meta-data

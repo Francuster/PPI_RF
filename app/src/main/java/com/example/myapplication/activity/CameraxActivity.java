@@ -38,8 +38,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.R;
-import com.example.myapplication.service.FaceRecognitionV2;
-import com.example.myapplication.service.LabelEmbeddingsTuple;
+import com.example.myapplication.service.FaceRecognition;
+import com.example.myapplication.model.LabelEmbeddingsTuple;
 import com.example.myapplication.utils.GraphicOverlay;
 import com.example.myapplication.utils.SimilarityClassifier;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -84,7 +84,7 @@ public class CameraxActivity extends AppCompatActivity {
     private static final int INPUT_SIZE = 112;
     private static final int OUTPUT_SIZE=192;
 
-    private FaceRecognitionV2 faceRecognitionV2;
+    private FaceRecognition faceRecognition;
 
     private boolean loading = false;
 
@@ -106,7 +106,7 @@ public class CameraxActivity extends AppCompatActivity {
         switchCamBtn.setOnClickListener((view -> switchCamera()));
 
 //        loadModel();
-        faceRecognitionV2 = new FaceRecognitionV2();
+        faceRecognition = new FaceRecognition();
     }
 
     @Override
@@ -283,7 +283,7 @@ public class CameraxActivity extends AppCompatActivity {
 
 //            if(start) name = recognizeImage(bitmap);
 
-            LabelEmbeddingsTuple labelEmbeddingsTuple = faceRecognitionV2.faceRecognition(bitmap, this);
+            LabelEmbeddingsTuple labelEmbeddingsTuple = faceRecognition.faceRecognition(bitmap, this);
             name = labelEmbeddingsTuple.getUsuario().getNombre();
             embeddings = labelEmbeddingsTuple.getEmbeddings();
             if(labelEmbeddingsTuple.getUsuario().getLabel() != -1) {
@@ -339,7 +339,7 @@ public class CameraxActivity extends AppCompatActivity {
 //            result.setExtra(embeddings);
 //
 //            registered.put( input.getText().toString(),result);
-            faceRecognitionV2.addEmbedding(embeddings, input.getText().toString());
+            faceRecognition.addEmbedding(embeddings, input.getText().toString());
 
             start = true;
 

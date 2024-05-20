@@ -16,16 +16,11 @@ import android.graphics.RectF;
 import android.graphics.YuvImage;
 import android.media.Image;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.AspectRatio;
 import androidx.camera.core.CameraSelector;
@@ -38,28 +33,30 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.myapplication.R;
-import com.example.myapplication.service.FaceRecognitionV2;
-import com.example.myapplication.service.LabelEmbeddingsTuple;
+import com.example.myapplication.model.EmbeddingsRequest;
+import com.example.myapplication.model.LabelEmbeddingsTuple;
+import com.example.myapplication.service.FaceRecognition;
+import com.example.myapplication.service.RetrofitClient;
 import com.example.myapplication.utils.GraphicOverlay;
-import com.example.myapplication.utils.SimilarityClassifier;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.mlkit.vision.common.InputImage;
 import com.google.mlkit.vision.face.Face;
 import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 
-import org.tensorflow.lite.Interpreter;
-
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ReadOnlyBufferException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class CameraxRecognitionActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class CameraxLoginActivity extends AppCompatActivity {
     private static final String TAG = "CameraxRecognitionActivity";
     private static final int PERMISSION_CODE = 1001;
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
@@ -74,7 +71,7 @@ public class CameraxRecognitionActivity extends AppCompatActivity {
 
     private boolean flipX = false;
 
-    private FaceRecognitionV2 faceRecognitionV2;
+    private FaceRecognition faceRecognition;
 
     private boolean loading = false;
 
@@ -89,7 +86,7 @@ public class CameraxRecognitionActivity extends AppCompatActivity {
         detectionTextView = findViewById(R.id.detection_text);
 
 //        loadModel();
-        faceRecognitionV2 = new FaceRecognitionV2();
+        faceRecognition = new FaceRecognition();
     }
 
     @Override
@@ -264,17 +261,32 @@ public class CameraxRecognitionActivity extends AppCompatActivity {
                     inputImage.getRotationDegrees(),
                     boundingBox);
 
-//            if(start) name = recognizeImage(bitmap);
+            float[] embeddings = faceRecognition.getFaceEmbeddings(bitmap, this);
 
-            LabelEmbeddingsTuple labelEmbeddingsTuple = faceRecognitionV2.faceRecognition(bitmap, this);
-            name = labelEmbeddingsTuple.getUsuario().getNombre();
-            if(labelEmbeddingsTuple.getUsuario().getLabel() != -1) {
+            if(embeddings.length > 0) {
 
+                EmbeddingsRequest embeddingsRequest = new EmbeddingsRequest(embeddings);
+
+                RetrofitClient.INSTANCE.getApiService().sendFloats(embeddingsRequest).enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            System.out.println("Floats sent successfully");
+                        } else {
+                            System.out.println("Failed to send floats: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        System.out.println("Error sending floats: " + t.getMessage());
+                    }
+                });
 
                 if(!loading){
                     loading = true;
                     // Create an Intent to start the NewActivity
-                    Intent intent = new Intent(CameraxRecognitionActivity.this, InicioSeguridadActivity.class);
+                    Intent intent = new Intent(CameraxLoginActivity.this, InicioSeguridadActivity.class);
 
                     // Optionally add extra data
                     intent.putExtra("key", "value");

@@ -43,7 +43,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import kotlin.experimental.inv
 
-class CameraxOfllineActivity : AppCompatActivity() {
+class CameraxLoginActivity : AppCompatActivity() {
     private var previewView: PreviewView? = null
     private var cameraSelector: CameraSelector? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -251,15 +251,14 @@ class CameraxOfllineActivity : AppCompatActivity() {
                 boundingBox
             )
 
-            //            if(start) name = recognizeImage(bitmap);
-            val labelEmbeddingsTuple = faceRecognition!!.faceRecognition(bitmap, this)
-            name = labelEmbeddingsTuple.usuario.nombre
-            if (labelEmbeddingsTuple.usuario.label != -1) {
+            val embeddings = faceRecognition?.getFaceEmbeddings(bitmap, this)
+
+            if (embeddings != null && embeddings.isNotEmpty()) {
                 if (!loading) {
                     loading = true
                     // Create an Intent to start the NewActivity
                     val intent =
-                        Intent(this@CameraxOfllineActivity, InicioSeguridadActivity::class.java)
+                        Intent(this@CameraxLoginActivity, InicioSeguridadActivity::class.java)
 
                     // Optionally add extra data
                     intent.putExtra("key", "value")

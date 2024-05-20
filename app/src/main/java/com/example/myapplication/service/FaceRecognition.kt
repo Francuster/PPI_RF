@@ -11,7 +11,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 
-public class FaceRecognition{
+public class FaceRecognition(){
 
     // Define the input image size expected by the model
     private val INPUT_IMAGE_SIZE = 112

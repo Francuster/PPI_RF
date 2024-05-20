@@ -2,6 +2,7 @@ package com.example.myapplication.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -16,9 +17,15 @@ import android.graphics.RectF
 import android.graphics.YuvImage
 import android.media.Image
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
+import android.view.View
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
@@ -32,10 +39,12 @@ import androidx.core.content.ContextCompat
 import com.example.myapplication.R
 import com.example.myapplication.service.FaceRecognition
 import com.example.myapplication.utils.GraphicOverlay
+import com.example.myapplication.utils.SimilarityClassifier.Recognition
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
+import org.tensorflow.lite.Interpreter
 import java.io.ByteArrayOutputStream
 import java.nio.ReadOnlyBufferException
 import java.util.concurrent.ExecutionException
@@ -43,7 +52,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import kotlin.experimental.inv
 
-class CameraxOfllineActivity : AppCompatActivity() {
+class CameraxActivity : AppCompatActivity() {
     private var previewView: PreviewView? = null
     private var cameraSelector: CameraSelector? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -51,9 +60,14 @@ class CameraxOfllineActivity : AppCompatActivity() {
     private var previewUseCase: Preview? = null
     private var analysisUseCase: ImageAnalysis? = null
     private var graphicOverlay: GraphicOverlay? = null
+    private var previewImg: ImageView? = null
     private var detectionTextView: TextView? = null
 
+    private val registered = HashMap<String, Recognition>() //saved Faces
+    private val tfLite: Interpreter? = null
     private var flipX = false
+    private var start = true
+    private var embeddings: FloatArray? = null
 
     private var faceRecognition: FaceRecognition? = null
 
@@ -62,11 +76,18 @@ class CameraxOfllineActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.camerax_simple)
+        setContentView(R.layout.camerax)
         previewView = findViewById(R.id.previewView)
-        previewView?.scaleType = (PreviewView.ScaleType.FIT_CENTER)
+        previewView?.scaleType = PreviewView.ScaleType.FIT_CENTER
         graphicOverlay = findViewById(R.id.graphic_overlay)
+        previewImg = findViewById(R.id.preview_img)
         detectionTextView = findViewById(R.id.detection_text)
+
+        val addBtn = findViewById<ImageButton>(R.id.add_btn)
+        addBtn.setOnClickListener((View.OnClickListener { v: View? -> addFace() }))
+
+        val switchCamBtn = findViewById<ImageButton>(R.id.switch_camera)
+        switchCamBtn.setOnClickListener((View.OnClickListener { view: View? -> switchCamera() }))
 
         //        loadModel();
         faceRecognition = FaceRecognition()
@@ -254,15 +275,16 @@ class CameraxOfllineActivity : AppCompatActivity() {
             //            if(start) name = recognizeImage(bitmap);
             val labelEmbeddingsTuple = faceRecognition!!.faceRecognition(bitmap, this)
             name = labelEmbeddingsTuple.usuario.nombre
+            embeddings = labelEmbeddingsTuple.embeddings
             if (labelEmbeddingsTuple.usuario.label != -1) {
                 if (!loading) {
                     loading = true
                     // Create an Intent to start the NewActivity
-                    val intent =
-                        Intent(this@CameraxOfllineActivity, InicioSeguridadActivity::class.java)
+                    val intent = Intent(this@CameraxActivity, InicioSeguridadActivity::class.java)
 
                     // Optionally add extra data
                     intent.putExtra("key", "value")
+
 
                     // Start the new activity
                     startActivity(intent)
@@ -276,7 +298,124 @@ class CameraxOfllineActivity : AppCompatActivity() {
         graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
     }
 
+    /** Recognize Processor  */
+    private fun addFace() {
+        start = false
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Enter Name")
 
+        // Set up the input
+        val input = EditText(this)
+
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        input.maxWidth = 200
+        builder.setView(input)
+
+        // Set up the buttons
+        builder.setPositiveButton("ADD") { dialog: DialogInterface?, which: Int ->
+            //Toast.makeText(context, input.getText().toString(), Toast.LENGTH_SHORT).show();
+            //Create and Initialize new object with Face embeddings and Name.
+//            SimilarityClassifier.Recognition result = new SimilarityClassifier.Recognition(
+//                    "0", "", -1f);
+//            result.setExtra(embeddings);
+//
+//            registered.put( input.getText().toString(),result);
+
+            faceRecognition!!.addEmbedding(embeddings!!, input.text.toString())
+            start = true
+        }
+        builder.setNegativeButton("Cancel") { dialog: DialogInterface, which: Int ->
+            start = true
+            dialog.cancel()
+        }
+
+        builder.show()
+    }
+
+    //    public String recognizeImage(final Bitmap bitmap) {
+    //        // set image to preview
+    //        previewImg.setImageBitmap(bitmap);
+    //
+    //        //Create ByteBuffer to store normalized image
+    //
+    //        ByteBuffer imgData = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * 3 * 4);
+    //
+    //        imgData.order(ByteOrder.nativeOrder());
+    //
+    //        int[] intValues = new int[INPUT_SIZE * INPUT_SIZE];
+    //
+    //        //get pixel values from Bitmap to normalize
+    //        bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+    //
+    //        imgData.rewind();
+    //
+    //        for (int i = 0; i < INPUT_SIZE; ++i) {
+    //            for (int j = 0; j < INPUT_SIZE; ++j) {
+    //                int pixelValue = intValues[i * INPUT_SIZE + j];
+    //                imgData.putFloat((((pixelValue >> 16) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+    //                imgData.putFloat((((pixelValue >> 8) & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+    //                imgData.putFloat(((pixelValue & 0xFF) - IMAGE_MEAN) / IMAGE_STD);
+    //            }
+    //        }
+    //        //imgData is input to our model
+    //        Object[] inputArray = {imgData};
+    //
+    //        Map<Integer, Object> outputMap = new HashMap<>();
+    //
+    //
+    //        embeddings = new float[1][OUTPUT_SIZE]; //output of model will be stored in this variable
+    //
+    //        outputMap.put(0, embeddings);
+    //
+    //        tfLite.runForMultipleInputsOutputs(inputArray, outputMap); //Run model
+    //
+    //
+    //
+    //        float distance;
+    //
+    //        //Compare new face with saved Faces.
+    //        if (registered.size() > 0) {
+    //
+    //            final Pair<String, Float> nearest = findNearest(embeddings[0]);//Find closest matching face
+    //
+    //            if (nearest != null) {
+    //
+    //                final String name = nearest.first;
+    //                distance = nearest.second;
+    //                if(distance<1.000f) //If distance between Closest found face is more than 1.000 ,then output UNKNOWN face.
+    //                    return name;
+    //                else
+    //                    return "unknown";
+    //            }
+    //        }
+    //
+    //        return null;
+    //    }
+    //
+    //    //Compare Faces by distance between face embeddings
+    //    private Pair<String, Float> findNearest(float[] emb) {
+    //
+    //        Pair<String, Float> ret = null;
+    //        for (Map.Entry<String, SimilarityClassifier.Recognition> entry : registered.entrySet()) {
+    //
+    //            final String name = entry.getKey();
+    //            final float[] knownEmb = ((float[][]) entry.getValue().getExtra())[0];
+    //
+    //            float distance = 0;
+    //            for (int i = 0; i < emb.length; i++) {
+    //                float diff = emb[i] - knownEmb[i];
+    //                distance += diff*diff;
+    //            }
+    //            distance = (float) Math.sqrt(distance);
+    //            if (ret == null || distance < ret.second) {
+    //                ret = new Pair<>(name, distance);
+    //            }
+    //        }
+    //
+    //        return ret;
+    //
+    //    }
+    //
     /** Bitmap Converter  */
     private fun mediaImgToBmp(image: Image?, rotation: Int, boundingBox: Rect): Bitmap {
         //Convert media image to Bitmap
@@ -329,12 +468,37 @@ class CameraxOfllineActivity : AppCompatActivity() {
         val imageBytes = out.toByteArray()
 
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-    }
+    } //
 
+    //    /** Model loader */
+    //    @SuppressWarnings("deprecation")
+    //    private void loadModel() {
+    //        try {
+    //            //model name
+    //            String modelFile = "mobile_face_net.tflite";
+    //            tfLite = new Interpreter(loadModelFile(CameraxActivity.this, modelFile));
+    //        } catch (IOException e) {
+    //            e.printStackTrace();
+    //        }
+    //    }
+    //
+    //    private MappedByteBuffer loadModelFile(Activity activity, String MODEL_FILE) throws IOException {
+    //        AssetFileDescriptor fileDescriptor = activity.getAssets().openFd(MODEL_FILE);
+    //        FileInputStream inputStream = new FileInputStream(fileDescriptor.getFileDescriptor());
+    //        FileChannel fileChannel = inputStream.getChannel();
+    //        long startOffset = fileDescriptor.getStartOffset();
+    //        long declaredLength = fileDescriptor.getDeclaredLength();
+    //        return fileChannel.map(FileChannel.MapMode.READ_ONLY, startOffset, declaredLength);
+    //    }
     companion object {
-        private const val TAG = "CameraxRecognitionActivity"
+        private const val TAG = "MainActivity"
         private const val PERMISSION_CODE = 1001
         private const val CAMERA_PERMISSION = Manifest.permission.CAMERA
+        private const val IMAGE_MEAN = 128.0f
+        private const val IMAGE_STD = 128.0f
+        private const val INPUT_SIZE = 112
+        private const val OUTPUT_SIZE = 192
+
         private fun getCropBitmapByCPU(source: Bitmap?, cropRectF: RectF): Bitmap {
             val resultBitmap = Bitmap.createBitmap(
                 cropRectF.width().toInt(),

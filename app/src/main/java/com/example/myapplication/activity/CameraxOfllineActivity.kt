@@ -53,7 +53,7 @@ class CameraxOfllineActivity : AppCompatActivity() {
     private var graphicOverlay: GraphicOverlay? = null
     private var detectionTextView: TextView? = null
 
-    private var flipX = false
+    private var flipX = true
 
     private var faceRecognition: FaceRecognition? = null
 
@@ -244,12 +244,18 @@ class CameraxOfllineActivity : AppCompatActivity() {
             // get bounding box of face;
             boundingBox = face.boundingBox
 
+            if(lensFacing == CameraSelector.LENS_FACING_FRONT){
+                boundingBox = translateRect(boundingBox, previewView!!, inputImage)
+            }
+
             // convert img to bitmap & crop img
             val bitmap = mediaImgToBmp(
                 inputImage.mediaImage,
                 inputImage.rotationDegrees,
                 boundingBox
             )
+
+
 
             //            if(start) name = recognizeImage(bitmap);
             val labelEmbeddingsTuple = faceRecognition!!.faceRecognition(bitmap, this)
@@ -273,9 +279,28 @@ class CameraxOfllineActivity : AppCompatActivity() {
             detectionTextView!!.setText(R.string.no_face_detected)
         }
 
+
+
         graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
     }
 
+    private fun translateRect(
+        faceBoundingBox: Rect,
+        previewView: PreviewView,
+        imageProxy: InputImage
+    ): Rect {
+
+//        val leftdiff = (imageProxy.width/ 2) - faceBoundingBox.left
+//        val rightdiff = (imageProxy.width/ 2) - faceBoundingBox.right
+
+        val left = previewView.width /2 - faceBoundingBox.right - 30
+        val top = faceBoundingBox.top
+        val right = previewView.width / 2 - faceBoundingBox.left - 30
+        val bottom = faceBoundingBox.bottom
+
+
+        return Rect(left, top, right, bottom)
+    }
 
     /** Bitmap Converter  */
     private fun mediaImgToBmp(image: Image?, rotation: Int, boundingBox: Rect): Bitmap {

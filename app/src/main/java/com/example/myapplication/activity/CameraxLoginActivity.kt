@@ -30,12 +30,17 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myapplication.R
+import com.example.myapplication.model.EmbeddingsRequest
 import com.example.myapplication.service.FaceRecognition
+import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.GraphicOverlay
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.nio.ReadOnlyBufferException
 import java.util.concurrent.ExecutionException
@@ -255,16 +260,25 @@ class CameraxLoginActivity : AppCompatActivity() {
 
             if (embeddings != null && embeddings.isNotEmpty()) {
                 if (!loading) {
-                    loading = true
-                    // Create an Intent to start the NewActivity
-                    val intent =
-                        Intent(this@CameraxLoginActivity, InicioSeguridadActivity::class.java)
 
-                    // Optionally add extra data
-                    intent.putExtra("key", "value")
 
-                    // Start the new activity
-                    startActivity(intent)
+                    val embeddingsRequest= EmbeddingsRequest(embeddings)
+                    // http request
+                    RetrofitClient.apiService.sendFloats(embeddingsRequest).enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                println("Floats sent successfully")
+                                val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
+                                startActivity(intent)
+                            } else {
+                                println("Failed to send floats: ${response.code()}")
+                            }
+                        }
+
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            println("Error sending floats: ${t.message}")
+                        }
+                    })
                 }
             }
             detectionTextView!!.text = name
@@ -273,6 +287,23 @@ class CameraxLoginActivity : AppCompatActivity() {
         }
 
         graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
+    }
+
+    private fun updateBoundingBox(boundingBox: Rect): Rect {
+
+        var resultBoundingbox = boundingBox;
+
+        // Adjust the bounding box if using the front camera
+        if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
+            val previewWidth = previewView!!.width
+            resultBoundingbox = Rect(
+                previewWidth - boundingBox.right,
+                boundingBox.top,
+                previewWidth - boundingBox.left,
+                boundingBox.bottom
+            )
+        }
+        return resultBoundingbox;
     }
 
 

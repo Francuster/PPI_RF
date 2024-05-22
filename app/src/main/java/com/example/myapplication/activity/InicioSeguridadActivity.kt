@@ -21,7 +21,7 @@ class InicioSeguridadActivity: AppCompatActivity() {
 
     }
 
-
+    //primer commit para publicar la branch
 
 }
 

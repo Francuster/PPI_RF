@@ -28,11 +28,6 @@
 <!--            android:exported="true"></service>-->
 
         <activity
-            android:name=".activity.OfflineFaceRecognitionActivity"
-            android:exported="false"
-            android:label="@string/title_activity_offline_face_recognition"
-            android:theme="@style/Theme.MyApplication" />
-        <activity
             android:name=".activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MyApplication">
@@ -55,6 +50,7 @@
         <activity android:name=".activity.InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
         <activity android:name=".activity.CameraxOfllineActivity" android:label="CameraxOfllineActivity" />
         <activity android:name=".activity.CameraxLoginActivity" android:label="CameraxLoginActivity" />
+        <activity android:name=".activity.CameraxAuthenticationActivity" android:label="CameraxAuthenticationActivity" />
 
         <!-- Declara tu servicio dentro de la sección <application> -->
         <meta-data

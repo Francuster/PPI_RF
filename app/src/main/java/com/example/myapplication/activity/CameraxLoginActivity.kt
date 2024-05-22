@@ -31,6 +31,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myapplication.R
 import com.example.myapplication.model.EmbeddingsRequest
+import com.example.myapplication.model.EmbeddingsResponse
 import com.example.myapplication.service.FaceRecognition
 import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.GraphicOverlay
@@ -62,7 +63,7 @@ class CameraxLoginActivity : AppCompatActivity() {
 
     private var faceRecognition: FaceRecognition? = null
 
-    private var loading = false
+    private var responseSuccess = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -249,6 +250,10 @@ class CameraxLoginActivity : AppCompatActivity() {
             // get bounding box of face;
             boundingBox = face.boundingBox
 
+            if(lensFacing == CameraSelector.LENS_FACING_FRONT){
+                boundingBox = translateRect(boundingBox, previewView!!)
+            }
+
             // convert img to bitmap & crop img
             val bitmap = mediaImgToBmp(
                 inputImage.mediaImage,
@@ -259,24 +264,24 @@ class CameraxLoginActivity : AppCompatActivity() {
             val embeddings = faceRecognition?.getFaceEmbeddings(bitmap, this)
 
             if (embeddings != null && embeddings.isNotEmpty()) {
-                if (!loading) {
-
+                if (!responseSuccess) {
 
                     val embeddingsRequest= EmbeddingsRequest(embeddings)
                     // http request
-                    RetrofitClient.apiService.sendFloats(embeddingsRequest).enqueue(object : Callback<Void> {
-                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    RetrofitClient.apiService.loginWithEmbeddings(embeddingsRequest).enqueue(object : Callback<EmbeddingsResponse> {
+                        override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {
                             if (response.isSuccessful) {
-                                println("Floats sent successfully")
+                                println("Embeddings sent successfully")
                                 val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
                                 startActivity(intent)
+                                responseSuccess = true
                             } else {
-                                println("Failed to send floats: ${response.code()}")
+                                println("Failed to send Embeddings: ${response.code()}")
                             }
                         }
 
-                        override fun onFailure(call: Call<Void>, t: Throwable) {
-                            println("Error sending floats: ${t.message}")
+                        override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
+                            println("Error sending Embeddings: ${t.message}")
                         }
                     })
                 }
@@ -289,22 +294,20 @@ class CameraxLoginActivity : AppCompatActivity() {
         graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
     }
 
-    private fun updateBoundingBox(boundingBox: Rect): Rect {
+    private fun translateRect(
+        faceBoundingBox: Rect,
+        previewView: PreviewView
+    ): Rect {
 
-        var resultBoundingbox = boundingBox;
+        val left = previewView.width /2 - faceBoundingBox.right - 60 //offset to center image
+        val top = faceBoundingBox.top
+        val right = previewView.width / 2 - faceBoundingBox.left - 60
+        val bottom = faceBoundingBox.bottom
 
-        // Adjust the bounding box if using the front camera
-        if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
-            val previewWidth = previewView!!.width
-            resultBoundingbox = Rect(
-                previewWidth - boundingBox.right,
-                boundingBox.top,
-                previewWidth - boundingBox.left,
-                boundingBox.bottom
-            )
-        }
-        return resultBoundingbox;
+
+        return Rect(left, top, right, bottom)
     }
+
 
 
     /** Bitmap Converter  */

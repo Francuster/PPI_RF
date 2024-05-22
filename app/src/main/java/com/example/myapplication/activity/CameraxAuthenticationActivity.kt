@@ -30,12 +30,18 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myapplication.R
+import com.example.myapplication.model.EmbeddingsRequest
+import com.example.myapplication.model.EmbeddingsResponse
 import com.example.myapplication.service.FaceRecognition
+import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.GraphicOverlay
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.nio.ReadOnlyBufferException
 import java.util.concurrent.ExecutionException
@@ -43,7 +49,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import kotlin.experimental.inv
 
-class CameraxOfllineActivity : AppCompatActivity() {
+class CameraxAuthenticationActivity : AppCompatActivity() {
     private var previewView: PreviewView? = null
     private var cameraSelector: CameraSelector? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -53,7 +59,7 @@ class CameraxOfllineActivity : AppCompatActivity() {
     private var graphicOverlay: GraphicOverlay? = null
     private var detectionTextView: TextView? = null
 
-    private var flipX = true
+    private var flipX = false
 
     private var faceRecognition: FaceRecognition? = null
 
@@ -255,23 +261,31 @@ class CameraxOfllineActivity : AppCompatActivity() {
                 boundingBox
             )
 
+            val embeddings = faceRecognition?.getFaceEmbeddings(bitmap, this)
 
-
-            //            if(start) name = recognizeImage(bitmap);
-            val labelEmbeddingsTuple = faceRecognition!!.faceRecognition(bitmap, this)
-            name = labelEmbeddingsTuple.usuario.nombre
-            if (labelEmbeddingsTuple.usuario.label != -1) {
+            if (embeddings != null && embeddings.isNotEmpty()) {
                 if (!responseSuccess) {
 
-                    responseSuccess = true
-                    // Create an Intent to start the NewActivity
-                    val intent = Intent(this, InicioSeguridadActivity::class.java)
+                    val embeddingsRequest= EmbeddingsRequest(embeddings)
+                    // http request
+                    RetrofitClient.apiService.authenticationWithEmbeddings(embeddingsRequest).enqueue(object : Callback<EmbeddingsResponse> {
+                        override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {
+                            if (response.isSuccessful) {
+                                println("Embeddings sent successfully")
 
-                    // Optionally add extra data
-                    intent.putExtra("key", "value")
+                                val intent = Intent(this@CameraxAuthenticationActivity, RegistroExitosoAntesalaActivity::class.java)
+                                intent.putExtra("embeddingsResponse", response.body())
+                                startActivity(intent)
+                                responseSuccess = true
+                            } else {
+                                println("Failed to send Embeddings: ${response.code()}")
+                            }
+                        }
 
-                    // Start the new activity
-                    startActivity(intent)
+                        override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
+                            println("Error sending Embeddings: ${t.message}")
+                        }
+                    })
                 }
             }
             detectionTextView!!.text = name
@@ -279,10 +293,10 @@ class CameraxOfllineActivity : AppCompatActivity() {
             detectionTextView!!.setText(R.string.no_face_detected)
         }
 
-
-
         graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
     }
+
+
 
     private fun translateRect(
         faceBoundingBox: Rect,
@@ -297,6 +311,8 @@ class CameraxOfllineActivity : AppCompatActivity() {
 
         return Rect(left, top, right, bottom)
     }
+
+
 
     /** Bitmap Converter  */
     private fun mediaImgToBmp(image: Image?, rotation: Int, boundingBox: Rect): Bitmap {

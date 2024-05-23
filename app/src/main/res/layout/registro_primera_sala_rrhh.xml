@@ -319,11 +319,53 @@
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.51"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.955"
+            app:layout_constraintVertical_bias="0.993"
             app:layout_constraintWidth_percent="0.48" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/hora_entrada"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_alerta"
+            android:focusable="false"
+            android:fontFamily="@font/inter_extrabold"
+            android:hint="HORA ENTRADA"
+            android:inputType="none"
+            android:textAlignment="center"
+            android:textColor="#36565B"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintHorizontal_bias="0.106"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.867"
+            app:layout_constraintWidth_percent="0.40"
+            android:textSize="10sp"/>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/hora_salida"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_alerta"
+            android:focusable="false"
+            android:fontFamily="@font/inter_extrabold"
+            android:hint="HORA SALIDA"
+            android:inputType="none"
+            android:textAlignment="center"
+            android:textColor="#36565B"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.05"
+            app:layout_constraintHorizontal_bias="0.919"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.867"
+            app:layout_constraintWidth_percent="0.40" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -68,7 +68,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.10.1")
     implementation(libs.core.ktx)
     implementation(libs.androidx.junit.ktx)
-    implementation(libs.androidx.runner) // Cambia la versión si es necesario
+    implementation(libs.androidx.runner)
+    implementation(libs.androidx.leanback) // Cambia la versión si es necesario
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

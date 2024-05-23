@@ -291,7 +291,7 @@ class CameraxActivity : AppCompatActivity() {
             detectionTextView!!.setText(R.string.no_face_detected)
         }
 
-        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
+//        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
     }
 
     /** Recognize Processor  */

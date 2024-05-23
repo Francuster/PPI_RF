@@ -250,9 +250,6 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
             // get bounding box of face;
             boundingBox = face.boundingBox
 
-            if(lensFacing == CameraSelector.LENS_FACING_FRONT){
-                boundingBox = translateRect(boundingBox, previewView!!)
-            }
 
             // convert img to bitmap & crop img
             val bitmap = mediaImgToBmp(
@@ -293,7 +290,7 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
             detectionTextView!!.setText(R.string.no_face_detected)
         }
 
-        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
+//        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
     }
 
 

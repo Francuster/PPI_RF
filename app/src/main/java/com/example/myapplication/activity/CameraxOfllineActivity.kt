@@ -244,10 +244,6 @@ class CameraxOfllineActivity : AppCompatActivity() {
             // get bounding box of face;
             boundingBox = face.boundingBox
 
-            if(lensFacing == CameraSelector.LENS_FACING_FRONT){
-                boundingBox = translateRect(boundingBox, previewView!!)
-            }
-
             // convert img to bitmap & crop img
             val bitmap = mediaImgToBmp(
                 inputImage.mediaImage,
@@ -281,7 +277,7 @@ class CameraxOfllineActivity : AppCompatActivity() {
 
 
 
-        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
+//        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
     }
 
     private fun translateRect(

@@ -51,18 +51,19 @@
         <activity android:name=".activity.CameraLoginActivity" android:label="CameraLoginActivity" />
         <activity android:name=".activity.InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
         <activity android:name=".activity.RegistroUsuarioActivity" android:label="RegistroUsuarioActivity" android:exported="true">
+
+        </activity>
+
+        <activity android:name=".activity.Denegado" android:label="Denegado" />
+
+        <activity android:name=".activity.ModificacionUsuario" android:label="ModificacionUsuario" android:exported="true"/>
+        <activity android:name=".activity.ReportesSeguridad" android:label="ReportesSeguridad" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activity.Denegado" android:label="Denegado" />
-
-        <activity android:name=".activity.ModificacionUsuario" android:label="ModificacionUsuario" android:exported="true"/>
-
-
 
 
 

@@ -176,12 +176,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cuenta_nav"
-            android:layout_width="132dp"
+            android:layout_width="80dp"
             android:layout_height="47dp"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.942"
+            app:layout_constraintHorizontal_bias="0.99"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5">
@@ -193,7 +193,7 @@
                 android:fontFamily="@font/inter_extrabold"
                 android:text="Cuenta"
                 android:textAlignment="center"
-                android:textSize="12dp"
+                android:textSize="7sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -233,7 +233,7 @@
                 android:fontFamily="@font/inter_extrabold"
                 android:text="Ingreso/Egreso"
                 android:textAlignment="center"
-                android:textSize="12dp"
+                android:textSize="7sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -253,6 +253,46 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/sort_arrow" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/logs_nav"
+            android:layout_width="70dp"
+            android:layout_height="47dp"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintVertical_bias="0.5">
+
+            <TextView
+                android:id="@id/cuenta"
+                android:layout_width="64dp"
+                android:layout_height="14dp"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="Logs"
+                android:textAlignment="center"
+                android:textSize="7sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.787"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imagen_nav_logs"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
+
+
+                app:layout_constraintBottom_toTopOf="@+id/cuenta"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/hand_held__tablet_kindle_device_electronics_ipad_computer" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -359,7 +399,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5"
             app:layout_constraintWidth_percent="0.33" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

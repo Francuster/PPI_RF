@@ -23,6 +23,60 @@
         app:layout_constraintWidth_percent="0.93">
 
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/apellido"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_alerta"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.552"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.351"
+            app:layout_constraintWidth_percent="0.90">
+
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/apellido_texto"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/inter_extrabold"
+                android:hint="APELLIDO"
+                android:textAlignment="center"
+                android:textColor="#36565B"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.55"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/imagen_apellido"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.533"
+                app:layout_constraintWidth_percent="0.68"
+                tools:ignore="DuplicateIds,MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imagen_apellido"
+                android:layout_width="62dp"
+                android:layout_height="40dp"
+
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.007"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5"
+                app:srcCompat="@drawable/user_multiple_group__close_geometric_human_multiple_person_up_user" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <TextView
             android:id="@+id/registro_titulo"
             android:layout_width="0dp"
@@ -47,15 +101,15 @@
             android:id="@+id/documento"
             android:layout_width="0dp"
             android:layout_height="0dp"
+
             android:background="@drawable/rectangulo_alerta"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.526"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.52"
+            app:layout_constraintVertical_bias="0.611"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -157,14 +211,14 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
-            app:layout_constraintBottom_toTopOf="@+id/documento"
 
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.526"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nombre"
-            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.478"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -212,17 +266,17 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
+            android:hint="TIPO CUENTA"
+            android:popupBackground="@drawable/rectangulo_alerta"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/documento"
-            app:layout_constraintVertical_bias="0.129"
-            app:layout_constraintWidth_percent="0.90"
-            android:popupBackground="@drawable/rectangulo_alerta"
-            android:hint="TIPO CUENTA"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.753"
+            app:layout_constraintWidth_percent="0.90" />
 
         <ImageView
             android:id="@+id/imagen_tipo_cuenta"
@@ -232,10 +286,10 @@
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.084"
+            app:layout_constraintHorizontal_bias="0.065"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.668"
+            app:layout_constraintVertical_bias="0.739"
             app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
 
         <ImageView
@@ -251,6 +305,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05"
             app:srcCompat="@drawable/arrow_left" />
+
         <Button
             android:id="@+id/boton_siguiente"
             android:layout_width="0dp"
@@ -267,7 +322,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.915"
+            app:layout_constraintVertical_bias="0.955"
             app:layout_constraintWidth_percent="0.48" />
 
 

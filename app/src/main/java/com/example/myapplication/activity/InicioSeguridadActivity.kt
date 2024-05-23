@@ -22,14 +22,22 @@ class InicioSeguridadActivity: AppCompatActivity() {
         }
 
     fun goToAnteEscanea(view: View) {
+        if(deviceIsConnected(applicationContext)){
             val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
             startActivity(intent)
             finish()
+        }else{
+            Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
+            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     fun goToFormulario(view: View) {
         if(deviceIsConnected(applicationContext)){
-
+            val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
+            startActivity(intent)
+            finish()
         }else{
             Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
             val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)

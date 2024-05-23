@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fonde_celeste"
+    tools:context=".Escanea">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_hijo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/rectangulo_celeste"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.8"
+        app:layout_constraintHorizontal_bias="0.482"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.431"
+        app:layout_constraintWidth_percent="0.93">
+
+
+        <TextView
+            android:id="@+id/empleados_titulo"
+            android:layout_width="0dp"
+            android:layout_height="38dp"
+            android:fontFamily="@font/inter_extrabold"
+            android:text="CUENTA"
+            android:textAlignment="textStart"
+            android:textSize="17sp"
+            android:textStyle="bold"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.119"
+            app:layout_constraintStart_toEndOf="@+id/imagen_volver"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.053"
+            app:layout_constraintWidth_percent="0.5"
+            tools:ignore="MissingConstraints" />
+
+        <ImageView
+            android:id="@+id/imagen_volver"
+            android:layout_width="62dp"
+            android:layout_height="40dp"
+
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.003"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.049"
+            app:srcCompat="@drawable/arrow_left" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

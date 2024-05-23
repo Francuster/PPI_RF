@@ -65,6 +65,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.RegistroRrHhPrimeraSalaActivity" android:label="RegistroRrHhPrimeraSalaActivity" />
+        <activity android:name=".activity.CamaraParaRegistroRrHhActivity" android:label="CamaraParaRegistroRrHhActivity" />
+
 
 
 

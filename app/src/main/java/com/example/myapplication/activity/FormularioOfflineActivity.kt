@@ -22,7 +22,9 @@ class FormularioOfflineActivity: ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val context = LocalContext.current
-                    RenderFormulario(context)
+                    RenderFormulario(context = this) {
+                        finish()
+                    }
                     verificarBaseDatos(context)
                 }
             }

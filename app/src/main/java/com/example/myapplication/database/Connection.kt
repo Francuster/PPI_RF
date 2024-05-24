@@ -85,8 +85,8 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
     //Prueba de insert en ingresos
 
       val horario = "2024-05-17 12:00:00"
-      val nombre = "Juan"
-      val apellido = "Pérez"
+      val nombre = "prueba"
+      val apellido = "update logs local"
       val dni = "12345678"
       val estado = "Activo"
       val tipo = "Entrada"
@@ -102,7 +102,7 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
         "'12345678', 'imagenOToken', 1)")
 
     Log.i(TAG,"DB esta creada")
-    Toast.makeText(ctx, "DB creada onCreate", Toast.LENGTH_LONG).show()
+    //Toast.makeText(ctx, "DB creada onCreate", Toast.LENGTH_LONG).show()
   }
 
   override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

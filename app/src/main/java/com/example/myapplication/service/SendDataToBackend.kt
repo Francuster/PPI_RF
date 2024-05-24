@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit
 
 class SendDataToBackend (private val context: Context) {
 
+    private var activeCall: Call? = null
 
     fun sendLog(log: Log) {
         // URL
@@ -48,32 +49,54 @@ class SendDataToBackend (private val context: Context) {
             .post(requestBody)
             .build()
 
+        activeCall?.cancel()
+
+
+        activeCall = client.newCall(request)
+
+
         // Ejecuta la solicitud de forma asíncrona
-        client.newCall(request).enqueue(object : Callback {
+        activeCall?.enqueue(object : Callback {
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    // La solicitud fue exitosa //
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        Toast.makeText(context, "HTTP request unsuccessful with status code ${response.code}", Toast.LENGTH_SHORT).show()
+                    }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(context, "Error en la respuesta: ${e.message}", Toast.LENGTH_SHORT).show()
+                }finally {
+                    response.body?.close()
+                    activeCall = null
+                }
+            }
+
             override fun onFailure(call: Call, e: IOException) {
                 // Maneja el fallo de la solicitud
                 e.printStackTrace()
-                Toast.makeText(context, "No se ha podido hacer el registro", Toast.LENGTH_SHORT)
+                Toast.makeText(context, "No se ha podido hacer la sincronizacion", Toast.LENGTH_SHORT)
                     .show()
+                activeCall=null
 
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                // Maneja la respuesta del servidor
-                // Manejar la respuesta del servidor aquí
-                // La solicitud fue exitosa //
-                Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     fun sendLocalRegs(): Boolean {
+            var count:Int=0
             val connection = Connection(context)
             val db = connection.writableDatabase
             val puntero = db.rawQuery("SELECT * FROM ingresos", null)
 
-            if (puntero.moveToFirst()) {
-                db.beginTransaction()
+        if (puntero.moveToFirst()) {
+            db.beginTransaction()
+            try {
                 do {
                     val reg = Registro(
                         puntero.getString(puntero.getColumnIndexOrThrow("horario")),
@@ -83,25 +106,45 @@ class SendDataToBackend (private val context: Context) {
                         puntero.getString(puntero.getColumnIndexOrThrow("estado")),
                         puntero.getString(puntero.getColumnIndexOrThrow("tipo")),
                     )
-                    sendRegistro(reg)
+                    // Envía el registro
+                    if (sendRegistro(reg)) {
+                        count+=
+                        // Borra el registro si se envió correctamente
+                        db.delete(
+                            "ingresos",
+                            "horario = ? AND nombre = ? AND apellido = ? AND dni = ? AND estado = ? AND tipo = ?",
+                            arrayOf(reg.horario, reg.nombre, reg.apellido, reg.dni, reg.estado, reg.tipo)
+                        )
+                    } else {
+                        // Si falla el envío, se puede decidir si continuar o revertir la transacción
+                        throw Exception("Error al eliminar el registro")
+                    }
                 } while (puntero.moveToNext())
 
-                db.execSQL("DELETE FROM ingresos")
+                Toast.makeText(context, "Cantidad de registros sincronizados: " + count, Toast.LENGTH_SHORT)
+                    .show()
 
                 db.setTransactionSuccessful()
-
-                puntero.close()
-                db.close()
-                return true
-            } else {
-                puntero.close()
-                db.close()
-                return false
+            } catch (e: Exception) {
+                // Manejo del error, si se desea loggear o realizar alguna acción
+                e.printStackTrace()
+            } finally {
+                db.endTransaction()
             }
+
+            puntero.close()
+            db.close()
+            return true
+        } else {
+            puntero.close()
+            db.close()
+            return false
+        }
     }
 
-    fun sendRegistro(reg: Registro) {
+    fun sendRegistro(reg: Registro): Boolean {
         // URL
+        var sended:Boolean=true
 
         val url = "https://log3r.up.railway.app/api/authentication/logs"
         // CREAR CONEXION
@@ -130,20 +173,50 @@ class SendDataToBackend (private val context: Context) {
             .post(requestBody)
             .build()
 
-        // Ejecuta la solicitud de forma asíncrona
-        client.newCall(request).enqueue(object : Callback {
+        activeCall?.cancel()
+
+        activeCall = client.newCall(request)
+
+        activeCall?.enqueue(object : Callback {
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    // La solicitud fue exitosa //
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "HTTP request unsuccessful with status code ${response.code}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        sended=false
+
+                    }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(
+                        context,
+                        "Error en la respuesta: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    sended=false
+                } finally {
+                    response.body?.close()
+                    activeCall = null
+                }
+            }
+
             override fun onFailure(call: Call, e: IOException) {
                 // Maneja el fallo de la solicitud
                 e.printStackTrace()
-                Toast.makeText(context, "No se ha podido hacer el registro", Toast.LENGTH_SHORT)
-                    .show()
-            }
+                Toast.makeText(context,"No se ha podido hacer la sincronizacion",Toast.LENGTH_SHORT).show()
+                activeCall = null
+                sended=false
 
-            override fun onResponse(call: Call, response: Response) {
-                // Maneja la respuesta del servidor
-                call.cancel() //Definir si sirve
             }
         })
+        return sended
     }
-
 }

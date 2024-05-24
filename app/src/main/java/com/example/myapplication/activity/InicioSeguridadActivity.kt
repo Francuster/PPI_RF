@@ -14,8 +14,6 @@ class InicioSeguridadActivity: AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.inicio_seguridad)
-
-
         }
 
     fun goToAnteEscanea(view: View) {
@@ -23,19 +21,18 @@ class InicioSeguridadActivity: AppCompatActivity() {
             startActivity(intent)
     }
 
-    //Bug cuando se toca el boton reconectar mas de una vez. Sospecha: Calls no se cierran.
     fun reconectar(view: View){
-        if(deviceIsConnected(applicationContext)){
+         if(deviceIsConnected(applicationContext)){
             Toast.makeText(this, "Sincronizando...", Toast.LENGTH_SHORT).show()
             val regRequest = SendDataToBackend(applicationContext)
             if(regRequest.sendLocalRegs()){
-                Toast.makeText(this, "Sincronización exitosa/registros online actualizados", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Sincronización exitosa", Toast.LENGTH_SHORT).show()
             }
             else{
-                Toast.makeText(this, "Nada para sincronizar", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "No existen nuevos registros para sincronizar.", Toast.LENGTH_SHORT).show()
             }
         }else{
-            Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Para sincronizar debes estar conectado a Internet", Toast.LENGTH_SHORT).show()
         }
     }
 }

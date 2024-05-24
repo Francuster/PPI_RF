@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondo_blanco"
-    android:rotationX="360"
     tools:context=".Escanea">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,7 +28,7 @@
             android:layout_width="300dp"
             android:layout_height="38dp"
             android:fontFamily="@font/inter_extrabold"
-            android:text="INGRESOS/EGRESOS"
+            android:text="REPORTES SEGURIDAD"
             android:textAlignment="center"
             android:textSize="17sp"
             android:textStyle="bold"
@@ -54,112 +53,39 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.026"
-            app:srcCompat="@drawable/sort_arrow" />
+            app:srcCompat="@drawable/hand_held__tablet_kindle_device_electronics_ipad_computer" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/ingreso"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rectangulo_celeste_ingreso"
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="311dp"
+            android:layout_height="308dp"
+            android:background="@drawable/rectangulo_alerta"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.177"
-            app:layout_constraintWidth_percent="0.9">
+            />
 
-
-            <TextView
-                android:id="@id/tipo_cuenta_texto"
-                android:layout_width="248dp"
-                android:layout_height="40dp"
-                android:fontFamily="@font/inter_extrabold"
-                android:text="Persona ingreso"
-                android:textAlignment="center"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.064"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="MissingConstraints" />
-
-            <ImageView
-                android:id="@+id/imagen_ingreso"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.60"
-                app:layout_constraintHorizontal_bias="0.553"
-                app:layout_constraintStart_toEndOf="@+id/tipo_cuenta_texto"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.521"
-                app:layout_constraintWidth_percent="0.10"
-                app:srcCompat="@drawable/check" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/egreso"
+        <Button
+            android:id="@+id/boton_siguiente"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rectangulo_verde"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/rectangulo_alerta"
+            android:fontFamily="@font/inter_extrabold"
+            android:onClick="Siguiente"
+            android:text="DESCARGAR"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ingreso"
-            app:layout_constraintVertical_bias="0.032"
-            app:layout_constraintWidth_percent="0.90">
-
-
-            <TextView
-                android:id="@id/tipo_cuenta_texto"
-                android:layout_width="248dp"
-                android:layout_height="40dp"
-                android:fontFamily="@font/inter_extrabold"
-                android:text="Persona egreso"
-                android:textAlignment="center"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imagen_egreso"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="MissingConstraints" />
-
-            <ImageView
-                android:id="@+id/imagen_egreso"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.80"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/tipo_cuenta_texto"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5"
-                app:layout_constraintWidth_percent="0.13"
-                app:srcCompat="@drawable/done_all_round" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.949"
+            app:layout_constraintWidth_percent="0.48"
+            android:textColor="#36565B"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -177,10 +103,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cuenta_nav"
-
             android:layout_width="80dp"
             android:layout_height="47dp"
-
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -200,10 +124,9 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.492"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.771"
+                app:layout_constraintVertical_bias="0.787"
                 tools:ignore="MissingConstraints" />
 
             <ImageView
@@ -214,10 +137,8 @@
 
                 app:layout_constraintBottom_toTopOf="@+id/cuenta"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.495"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/menu" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -237,7 +158,6 @@
                 android:layout_width="107dp"
                 android:layout_height="20dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:onClick="goToFormulario"
                 android:text="Ingreso/Egreso"
                 android:textAlignment="center"
                 android:textSize="7sp"
@@ -312,7 +232,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"></View>
+        app:layout_constraintStart_toStartOf="parent">
+    </View>
 
     <ImageView
         android:id="@+id/imagen_scan"

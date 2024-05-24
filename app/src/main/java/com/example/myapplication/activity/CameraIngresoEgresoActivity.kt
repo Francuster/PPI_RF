@@ -283,8 +283,10 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         if (!detecto && !timeUpToastShown) {
             showToastOnUiThread("Tiempo de escaneo agotado")
             timeUpToastShown = true
+            mostrarPantallaErrorIngreso()  // Redirigir a la pantalla de error
         }
     }
+
 
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
@@ -470,7 +472,10 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                             registro_exitoso_antesala(nombre, apellido, dni, primerRol, lugares)
                         } else if (response.code == 401) {
                             // Si la solicitud fue no autorizada, mostrar pantalla error
-                            mostrarPantallaErrorIngreso()}
+                            //mostrarPantallaErrorIngreso()
+                            showToastOnUiThread("Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\nError en la solicitud HTTP")
+
+                        }
                     } catch (e: Exception) {
                         e.printStackTrace()
                         showToastOnUiThread("Error en la respuesta: ${e.message}")

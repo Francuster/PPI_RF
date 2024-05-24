@@ -297,10 +297,16 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         updateButtonState()
         if (!detecto && !timeUpToastShown) {
             showToastOnUiThread("Tiempo de escaneo agotado")
-            //agregar pantalla error ?
             timeUpToastShown = true
+            mostrarPantallaErrorIngreso()  // Redirigir a la pantalla de error
         }
     }
+
+    private fun mostrarPantallaErrorIngreso() {
+        val intent = Intent(applicationContext, RegistroDenegadoActivity::class.java)
+        startActivity(intent)
+    }
+
 
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
@@ -524,7 +530,8 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                             registro_exitoso_antesala(nombre, apellido, dni, primerRol)
                         } else if (response.code == 401) {
                         // Si la solicitud fue no autorizada, mostrar pantalla inicio
-                        mostrarPantallaInicio()
+                            showToastOnUiThread("Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\n")
+                            //mostrarPantallaInicio()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()

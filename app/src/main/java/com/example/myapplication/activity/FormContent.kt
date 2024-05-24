@@ -115,7 +115,7 @@ fun Formulario(onSubmit: (String, String, String, String, String, String) -> Uni
     var categoria by remember { mutableStateOf("") }
     val categorias = listOf("Visitante", "Profesor", "Alumno", "Seguridad")
     var estado by remember { mutableStateOf("") }
-    val estados = listOf("Ingresando", "Retirando")
+    val estados = listOf("Ingresando", "Saliendo")
     var mail by remember { mutableStateOf("") }
     var dni by remember { mutableStateOf("") }
     var isDropdownExpanded by remember { mutableStateOf(false) }

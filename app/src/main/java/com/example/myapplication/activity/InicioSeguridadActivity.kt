@@ -44,6 +44,12 @@ class InicioSeguridadActivity: AppCompatActivity() {
             startActivity(intent)
         }
     }
+    fun goToReporteSeguridad(view: View) {
+
+            val intent = Intent(applicationContext, ReportesSeguridad::class.java)
+            startActivity(intent)
+
+    }
 
 }
 

@@ -131,22 +131,25 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
         val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         val request = Request.Builder()
-            .url("https://log3r.up.railway.app/api/users")//IP LOCAL U ONLINE
+            .url("http://192.168.1.34:5000/api/users")//IP LOCAL U ONLINE
             .post(requestBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
+                    runOnUiThread {
+                        Toast.makeText(this@RegistroUsuarioActivity, "EXITO EN LA SOLICITUD USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
+                    }
                     goToRegistroExitoso()
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    Toast.makeText(this@RegistroUsuarioActivity, "Fallo en la solicitud: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RegistroUsuarioActivity, "Fallo en la solicitud de registro de usuario: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
-                //goToRegistroDenegado()
+                goToRegistroDenegado()
             }
         })
     }

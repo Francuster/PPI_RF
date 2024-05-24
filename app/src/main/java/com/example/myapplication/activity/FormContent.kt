@@ -16,8 +16,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -124,7 +126,9 @@ fun Formulario(onSubmit: (String, String, String, String, String, String) -> Uni
     )
 
     Column(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         Icon(
             painter = painterResource(id = R.drawable.arrow_left),
@@ -132,7 +136,7 @@ fun Formulario(onSubmit: (String, String, String, String, String, String) -> Uni
             modifier = Modifier
                 .size(30.dp)
                 .padding(start = 0.dp)
-                .clickable{
+                .clickable {
                     // Aquí puedes agregar el código que deseas ejecutar cuando el icono se haga clic
                     onBack()
                 },

@@ -1,6 +1,8 @@
 package com.example.myapplication.service
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import com.example.myapplication.model.Log
 import okhttp3.Call
@@ -13,7 +15,6 @@ import java.io.IOException
 import java.util.concurrent.TimeUnit
 
 class SendDataToBackend (private val context: Context) {
-
     fun  sendLog(log: Log) {
         // URL
 
@@ -46,7 +47,7 @@ class SendDataToBackend (private val context: Context) {
             override fun onFailure(call: Call, e: IOException) {
                 // Maneja el fallo de la solicitud
                 e.printStackTrace()
-                Toast.makeText(context, "No se ha podido hacer el registro", Toast.LENGTH_SHORT).show()
+                showToastOnUiThread("No se ha podido hacer el registro")
 
             }
 
@@ -54,7 +55,7 @@ class SendDataToBackend (private val context: Context) {
                 // Maneja la respuesta del servidor
                 // Manejar la respuesta del servidor aquí
                     // La solicitud fue exitosa //
-                    Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                    showToastOnUiThread("Registro exitoso")
 
 
             }
@@ -64,5 +65,10 @@ class SendDataToBackend (private val context: Context) {
         })
     }
 
+    private fun showToastOnUiThread(message: String) {
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        }
+    }
 
 }

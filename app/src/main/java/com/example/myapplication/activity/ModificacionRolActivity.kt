@@ -2,6 +2,7 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
@@ -28,5 +29,10 @@ class ModificacionRolActivity: AppCompatActivity() {
         val adaptador= ArrayAdapter(this, R.layout.desplegable_tipo_cuenta,elementos)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter=adaptador
-}
+}fun goToAtras(view : View){
+
+        val intent = Intent(applicationContext, ModificacionUsuarioActivity::class.java)
+        startActivity(intent)
+
+    }
 }

@@ -35,7 +35,7 @@
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.15"
+            app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/imagen_volver"
             app:layout_constraintTop_toTopOf="parent"
@@ -48,15 +48,17 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
+            android:onClick="goToModificacionTexto"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
 
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.52"
             app:layout_constraintWidth_percent="0.90">
+
             <ImageView
                 android:id="@+id/imagen_flecha_documento"
                 android:layout_width="0dp"
@@ -118,15 +120,17 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
+            android:onClick="goToModificacionTexto"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
 
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.22"
             app:layout_constraintWidth_percent="0.90">
+
             <ImageView
                 android:id="@+id/imagen_flecha_nombre"
                 android:layout_width="0dp"
@@ -187,8 +191,9 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
-            app:layout_constraintBottom_toTopOf="@+id/documento"
+            android:onClick="goToModificacionTexto"
 
+            app:layout_constraintBottom_toTopOf="@+id/documento"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
@@ -196,6 +201,7 @@
             app:layout_constraintTop_toBottomOf="@+id/nombre"
             app:layout_constraintVertical_bias="0.5"
             app:layout_constraintWidth_percent="0.90">
+
             <ImageView
                 android:id="@+id/imagen_flecha_mail"
                 android:layout_width="0dp"
@@ -258,6 +264,7 @@
             android:layout_height="40dp"
 
 
+            android:onClick="goToAtras"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.028"
@@ -265,6 +272,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05"
             app:srcCompat="@drawable/arrow_left" />
+
         <Button
             android:id="@+id/boton_siguiente"
             android:layout_width="0dp"
@@ -278,10 +286,27 @@
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.915"
+            app:layout_constraintVertical_bias="0.973"
+            app:layout_constraintWidth_percent="0.48" />
+
+        <Button
+            android:id="@+id/boton_cambiar_hora"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/boton"
+            android:fontFamily="@font/inter_extrabold"
+            android:onClick="goToModificacionHora"
+            android:text="CAMBIAR HORA"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.843"
             app:layout_constraintWidth_percent="0.48" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -289,14 +314,15 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
-            app:layout_constraintBottom_toTopOf="@+id/boton_siguiente"
+            android:onClick="goToModificacionRol"
 
+            app:layout_constraintBottom_toTopOf="@+id/boton_cambiar_hora"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.526"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/documento"
-            app:layout_constraintVertical_bias="0.222"
+            app:layout_constraintVertical_bias="0.569"
             app:layout_constraintWidth_percent="0.90">
 
             <ImageView

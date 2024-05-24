@@ -20,15 +20,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myapplication.R
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import org.json.JSONObject
 import org.opencv.android.OpenCVLoader
 import org.opencv.core.Core
 import org.opencv.core.CvType
@@ -46,7 +37,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 
-class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback {
+class CamaraParaRegistroRrHhActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     private var camera: Camera? = null
     private lateinit var cascadeClassifier: CascadeClassifier
@@ -62,14 +53,6 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
     private var lastRequestTimeMillis = 0L
     private val requestIntervalMillis = 15000L // 1000=1 segundo
 
-    // Cliente HTTP
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(5, TimeUnit.SECONDS)
-        .writeTimeout(5, TimeUnit.SECONDS)
-        .readTimeout(20, TimeUnit.SECONDS)
-        .build()
-
-
     //FUNCIONES
     companion object {
         private const val REQUEST_CAMERA_PERMISSION = 1
@@ -81,6 +64,8 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         setupUI()
+        OpenCVLoader.initDebug()
+        loadFaceCascade()
     }
 
     private fun setupUI() {
@@ -111,7 +96,6 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
     }
 
     //metodo para dibujar el ovalo en la vista previa de la camara
-    // Método para dibujar el óvalo en la vista previa de la cámara de manera centrada y responsive
     private fun drawOvalFrame() {
         val ovalPaint = Paint().apply {
             color = Color.WHITE
@@ -149,7 +133,6 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         addContentView(frameView, layoutParams)
         ovalFrameView = frameView // Asignar la vista del óvalo para referencia futura
     }
-
 
     override fun onResume() {
         super.onResume()
@@ -209,7 +192,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                     e.printStackTrace()
                 }
             } else {
-                showToastOnUiThread("No se pudo abrir la cámara frontal")
+                showToast("No se pudo abrir la cámara frontal")
             }
         }
     }
@@ -251,7 +234,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     openCamera()
                 } else {
-                    showToastOnUiThread("Permiso de la cámara denegado")
+                    showToast("Permiso de la cámara denegado")
                 }
                 return
             }
@@ -266,13 +249,14 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         updateButtonState()
         if (isScanning) {
             startTimer()
-            showToastOnUiThread("Escaneando 30 segundos...")
+            showToast("Escaneando 30 segundos...")
         } else {
             stopTimer()
-            showToastOnUiThread("Escaneo detenido manualmente")
+            showToast("Escaneo detenido manualmente")
         }
     }
-    //cambia el estado del boton
+
+    // Cambia el estado del botón
     private fun updateButtonState() {
         buttonScan.text = if (isScanning) "Detener Escaneo" else "Escanear"
     }
@@ -281,7 +265,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         isScanning = false
         updateButtonState()
         if (!detecto && !timeUpToastShown) {
-            showToastOnUiThread("Tiempo de escaneo agotado")
+            showToast("Tiempo de escaneo agotado")
             timeUpToastShown = true
         }
     }
@@ -290,10 +274,11 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
-                if (!detecto && (secondsRemaining <= 3&& secondsRemaining >2 ||secondsRemaining <= 15&& secondsRemaining >14 )) { //manejar tiempo que se muestra en toast
-                    showToastOnUiThread("Tiempo restante: $secondsRemaining segundos")
+                if (!detecto && (secondsRemaining <= 3 && secondsRemaining > 2 || secondsRemaining <= 15 && secondsRemaining > 14)) { // Manejar tiempo que se muestra en toast
+                    showToast("Tiempo restante: $secondsRemaining segundos")
                 }
             }
+
             override fun onFinish() {
                 handleScanTimeout()
             }
@@ -304,35 +289,14 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         timer?.cancel()
     }
 
-    private fun mostrarPantallaErrorIngreso() {
-        val intent = Intent(applicationContext, RegistroDenegadoActivity::class.java)
-        startActivity(intent)
-    }
-
-
-    //funcion para pasar los datos a otra activity
-    private fun registro_exitoso_antesala(nombre: String, apellido: String, dni: Int, roles: String,lugares:String) {
-
-        // Crear el Intent y pasar los datos
-        val intent = Intent(this, RegistroExitosoAntesalaActivity::class.java)
-        intent.putExtra("nombre", nombre)
-        intent.putExtra("apellido", apellido)
-        intent.putExtra("dni", dni)
-        intent.putExtra("roles", roles)
-        intent.putExtra("lugares",lugares)
-        startActivity(intent)
-    }
-
-
-
-    //metodo para los toasts en el hilo principal
-    private fun showToastOnUiThread(message: String) {
+    // Método para mostrar un Toast en el hilo principal
+    private fun showToast(message: String) {
         runOnUiThread {
-            Toast.makeText(this@CameraIngresoEgresoActivity, message, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@CamaraParaRegistroRrHhActivity, message, Toast.LENGTH_SHORT).show()
         }
     }
 
-    //metodo principal de deteccion de rostros en la vista previa de la camara, se ejecuta en otro hilo para optimizar recursos
+    // Método principal de detección de rostros en la vista previa de la cámara
     override fun onPreviewFrame(data: ByteArray, camera: Camera?) {
         // Verificar si el escaneo está activo
         if (!isScanning) return
@@ -354,13 +318,12 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
             val height = parameters?.previewSize?.height ?: 0
 
             // Crear una matriz para la vista previa YUV
-            val yuvMat = Mat(height + height / 2, width, org.opencv.core.CvType.CV_8UC1)
+            val yuvMat = Mat(height + height / 2, width, CvType.CV_8UC1)
             yuvMat.put(0, 0, data)
 
             // Convertir la matriz YUV a una matriz RGBA
             val rgbaMat = Mat()
             Imgproc.cvtColor(yuvMat, rgbaMat, Imgproc.COLOR_YUV2RGBA_NV21, 4)
-
 
             // Detectar rostros en la matriz RGBA
             val faces = MatOfRect()
@@ -384,146 +347,25 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
 
                     // Verificar si se detectó al menos un rostro
                     if (faces.toArray().isNotEmpty()) {
-                        // Enviar la matriz RGBA completa como una solicitud HTTP
-                        enviarMatrizComoHTTPRequest(rgbaMat)
+                        // Convertir la matriz RGBA a un formato de imagen compatible con HTTP (ej. JPEG)
+                        val faceMat = Mat(rgbaMat, faces.toArray()[0])
+                        enviarImagen(faceMat)
 
                         // Actualizar el tiempo de la última solicitud
                         lastRequestTimeMillis = currentTimeMillis
                     }
                 }
+
                 // Salir del hilo
                 return@Thread
             }
+
             // Liberar la matriz YUV
             yuvMat.release()
         }.start() // Iniciar el hilo
     }
 
-
-
-    private var activeCall: Call? = null // Guardo la solicitud HTTP activa
-
-    private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
-        // Rotar la imagen 90 grados en sentido antihorario
-        Core.rotate(faceMat, faceMat, Core.ROTATE_90_COUNTERCLOCKWISE)
-
-        // Verificar el tipo de la matriz de OpenCV
-        if (faceMat.type() != CvType.CV_8UC3) {
-            // Si la matriz no es de 3 canales (RGB), convertirla a RGB
-            Imgproc.cvtColor(faceMat, faceMat, Imgproc.COLOR_BGR2RGB)
-        }
-
-        val byteStream = ByteArrayOutputStream()
-        val imageMat = MatOfByte()
-
-        try {
-            // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej, JPEG, PNG)
-            if (!Imgcodecs.imencode(".png", faceMat, imageMat)) {
-                throw IOException("Failed to encode image")
-            }
-            byteStream.write(imageMat.toArray())
-
-            // Crear el cuerpo de la solicitud HTTP
-            val requestBody = MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("image", "filename.png", byteStream.toByteArray().toRequestBody("image/png".toMediaTypeOrNull()))
-                .build()
-
-            // Construir y enviar la solicitud HTTP
-            val request = Request.Builder()
-                .url("https://log3r.up.railway.app/api/authentication") // Cambiar por IP local para prueba o IP online
-                .post(requestBody)
-                .build()
-
-            // Cancelar cualquier solicitud HTTP activa antes de enviar la nueva solicitud
-            activeCall?.cancel()
-
-            // Enviar la solicitud HTTP y guardar una referencia a la solicitud activa
-            activeCall = client.newCall(request)
-            activeCall?.enqueue(object : Callback {
-                override fun onResponse(call: Call, response: Response) {
-                    try {
-                        if (response.isSuccessful) {
-                            // La solicitud fue exitosa
-                            val responseBody = response.body?.string() ?: throw IOException("Response body is null")
-                            val jsonObject = JSONObject(responseBody)
-
-                            // Obtener el objeto "data" que contiene los datos de la persona
-                            val dataObject = jsonObject.getJSONObject("data")
-
-                            // Extraer los datos de la persona del objeto "data"
-                            val nombre = dataObject.getString("nombre")
-                            val apellido = dataObject.getString("apellido")
-                            val dni = dataObject.getInt("dni")
-                            val rolArray = dataObject.getJSONArray("rol")
-
-                            // Convertir el JSONArray de roles a una lista de cadenas
-                            val primerRol = rolArray.getString(0)
-                            val lugaresArray = dataObject.getJSONArray("lugares")
-                            var lugares = lugaresArray.getString(0)
-
-                            // Recorrer el JSONArray y almacenar cada elemento en el array
-                            for (i in 1 until lugaresArray.length()) {
-                                lugares = "$lugares\n${lugaresArray.getString(i)}"
-                            }
-
-                            registro_exitoso_antesala(nombre, apellido, dni, primerRol, lugares)
-                        } else if (response.code == 401) {
-                            // Si la solicitud fue no autorizada, mostrar pantalla error
-                            mostrarPantallaErrorIngreso()}
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        showToastOnUiThread("Error en la respuesta: ${e.message}")
-                    } finally {
-                        // Cerrar el cuerpo de la respuesta y limpiar la referencia a la solicitud activa
-                        response.body?.close()
-                        activeCall = null
-                    }
-
-
-
-
-                    // Mostrar los datos de la persona en un Toast para pruebas
-                    /*val personaInfo = "Nombre: $nombre\n" +
-                            "Apellido: $apellido\n" +
-                            "DNI: $dni\n" +
-                            "Roles: ${roles.joinToString(", ")}"
-                    showToastOnUiThread(personaInfo)*/
-
-
-                }
-
-
-                override fun onFailure(call: Call, e: IOException) {
-                    try {
-                        // OnFailure se utiliza para manejar fallos de conexión,
-                        // errores de tiempo de espera y otros problemas de red.
-                        e.printStackTrace()
-                        showToastOnUiThread("Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\nError en la solicitud HTTP")
-                    } finally {
-                        // Limpiar la referencia a la solicitud activa
-                        activeCall = null
-                    }
-                }
-            })
-        } catch (e: Exception) {
-            e.printStackTrace()
-            showToastOnUiThread("Error en la conversión o envío de la imagen: ${e.message}")
-        } finally {
-            // Bloque de liberación de recursos que siempre se ejecuta
-            try {
-                byteStream.close() // Cerrar ByteArrayOutputStream para liberar el recurso de memoria
-            } catch (e: IOException) {
-                e.printStackTrace() // Registrar el error si no se puede cerrar el flujo
-
-            }
-            imageMat.release() // Liberar el recurso MatOfByte para liberar la memoria nativa de OpenCV
-        }
-    }
-
-
-
-    //metodo que carga el clasificador en cascada para deteccion de rostros
+    // Método que carga el clasificador en cascada para detección de rostros
     private fun loadFaceCascade() {
         try {
             val resourceId = R.raw.haarcascade_frontalface_default
@@ -551,4 +393,31 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         }
     }
 
+    // Método para enviar la imagen del rostro detectado al intent de registro
+    private fun enviarImagen(faceMat: Mat) {
+        // Rotar la imagen 90 grados en sentido antihorario
+        Core.rotate(faceMat, faceMat, Core.ROTATE_90_COUNTERCLOCKWISE)
+
+        // Verificar el tipo de la matriz de OpenCV
+        if (faceMat.type() != CvType.CV_8UC3) {
+            // Si la matriz no es de 3 canales (RGB), convertirla a RGB
+            Imgproc.cvtColor(faceMat, faceMat, Imgproc.COLOR_BGR2RGB)
+        }
+
+        // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej. JPEG)
+        val byteStream = ByteArrayOutputStream()
+        val imageMat = MatOfByte()
+        Imgcodecs.imencode(".jpg", faceMat, imageMat)
+        byteStream.write(imageMat.toArray())
+
+        val byteArray = byteStream.toByteArray()
+
+        // Crear un intent para pasar la imagen a la actividad anterior
+        val resultIntent = Intent().apply {
+            putExtra("image", byteArray)
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
+    }
 }
+

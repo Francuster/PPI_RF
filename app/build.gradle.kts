@@ -66,9 +66,11 @@ dependencies {
     implementation("org.opencv:opencv:4.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1") // Cambia la versión si es necesario
     implementation("androidx.core:core-ktx:1.10.1")
+    implementation ("org.json:json:20210307") // Para trabajar con JSON
     implementation(libs.core.ktx)
     implementation(libs.androidx.junit.ktx)
-    implementation(libs.androidx.runner) // Cambia la versión si es necesario
+    implementation(libs.androidx.runner)
+    implementation(libs.androidx.leanback) // Cambia la versión si es necesario
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,8 +78,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation ("com.squareup.okhttp3:okhttp:4.9.2")// OKhttp para peticiones y solicitudes
-
+    // OKhttp para peticiones y solicitudes
+    implementation ("com.squareup.okhttp3:okhttp:4.9.2")
+    // Kotlin Extensions for OkHttp
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.2")
 
     var camerax_version = "1.2.2"
     implementation ("androidx.camera:camera-core:${camerax_version}")

@@ -173,4 +173,5 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         startActivity(intent)
 
     }
+
 }

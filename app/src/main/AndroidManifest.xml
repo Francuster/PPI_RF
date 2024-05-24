@@ -36,7 +36,11 @@
             android:name=".activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MyApplication">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
 
@@ -58,11 +62,7 @@
 
         <activity android:name=".activity.ModificacionUsuario" android:label="ModificacionUsuario" android:exported="true"/>
         <activity android:name=".activity.ReportesSeguridad" android:label="ReportesSeguridad" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
 

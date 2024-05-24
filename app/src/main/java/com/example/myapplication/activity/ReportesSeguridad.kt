@@ -10,11 +10,6 @@ import com.example.myapplication.utils.isServiceRunning
 class ReportesSeguridad: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(!isServiceRunning(applicationContext, NetworkChangeService ::class.java)){
-            val intent = Intent(this, NetworkChangeService::class.java)
-            startService(intent)
-        }
-
         setContentView(R.layout.reporte_seguridad)
-}
+    }
 }

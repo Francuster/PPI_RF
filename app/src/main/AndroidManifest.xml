@@ -65,6 +65,9 @@
 
         </activity>
 
+        <activity android:name=".activity.RegistroRrHhPrimeraSalaActivity" android:label="RegistroRrHhPrimeraSalaActivity" />
+        <activity android:name=".activity.CamaraParaRegistroRrHhActivity" android:label="CamaraParaRegistroRrHhActivity" />
+        <activity android:name=".activity.InicioRrHhActivity" android:label="InicioRrHhActivity" />
 
 
 

@@ -306,7 +306,7 @@
         android:layout_height="0dp"
 
 
-        android:onClick="goToAnteEscanea"
+        android:onClick="goToRegistroRrHhPrimeraSala"
         app:layout_constraintBottom_toBottomOf="@+id/elipse_scan"
         app:layout_constraintEnd_toEndOf="@+id/elipse_scan"
         app:layout_constraintStart_toStartOf="@+id/elipse_scan"

@@ -280,13 +280,16 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         isScanning = !isScanning
         updateButtonState()
         if (isScanning) {
-            startTimer()
+            timeUpToastShown = false // Restablecer la bandera cuando se reinicia el escaneo
+            startTimer() // Reiniciar el temporizador al iniciar el escaneo
             showToastOnUiThread("Escaneando 30 segundos...")
         } else {
-            stopTimer()
+            stopTimer() // Detener el temporizador al detener el escaneo manualmente
             showToastOnUiThread("Escaneo detenido manualmente")
         }
     }
+
+
     //cambia el estado del boton
     private fun updateButtonState() {
         buttonScan.text = if (isScanning) "Detener Escaneo" else "Escanear"
@@ -303,7 +306,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
     }
 
     private fun mostrarPantallaErrorIngreso() {
-        val intent = Intent(applicationContext, RegistroDenegadoActivity::class.java)
+        val intent = Intent(applicationContext, IngresoDenegadoActivity::class.java)
         startActivity(intent)
     }
 

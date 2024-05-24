@@ -154,7 +154,7 @@
             android:background="@drawable/boton_verde"
             android:fontFamily="@font/inter_extrabold"
 
-            android:onClick="Siguiente"
+            android:onClick="ingresoClick"
             android:text="INGRESO"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -175,7 +175,7 @@
             android:background="@drawable/boton_verde"
             android:fontFamily="@font/inter_extrabold"
 
-            android:onClick="Siguiente"
+            android:onClick="egresoClick"
             android:text="EGRESO"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"

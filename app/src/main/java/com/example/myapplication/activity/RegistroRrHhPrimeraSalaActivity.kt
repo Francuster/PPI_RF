@@ -37,11 +37,13 @@ class RegistroRrHhPrimeraSalaActivity : AppCompatActivity() {
             val byteArray = data?.getByteArrayExtra("image")
             if (byteArray != null) {
                 imagenBase64 = Base64.encodeToString(byteArray, Base64.DEFAULT)
+                enviarDatosRegistro()
             }
+            //enviarDatosRegistro()
         }
     }
 
-    fun enviarDatosRegistro(view: View) {
+    fun enviarDatosRegistro() {
         val nombreEditText = findViewById<EditText>(R.id.nombre_texto)
         val apellidoEditText = findViewById<EditText>(R.id.apellido_texto)
         val documentoEditText = findViewById<EditText>(R.id.documento_texto)
@@ -68,21 +70,24 @@ class RegistroRrHhPrimeraSalaActivity : AppCompatActivity() {
 
         val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         val request = Request.Builder()
-            .url("https://tu-backend/api/users") // Cambia por tu URL local u online
+            .url("http://192.168.1.34:5000/api/users") // Cambia por tu URL local u online
             .post(requestBody)
             .build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body?.string()
+                val responseBody = response.body?.string()
+                if (response.isSuccessful && responseBody != null) {
+                    // Procesar la respuesta exitosa
                     goToRegistroExitoso()
                 } else {
+                    // Procesar la respuesta no exitosa
                     goToRegistroDenegado()
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
+                // Manejar el fallo en la solicitud
                 runOnUiThread {
                     Toast.makeText(this@RegistroRrHhPrimeraSalaActivity, "Fallo en la solicitud: ${e.message}", Toast.LENGTH_SHORT).show()
                 }

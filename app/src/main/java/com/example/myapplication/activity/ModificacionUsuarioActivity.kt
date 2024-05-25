@@ -14,6 +14,9 @@ import org.json.JSONObject
 import java.io.IOException
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
+import java.io.FileOutputStream
 
 class ModificacionUsuarioActivity : AppCompatActivity() {
 
@@ -105,20 +108,24 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
     fun enviarDatosModificacion() {
         userId?.let { id ->
-            val json = JSONObject().apply {
-                put("nombre", nombre)
-                put("apellido", apellido)
-                put("dni", documento)
-                put("rol", rol)
-                put("horariosEntrada", horaEntrada)
-                put("horariosSalida", horaSalida)
-                put("email", mail)
-                imageByteArray?.let {
-                    put("image", Base64.encodeToString(it, Base64.DEFAULT))
+            val multipartBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+            nombre?.let { multipartBodyBuilder.addFormDataPart("nombre", it) }
+            apellido?.let { multipartBodyBuilder.addFormDataPart("apellido", it) }
+            documento?.let { multipartBodyBuilder.addFormDataPart("dni", it) }
+            rol?.let { multipartBodyBuilder.addFormDataPart("rol", it) }
+            horaEntrada?.let { multipartBodyBuilder.addFormDataPart("horariosEntrada", it) }
+            horaSalida?.let { multipartBodyBuilder.addFormDataPart("horariosSalida", it) }
+            mail?.let { multipartBodyBuilder.addFormDataPart("email", it) }
+
+            imageByteArray?.let {
+                val tempFile = File.createTempFile("image", ".jpg", cacheDir)
+                FileOutputStream(tempFile).use { fos ->
+                    fos.write(it)
                 }
+                multipartBodyBuilder.addFormDataPart("image", tempFile.name, tempFile.asRequestBody("image/jpeg".toMediaTypeOrNull()))
             }
 
-            val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+            val requestBody = multipartBodyBuilder.build()
             val request = Request.Builder()
                 .url("http://192.168.1.34:5000/api/users/$id")
                 .put(requestBody)

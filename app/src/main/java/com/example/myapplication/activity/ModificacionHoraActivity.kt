@@ -1,64 +1,47 @@
 package com.example.myapplication.activity
 
-
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.utils.NetworkChangeService
 import com.example.myapplication.utils.isServiceRunning
-import android.widget.Spinner
 import com.google.android.material.textfield.TextInputEditText
 import java.util.Calendar
 
-
-class RegistroUsuarioActivity:AppCompatActivity() {
+class ModificacionHoraActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(!isServiceRunning(applicationContext, NetworkChangeService ::class.java)){
             val intent = Intent(this, NetworkChangeService::class.java)
             startService(intent)
         }
-
-        setContentView(R.layout.registro_primera_sala_rrhh)
-        val spinner:Spinner = findViewById<Spinner>(R.id.tipo_cuenta)
-        var elementos=ArrayList<String>()
-
-        elementos.add("ESTUDIANTE")
-        elementos.add("PROFESOR")
-        elementos.add("SEGURIDAD")
-        elementos.add("RRHH")
-        val adaptador=ArrayAdapter(this,R.layout.desplegable_tipo_cuenta,elementos)
-        adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
-        spinner.adapter=adaptador
-
-        val hora_entrada=findViewById<TextInputEditText>(R.id.hora_entrada)
-        hora_entrada.setOnClickListener(){
+        setContentView(R.layout.modificacion_hora)
+        val hora_entrada_modificacion=findViewById<TextInputEditText>(R.id.hora_entrada_modificacion)
+        hora_entrada_modificacion.setOnClickListener(){
             val calendar = Calendar.getInstance()
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
             val timePickerDialog = TimePickerDialog(this, { _, selectedHour, selectedMinute ->
                 // Formatear la hora seleccionada y mostrarla en el TextInputEditText
                 val formattedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-                hora_entrada.setText(formattedTime)
+                hora_entrada_modificacion.setText(formattedTime)
             }, hour, minute, true)
 
             // Mostrar el TimePickerDialog
             timePickerDialog.show()
         }
-
-        val hora_salida=findViewById<TextInputEditText>(R.id.hora_salida)
-        hora_salida.setOnClickListener(){
+        val hora_salida_modificacion=findViewById<TextInputEditText>(R.id.hora_salida_modificacion)
+        hora_salida_modificacion.setOnClickListener(){
             val calendar = Calendar.getInstance()
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
             val timePickerDialog = TimePickerDialog(this, { _, selectedHour, selectedMinute ->
                 // Formatear la hora seleccionada y mostrarla en el TextInputEditText
                 val formattedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-                hora_salida.setText(formattedTime)
+                hora_salida_modificacion.setText(formattedTime)
             }, hour, minute, true)
 
             // Mostrar el TimePickerDialog
@@ -66,11 +49,10 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         }
 
     }
-    fun Siguiente(view : View){
+    fun goToAtras(view : View){
 
-        val intent = Intent(applicationContext, Denegado::class.java)
+        val intent = Intent(applicationContext, ModificacionUsuarioActivity::class.java)
         startActivity(intent)
 
     }
-
 }

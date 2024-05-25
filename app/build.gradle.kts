@@ -70,7 +70,10 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.runner)
-    implementation(libs.androidx.leanback) // Cambia la versión si es necesario
+    implementation(libs.androidx.leanback)
+    implementation(libs.androidx.legacy.support.v4) // Cambia la versión si es necesario
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

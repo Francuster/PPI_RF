@@ -69,6 +69,8 @@
         <activity android:name=".activity.CamaraParaRegistroRrHhActivity" android:label="CamaraParaRegistroRrHhActivity" />
         <activity android:name=".activity.InicioRrHhActivity" android:label="InicioRrHhActivity" />
 
+        <activity android:name=".activity.IngresoDenegadoActivity" android:label="InicioDenegadoActivity" />
+
 
 
         <!-- Declara tu servicio dentro de la sección <application> -->

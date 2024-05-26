@@ -270,6 +270,7 @@ class CamaraParaRegistroRrHhActivity : AppCompatActivity(), Camera.PreviewCallba
         }
     }
 
+
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {

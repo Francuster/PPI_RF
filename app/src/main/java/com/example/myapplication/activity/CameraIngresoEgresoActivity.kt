@@ -415,57 +415,6 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
 
         val byteStream = ByteArrayOutputStream()
         val imageMat = MatOfByte()
-        Imgcodecs.imencode(".png", faceMat, imageMat)
-        byteStream.write(imageMat.toArray())
-
-        // Crear el cuerpo de la solicitud HTTP
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("image", "filename.png", byteStream.toByteArray().toRequestBody("image/png".toMediaTypeOrNull()))
-            .build()
-
-        // Construir y enviar la solicitud HTTP
-        val request = Request.Builder()
-            .url("https://log3r.up.railway.app/api/authentication")//cambiar por ip local para prueba o ip online
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                // Manejar la respuesta del servidor aquí
-                if (response.isSuccessful) {
-                    // La solicitud fue exitosa //
-                    //showToastOnUiThread("La solicitud fue exitosa")
-                    val responseBody = response.body?.string() // Obtener la respuesta como una cadena
-                    val jsonObject = JSONObject(responseBody) // Convertir la cadena JSON a un objeto JSONObject
-
-                    // Obtener el objeto "data" que contiene los datos de la persona
-                    val dataObject = jsonObject.getJSONObject("data")
-
-                    // Extraer los datos de la persona del objeto "data"
-                    val nombre = dataObject.getString("nombre")
-                    val apellido = dataObject.getString("apellido")
-                    val dni = dataObject.getInt("dni")
-
-                    //roles
-                    val rolArray = dataObject.getJSONArray("rol")
-                    // Convertir el JSONArray de roles a una lista de cadenas
-                    val primerRol = rolArray.getString(0)
-                    var roles=rolArray.getString(0)
-                    // Recorrer el JSONArray y almacenar cada elemento en el array
-                    for (i in 1 until rolArray.length()) {
-                        roles="$roles"+"\n"+"${rolArray.getString(i)}"
-                    }
-                    //lugares
-                    val lugaresArray=dataObject.getJSONArray("lugares")
-                    var lugares = lugaresArray.getString(0)
-                    // Recorrer el JSONArray y almacenar cada elemento en el array
-                    for (i in 1 until lugaresArray.length()) {
-                        lugares="$lugares"+"\n"+"${lugaresArray.getString(i)}"
-                    }
-
-                    registro_exitoso_antesala(nombre, apellido, dni, roles,lugares)
-
 
         try {
             // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej, JPEG, PNG)

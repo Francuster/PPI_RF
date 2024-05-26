@@ -280,13 +280,16 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         isScanning = !isScanning
         updateButtonState()
         if (isScanning) {
-            startTimer()
+            timeUpToastShown = false // Restablecer la bandera cuando se reinicia el escaneo
+            startTimer() // Reiniciar el temporizador al iniciar el escaneo
             showToastOnUiThread("Escaneando 30 segundos...")
         } else {
-            stopTimer()
+            stopTimer() // Detener el temporizador al detener el escaneo manualmente
             showToastOnUiThread("Escaneo detenido manualmente")
         }
     }
+
+
     //cambia el estado del boton
     private fun updateButtonState() {
         buttonScan.text = if (isScanning) "Detener Escaneo" else "Escanear"
@@ -298,8 +301,15 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         if (!detecto && !timeUpToastShown) {
             showToastOnUiThread("Tiempo de escaneo agotado")
             timeUpToastShown = true
+            mostrarPantallaErrorIngreso()  // Redirigir a la pantalla de error
         }
     }
+
+    private fun mostrarPantallaErrorIngreso() {
+        val intent = Intent(applicationContext, IngresoDenegadoActivity::class.java)
+        startActivity(intent)
+    }
+
 
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
@@ -519,12 +529,12 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                                 lugares = "$lugares\n${lugaresArray.getString(i)}"
                             }
 
+
                             registro_exitoso_antesala(nombre, apellido, dni, primerRol)
-                        } else {
-                            // Manejar errores HTTP específicos
-                            // Por ejemplo, el error 500 (Internal Server Error)
-                            // o el error 404 (Not Found)
-                            showToastOnUiThread("HTTP request unsuccessful with status code ${response.code}")
+                        } else if (response.code == 401) {
+                        // Si la solicitud fue no autorizada, mostrar pantalla inicio
+                            showToastOnUiThread("Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\n")
+                            //mostrarPantallaInicio()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -534,7 +544,9 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                         response.body?.close()
                         activeCall = null
                     }
+
                 }
+
 
                 override fun onFailure(call: Call, e: IOException) {
                     try {
@@ -560,6 +572,12 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
             }
             imageMat.release() // Liberar el recurso MatOfByte para liberar la memoria nativa de OpenCV
         }
+
+    }
+
+    private fun mostrarPantallaInicio() {
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
     }
 
 

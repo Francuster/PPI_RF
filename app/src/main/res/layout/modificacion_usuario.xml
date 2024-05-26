@@ -64,6 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
 
+                android:onClick="goToModificacionTexto"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -88,6 +89,8 @@
                 android:textColor="#36565B"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                android:onClick="goToModificacionTexto"
+                android:tag="documento"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.55"
@@ -121,6 +124,7 @@
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
             android:onClick="goToModificacionTexto"
+            android:tag="nombre"
             app:layout_constraintBottom_toBottomOf="parent"
 
             app:layout_constraintEnd_toEndOf="parent"
@@ -135,6 +139,7 @@
                 android:id="@+id/imagen_flecha_nombre"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:onClick="goToModificacionTexto"
 
 
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -159,13 +164,15 @@
                 android:textColor="#36565B"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                android:onClick="goToModificacionTexto"
+                android:tag="nombre"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.55"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@+id/imagen_nombre"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.533"
+                app:layout_constraintVertical_bias="0.466"
                 app:layout_constraintWidth_percent="0.68"
                 tools:ignore="DuplicateIds,MissingConstraints" />
 
@@ -207,6 +214,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
 
+                android:onClick="goToModificacionTexto"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -230,6 +238,8 @@
                 android:textColor="#36565B"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                android:onClick="goToModificacionTexto"
+                android:tag="apellido"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.55"
@@ -277,6 +287,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
 
+                android:onClick="goToModificacionTexto"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -301,6 +312,8 @@
                 android:textColor="#36565B"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                android:onClick="goToModificacionTexto"
+                android:tag="mail"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.55"
@@ -334,7 +347,7 @@
             android:layout_height="40dp"
 
 
-            android:onClick="goToAtras"
+            android:onClick="goToAtrasInicioRRHH"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.028"
@@ -351,7 +364,7 @@
             android:layout_weight="1"
             android:background="@drawable/boton"
             android:fontFamily="@font/inter_extrabold"
-            android:onClick="Siguiente"
+            android:onClick="goToCameraParaRegistro"
             android:text="CAMBIAR FOTO"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -424,6 +437,7 @@
                 android:textColor="#36565B"
                 android:textSize="15sp"
                 android:textStyle="bold"
+                android:onClick="goToModificacionRol"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.55"

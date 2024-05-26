@@ -34,7 +34,11 @@
             android:name=".activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MyApplication">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
         </activity>
         <!--Login-->
@@ -83,16 +87,19 @@
         <activity android:name=".activity.ModificacionHoraActivity" android:label="ModificacionHoraActivityActivity" android:exported="true">
         </activity>
 
-        <activity android:name=".activity.ModificacionUsuarioActivity" android:label="ModificacionUsuarioActivity" android:exported="true">
 
+        <activity android:name=".activity.RegistroExitoso2Activity" android:label="RegistroExitoso2Activity" />
+        <activity android:name=".activity.RegistroDenegado2Activity" android:label="RegistroDenegado2Activity" />
+
+
+        <activity android:name=".activity.ModificacionUsuarioActivity" android:label="ModificacionUsuarioActivity" android:exported="true">
         </activity>
+
+
+
         <!-- Configuracion RRHH -->
         <activity android:name=".activity.ConfiguracionRRHHActivity" android:label="ConfiguracionRRHHActivity" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!-- Declara tu servicio dentro de la sección <application> -->
         <meta-data

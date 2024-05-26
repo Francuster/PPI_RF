@@ -57,12 +57,23 @@ class RegistroExitosoAntesalaActivity: AppCompatActivity() {
         }
     }
 
-    fun Siguiente(view: View) {
+    fun ingresoClick(view: View) {
         // Iniciar la actividad RegistroExitosoActivity
         val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
         val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
         val horario = formato.format(Date())
-        val log = Log( horario,nombre,apellido,dni,"ingresando","online")
+        val log = Log( horario,nombre,apellido,dni,"Ingresando","online")
+        val logRequest = SendDataToBackend(applicationContext)
+        logRequest.sendLog(log)
+        startActivity(intent)
+    }
+
+    fun egresoClick(view: View){
+        // Iniciar la actividad RegistroExitosoActivity
+        val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
+        val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+        val horario = formato.format(Date())
+        val log = Log( horario,nombre,apellido,dni,"Saliendo","online")
         val logRequest = SendDataToBackend(applicationContext)
         logRequest.sendLog(log)
         startActivity(intent)

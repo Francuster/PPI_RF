@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.Composable
 import com.example.myapplication.R
 import com.example.myapplication.utils.deviceIsConnected
 
@@ -43,6 +42,12 @@ class InicioSeguridadActivity: AppCompatActivity() {
             val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
             startActivity(intent)
         }
+    }
+    fun goToReporteSeguridad(view: View) {
+
+            val intent = Intent(applicationContext, ReportesSeguridadActivity::class.java)
+            startActivity(intent)
+
     }
 
 }

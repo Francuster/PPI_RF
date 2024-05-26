@@ -3,7 +3,7 @@ package com.example.myapplication.model
 import android.graphics.Bitmap
 import org.json.JSONArray
 import org.json.JSONObject
-
+//esta clase deberia borrarse
 data class Persona(
     val numeroDocumento: String, //cambiar a number seguramente
     val nombre: String,

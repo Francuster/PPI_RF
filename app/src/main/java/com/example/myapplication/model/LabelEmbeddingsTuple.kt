@@ -1,4 +1,4 @@
-package com.example.myapplication.service
+package com.example.myapplication.model
 
 import com.example.myapplication.model.Usuario
 

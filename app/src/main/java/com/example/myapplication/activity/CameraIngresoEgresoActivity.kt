@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import okhttp3.Call
 import okhttp3.Callback
@@ -436,7 +437,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
 
             // Construir y enviar la solicitud HTTP
             val request = Request.Builder()
-                .url("https://log3r.up.railway.app/api/authentication") // Cambiar por IP local para prueba o IP online
+                .url(BuildConfig.BASE_URL + "/api/authentication") // Cambiar por IP local para prueba o IP online
                 .post(requestBody)
                 .build()
 
@@ -486,6 +487,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                         // Cerrar el cuerpo de la respuesta y limpiar la referencia a la solicitud activa
                         response.body?.close()
                         activeCall = null
+
                     }
 
 

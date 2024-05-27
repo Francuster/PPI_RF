@@ -23,8 +23,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
-import com.example.myapplication.service.FaceRecognitionV2
+import com.example.myapplication.service.FaceRecognition
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -67,11 +68,11 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
     private var lastRequestTimeMillis = 0L
     private val requestIntervalMillis = 15000L // 1000=1 segundo
 
-    private var faceRecognitionV2: FaceRecognitionV2? = null
+    private var faceRecognition: FaceRecognition? = null
 
 
     init {
-        faceRecognitionV2 = FaceRecognitionV2()
+        faceRecognition = FaceRecognition()
 
     }
 
@@ -416,22 +417,6 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                     // Verificar si se detectó al menos un rostro
                     if (faces.toArray().isNotEmpty()) {
 
-//                        if(!deviceIsConnected(applicationContext)){
-//                            val bitmap = convertNV21ToBitmap(data, width, height)
-//                            if(bitmap != null){
-//                                val usuario = faceRecognitionV2?.faceRecognitionGetUser(bitmap, this)
-//                                if(usuario?.label != -1){
-//                                    // Crear el Intent y pasar los datos
-//                                    val intent = Intent(this, InicioSeguridadActivity::class.java)
-//                                    intent.putExtra("nombre", usuario?.nombre)
-//                                    intent.putExtra("apellido", usuario?.apellido)
-//                                    intent.putExtra("dni", usuario?.dni)
-//                                    intent.putExtra("roles", usuario?.rol.toString())
-//                                    startActivity(intent)
-//                                }
-//                            }
-//
-//                        }
                         // Enviar la matriz RGBA completa como una solicitud HTTP
                         enviarMatrizComoHTTPRequest(rgbaMat)
 

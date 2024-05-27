@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.database.Connection
 import com.example.myapplication.model.Log
 import com.example.myapplication.model.Registro
@@ -28,7 +29,7 @@ class SendDataToBackend (private val context: Context) {
 
         // URL
 
-        val url = "https://log3r.up.railway.app/api/authentication/logs"
+        val url = BuildConfig.BASE_URL + "/api/authentication/logs"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)

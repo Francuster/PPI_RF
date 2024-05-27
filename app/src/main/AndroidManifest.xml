@@ -27,16 +27,22 @@
 <!--            android:enabled="true"-->
 <!--            android:exported="true"></service>-->
 
+        <!--Main-->
+
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.MyApplication">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
+        <!--Login-->
+        <activity
+            android:name=".activity.OfflineFaceRecognitionActivity"
+            android:exported="false"
+            android:label="@string/title_activity_offline_face_recognition"
+            android:theme="@style/Theme.MyApplication" />
+
 
         <activity
             android:name=".activity.RegistroExitosoAntesalaActivity"
@@ -47,11 +53,54 @@
         <activity android:name=".activity.FormularioOfflineActivity" android:label="FormularioOffline" />
         <activity android:name=".activity.RegistroDenegadoActivity" android:label="RegistroDenegado" />
         <activity android:name=".activity.CameraLoginActivity" android:label="CameraLoginActivity" />
+
+        <!--Pantallas de inicio-->
         <activity android:name=".activity.InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
         <activity android:name=".activity.CameraxOfllineActivity" android:label="CameraxOfllineActivity" />
         <activity android:name=".activity.CameraxLoginActivity" android:label="CameraxLoginActivity" />
         <activity android:name=".activity.CameraxAuthenticationActivity" android:label="CameraxAuthenticationActivity" />
 
+        <activity android:name=".activity.InicioRrHhActivity" android:label="InicioRrHhActivity" />
+        <!--Reportes-->
+        <activity android:name=".activity.ReportesSeguridadActivity" android:label="ReportesSeguridad" android:exported="true">
+
+        </activity>
+
+
+
+        <activity android:name=".activity.Denegado" android:label="Denegado" />
+        <!--ABM-->
+        <activity android:name=".activity.ModificacionTextoActivity" android:label="ModificacionUsuario" android:exported="true"/>
+
+
+        <activity android:name=".activity.RegistroUsuarioActivity" android:label="RegistroUsuarioActivity" android:exported="true">
+
+        </activity>
+
+
+        <activity android:name=".activity.ModificacionRolActivity" android:label="ModificacionRolActivity" android:exported="true">
+
+        </activity>
+        <activity android:name=".activity.RegistroRrHhPrimeraSalaActivity" android:label="RegistroRrHhPrimeraSalaActivity" />
+        <activity android:name=".activity.CamaraParaRegistroRrHhActivity" android:label="CamaraParaRegistroRrHhActivity" />
+        <activity android:name=".activity.ModificacionHoraActivity" android:label="ModificacionHoraActivityActivity" android:exported="true">
+        </activity>
+
+
+        <activity android:name=".activity.ModificacionUsuarioActivity" android:label="ModificacionUsuarioActivity" android:exported="true">
+
+        <activity android:name=".activity.IngresoDenegadoActivity" android:label="InicioDenegadoActivity" />
+
+
+        </activity>
+        <!-- Configuracion RRHH -->
+        <activity android:name=".activity.ConfiguracionRRHHActivity" android:label="ConfiguracionRRHHActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <!-- Declara tu servicio dentro de la sección <application> -->
         <meta-data
             android:name="preloaded_fonts"

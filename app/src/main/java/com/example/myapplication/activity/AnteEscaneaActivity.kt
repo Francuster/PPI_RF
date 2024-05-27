@@ -22,6 +22,5 @@ class AnteEscaneaActivity: AppCompatActivity() {
             Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
             finish()
         }
-
     }
 }

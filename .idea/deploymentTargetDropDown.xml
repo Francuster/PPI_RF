@@ -2,6 +2,9 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="CameraLoginActivity">
+        <State />
+      </entry>
       <entry key="ReportesSeguridadActivity">
         <State>
           <targetSelectedWithDropDown>

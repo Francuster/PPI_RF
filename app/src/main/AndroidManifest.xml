@@ -27,9 +27,8 @@
 <!--            android:enabled="true"-->
 <!--            android:exported="true"></service>-->
 
-
-
         <!--Main-->
+
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"
@@ -57,6 +56,10 @@
 
         <!--Pantallas de inicio-->
         <activity android:name=".activity.InicioSeguridadActivity" android:label="InicioSeguridadActivity" />
+        <activity android:name=".activity.CameraxOfllineActivity" android:label="CameraxOfllineActivity" />
+        <activity android:name=".activity.CameraxLoginActivity" android:label="CameraxLoginActivity" />
+        <activity android:name=".activity.CameraxAuthenticationActivity" android:label="CameraxAuthenticationActivity" />
+
         <activity android:name=".activity.InicioRrHhActivity" android:label="InicioRrHhActivity" />
         <!--Reportes-->
         <activity android:name=".activity.ReportesSeguridadActivity" android:label="ReportesSeguridad" android:exported="true">

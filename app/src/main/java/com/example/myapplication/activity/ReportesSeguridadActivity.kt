@@ -20,6 +20,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import android.graphics.pdf.PdfDocument
+import com.example.myapplication.BuildConfig
 
 class ReportesSeguridadActivity : AppCompatActivity() {
     private lateinit var calendarView: CalendarView
@@ -59,7 +60,7 @@ class ReportesSeguridadActivity : AppCompatActivity() {
     // Función para descargar los logs en base a la fecha seleccionada
     private fun downloadLogs(date: String) {
         // Construir la URL para la solicitud HTTP
-        val url = "http://192.168.1.34:5000/api/day/logs?fecha=$date"
+        val url = BuildConfig.BASE_URL + "/api/day/logs?fecha=$date"
         val client = OkHttpClient()
 
         // Construir la solicitud HTTP GET

@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import okhttp3.*
 import org.json.JSONObject
@@ -68,7 +69,7 @@ class RegistroRrHhPrimeraSalaActivity : AppCompatActivity() {
 
         val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         val request = Request.Builder()
-            .url("https://tu-backend/api/users") // Cambia por tu URL local u online
+            .url(BuildConfig.BASE_URL + "/api/users") // Cambia por tu URL local u online
             .post(requestBody)
             .build()
 

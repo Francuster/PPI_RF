@@ -70,6 +70,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
     private var faceRecognition: FaceRecognition? = null
 
+    private var activeCall: Call? = null // Guardo la solicitud HTTP activa
 
     init {
         faceRecognition = FaceRecognition()
@@ -448,7 +449,6 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
 
 
-    private var activeCall: Call? = null // Guardo la solicitud HTTP activa
 
     private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
         // Rotar la imagen 90 grados en sentido antihorario
@@ -478,7 +478,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
             // Construir y enviar la solicitud HTTP
             val request = Request.Builder()
-                .url("https://log3r.up.railway.app/api/authentication") // Cambiar por IP local para prueba o IP online
+                .url(BuildConfig.BASE_URL + "/api/authentication") // Cambiar por IP local para prueba o IP online
                 .post(requestBody)
                 .build()
 

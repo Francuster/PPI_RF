@@ -150,7 +150,7 @@ class SendDataToBackend (private val context: Context) {
         // URL
         var sended:Boolean=true
 
-        val url = "https://log3r.up.railway.app/api/authentication/logs"
+        val url = BuildConfig.BASE_URL + "/api/authentication/logs"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)

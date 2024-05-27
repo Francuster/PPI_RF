@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import okhttp3.Call
 import okhttp3.Callback
@@ -27,7 +28,7 @@ class InicioRrHhActivity: AppCompatActivity() {
 
     private fun fetchUser() {
         val request = Request.Builder()
-            .url("http://192.168.1.34:5000/api/users") // Cambia esto por la URL de tu API
+            .url(BuildConfig.BASE_URL +"/api/users") // Cambia esto por la URL de tu API
             .build()
 
         client.newCall(request).enqueue(object : Callback {

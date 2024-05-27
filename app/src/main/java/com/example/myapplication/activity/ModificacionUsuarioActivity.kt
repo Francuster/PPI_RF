@@ -2,21 +2,24 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Base64
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.utils.NetworkChangeService
 import com.example.myapplication.utils.isServiceRunning
-import okhttp3.*
-import org.json.JSONObject
-import java.io.IOException
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.Response
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
 class ModificacionUsuarioActivity : AppCompatActivity() {
 
@@ -127,7 +130,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
             val requestBody = multipartBodyBuilder.build()
             val request = Request.Builder()
-                .url("http://192.168.1.34:5000/api/users/$id")
+                .url(BuildConfig.BASE_URL + "/api/users/$id")
                 .put(requestBody)
                 .build()
 

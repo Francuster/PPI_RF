@@ -224,7 +224,7 @@
 
             <com.google.android.material.textfield.TextInputEditText
 
-                android:id="@+id/nombre_texto"
+                android:id="@+id/email_texto"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@android:color/transparent"

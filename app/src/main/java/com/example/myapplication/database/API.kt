@@ -3,19 +3,14 @@ package com.example.myapplication.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import android.os.Build
 import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.example.myapplication.model.Registro
-import android.widget.Toast
-import androidx.annotation.RequiresApi
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+
 import java.util.Calendar
-import java.util.Locale
+
 
 //import com.example.myapplication.entities.Usuario
 /*

@@ -95,7 +95,7 @@ class SendDataToBackend (private val context: Context) {
             var count:Int=0
             val connection = Connection(context)
             val db = connection.writableDatabase
-            val puntero = db.rawQuery("SELECT * FROM ingresos", null)
+            val puntero = db.rawQuery("SELECT * FROM LOGS", null)
 
         if (puntero.moveToFirst()) {
             db.beginTransaction()
@@ -114,7 +114,7 @@ class SendDataToBackend (private val context: Context) {
                         count+=
                         // Borra el registro si se envió correctamente
                         db.delete(
-                            "ingresos",
+                            "LOGS",
                             "horario = ? AND nombre = ? AND apellido = ? AND dni = ? AND estado = ? AND tipo = ?",
                             arrayOf(reg.horario, reg.nombre, reg.apellido, reg.dni, reg.estado, reg.tipo)
                         )
@@ -162,7 +162,7 @@ class SendDataToBackend (private val context: Context) {
 
         // Crear el cuerpo de la solicitud HTTP
         val requestBody = FormBody.Builder()
-            .add("horario", reg.horario)
+            .add("horario", horario.toString())
             .add("nombre", reg.nombre)
             .add("apellido", reg.apellido)
             .add("dni", reg.dni)

@@ -15,12 +15,42 @@ class InicioSeguridadActivity: AppCompatActivity() {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.inicio_seguridad)
         }
+        override fun onResume() {
+            super.onResume()
+            setContentView(R.layout.inicio_seguridad)
+        }
 
     fun goToAnteEscanea(view: View) {
+        if(deviceIsConnected(applicationContext)){
             val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
             startActivity(intent)
+            finish()
+        }else{
+            Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
+            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
+            startActivity(intent)
+        }
     }
 
+    fun goToFormulario(view: View) {
+        if(deviceIsConnected(applicationContext)){
+            val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
+            startActivity(intent)
+            finish()
+        }else{
+            Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
+            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
+            startActivity(intent)
+        }
+
+    }
+    fun goToReporteSeguridad(view: View) {
+
+        val intent = Intent(applicationContext, ReportesSeguridadActivity::class.java)
+        startActivity(intent)
+
+    }
+    
     fun reconectar(view: View){
          if(deviceIsConnected(applicationContext)){
             Toast.makeText(this, "Sincronizando...", Toast.LENGTH_SHORT).show()
@@ -35,6 +65,7 @@ class InicioSeguridadActivity: AppCompatActivity() {
             Toast.makeText(this, "Para sincronizar debes estar conectado a Internet", Toast.LENGTH_SHORT).show()
         }
     }
+
 }
 
 

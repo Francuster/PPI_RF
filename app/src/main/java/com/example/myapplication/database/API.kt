@@ -3,11 +3,19 @@ package com.example.myapplication.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.os.Build
 import android.util.Log
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import com.example.myapplication.model.Registro
+import android.widget.Toast
+import androidx.annotation.RequiresApi
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
 //import com.example.myapplication.entities.Usuario
 /*
@@ -18,8 +26,38 @@ object API {
 
   fun salidaUsuario(ingreso: Ingreso usuario: Usuario)
 }*/
+fun registrarLogs(context: Context, nombre: String, apellido: String, dni: Int, estado: String, tipo: String) {
+    val databaseConnection = Connection(context)
+    val db = databaseConnection.writableDatabase
+    val fechaActual = obtenerFechaActualISO()
+    try {
+        // Registrar el visitante en la tabla de Logs
+        val queryLogs = "INSERT INTO logs (horario, nombre, apellido, dni, estado, tipo) VALUES (?, ?, ?, ?, ?, ?)"
+        db.execSQL(queryLogs, arrayOf(fechaActual, nombre, apellido, dni, estado, tipo))
+    } catch (e: Exception) {
+        // Manejar cualquier excepción
+        Log.e(TAG, "Error al registrar Log", e)
+    } finally {
+        // Cerrar la conexión a la base de datos
+        Log.i(TAG, "Entrada de usuario insertada correctamente en la tabla LOGS con horario: $fechaActual")
+        db.close()
+    }
+}
 
-fun entradaVisitante(context: Context, usuarioID: Int, fechaHoraEntrada: String, entradaSalidaOnline: Int) {
+fun obtenerFechaActualISO(): String {
+    // Crear un objeto Calendar para obtener la fecha y hora actual
+    val calendar = Calendar.getInstance()
+
+    // Crear un formato de fecha ISO 8601
+    val formatoISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+
+    // Obtener la fecha actual en formato ISO 8601
+    val fechaActualISO = formatoISO.format(calendar.time)
+
+    // Retornar la fecha en formato ISO
+    return fechaActualISO
+}
+fun insertIntoIngresos(context: Context, usuarioID: Int?, fechaHoraEntrada: String, entradaSalidaOnline: Int) {
     val databaseConnection = Connection(context)
     val db: SQLiteDatabase = databaseConnection.writableDatabase
 
@@ -158,3 +196,4 @@ fun obtenerIdUsuarioPorLegajo(context: Context, legajo: String): Int? {
     // Devolver el id_usuario (o null si no se encontró)
     return idUsuario
 }
+

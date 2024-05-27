@@ -2,6 +2,8 @@ package com.example.myapplication.service
 
 import android.content.Context
 import android.database.Cursor
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import com.example.myapplication.database.Connection
 import com.example.myapplication.model.Log
@@ -23,6 +25,7 @@ class SendDataToBackend (private val context: Context) {
     private var activeCall: Call? = null
 
     fun sendLog(log: Log) {
+
         // URL
 
         val url = "https://log3r.up.railway.app/api/authentication/logs"

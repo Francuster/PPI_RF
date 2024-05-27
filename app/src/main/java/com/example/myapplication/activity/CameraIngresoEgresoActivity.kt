@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import okhttp3.Call
 import okhttp3.Callback
@@ -265,13 +266,16 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         isScanning = !isScanning
         updateButtonState()
         if (isScanning) {
-            startTimer()
+            timeUpToastShown = false // Restablecer la bandera cuando se reinicia el escaneo
+            startTimer() // Reiniciar el temporizador al iniciar el escaneo
             showToastOnUiThread("Escaneando 30 segundos...")
         } else {
-            stopTimer()
+            stopTimer() // Detener el temporizador al detener el escaneo manualmente
             showToastOnUiThread("Escaneo detenido manualmente")
         }
     }
+
+
     //cambia el estado del boton
     private fun updateButtonState() {
         buttonScan.text = if (isScanning) "Detener Escaneo" else "Escanear"
@@ -283,8 +287,10 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         if (!detecto && !timeUpToastShown) {
             showToastOnUiThread("Tiempo de escaneo agotado")
             timeUpToastShown = true
+            mostrarPantallaErrorIngreso()  // Redirigir a la pantalla de error
         }
     }
+
 
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
@@ -304,8 +310,8 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         timer?.cancel()
     }
 
-    private fun siguiente() {
-        val intent = Intent(applicationContext, RegistroExitosoActivity::class.java)
+    private fun mostrarPantallaErrorIngreso() {
+        val intent = Intent(applicationContext, RegistroDenegadoActivity::class.java)
         startActivity(intent)
     }
 
@@ -431,7 +437,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
 
             // Construir y enviar la solicitud HTTP
             val request = Request.Builder()
-                .url("https://log3r.up.railway.app/api/authentication") // Cambiar por IP local para prueba o IP online
+                .url(BuildConfig.BASE_URL + "/api/authentication") // Cambiar por IP local para prueba o IP online
                 .post(requestBody)
                 .build()
 
@@ -468,11 +474,11 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                             }
 
                             registro_exitoso_antesala(nombre, apellido, dni, primerRol, lugares)
-                        } else {
-                            // Manejar errores HTTP específicos
-                            // Por ejemplo, el error 500 (Internal Server Error)
-                            // o el error 404 (Not Found)
-                            showToastOnUiThread("HTTP request unsuccessful with status code ${response.code}")
+                        } else if (response.code == 401) {
+                            // Si la solicitud fue no autorizada, mostrar pantalla error
+                            //mostrarPantallaErrorIngreso()
+                            showToastOnUiThread("Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\nError en la solicitud HTTP")
+
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -481,8 +487,22 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                         // Cerrar el cuerpo de la respuesta y limpiar la referencia a la solicitud activa
                         response.body?.close()
                         activeCall = null
+
                     }
+
+
+
+
+                    // Mostrar los datos de la persona en un Toast para pruebas
+                    /*val personaInfo = "Nombre: $nombre\n" +
+                            "Apellido: $apellido\n" +
+                            "DNI: $dni\n" +
+                            "Roles: ${roles.joinToString(", ")}"
+                    showToastOnUiThread(personaInfo)*/
+
+
                 }
+
 
                 override fun onFailure(call: Call, e: IOException) {
                     try {
@@ -505,6 +525,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                 byteStream.close() // Cerrar ByteArrayOutputStream para liberar el recurso de memoria
             } catch (e: IOException) {
                 e.printStackTrace() // Registrar el error si no se puede cerrar el flujo
+
             }
             imageMat.release() // Liberar el recurso MatOfByte para liberar la memoria nativa de OpenCV
         }

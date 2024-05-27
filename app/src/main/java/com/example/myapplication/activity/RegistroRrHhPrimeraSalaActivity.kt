@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import okhttp3.*
 import java.io.File
@@ -76,7 +77,7 @@ class RegistroRrHhPrimeraSalaActivity : AppCompatActivity() {
 
         val requestBody = multipartBodyBuilder.build()
         val request = Request.Builder()
-            .url("http://192.168.1.34:5000/api/users")
+            .url(BuildConfig.BASE_URL + "/api/users") // Cambia por tu URL local u online
             .post(requestBody)
             .build()
 

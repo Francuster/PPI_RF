@@ -319,8 +319,6 @@
         android:id="@+id/imagen_scan"
         android:layout_width="49dp"
         android:layout_height="47dp"
-
-
         android:onClick="goToAnteEscanea"
         app:layout_constraintBottom_toBottomOf="@+id/elipse_scan"
         app:layout_constraintEnd_toEndOf="@+id/elipse_scan"
@@ -392,7 +390,7 @@
             android:layout_weight="1"
             android:background="@drawable/boton"
             android:fontFamily="@font/inter_extrabold"
-            android:onClick="Siguiente"
+            android:onClick="reconectar"
             android:text="RECONECTAR"
             android:textColor="#7D7A73"
 

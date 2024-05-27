@@ -3,15 +3,14 @@ package com.example.myapplication.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import android.os.Build
 import android.util.Log
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
+import java.util.Date
 import java.util.Locale
+import com.example.myapplication.model.Registro
+
+import java.util.Calendar
+
 
 //import com.example.myapplication.entities.Usuario
 /*
@@ -57,6 +56,7 @@ fun insertIntoIngresos(context: Context, usuarioID: Int?, fechaHoraEntrada: Stri
     val databaseConnection = Connection(context)
     val db: SQLiteDatabase = databaseConnection.writableDatabase
 
+
     try {
         // Crea un objeto ContentValues para almacenar los datos que se insertarán
         val values = ContentValues().apply {
@@ -82,6 +82,42 @@ fun insertIntoIngresos(context: Context, usuarioID: Int?, fechaHoraEntrada: Stri
     } finally {
         // Cerrar la base de datos
         db.close()
+    }
+}
+
+//Funcion de prueba (No utilizada para sincronizar datos y no testeada). Deberia juntar los datos del registro offline e ingresarlos a la SQliteDB local
+//Se implementó nueva data class Registro en ves de la data class Log, ya que es amibugua con android.com.util.Log
+
+fun ingresarRegistro(context: Context,reg: Registro){
+    val databaseConnection = Connection(context)
+    val db: SQLiteDatabase = databaseConnection.writableDatabase
+
+    try {
+        val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+        val horario = formato.format(Date())
+        reg.horario=horario
+        val values = ContentValues().apply {
+            put("horario", reg.horario)
+            put("nombre", reg.nombre)
+            put("apellido",reg.apellido)
+            put("dni",reg.dni)
+            put("estado",reg.estado)
+            put("tipo",reg.tipo)
+        }
+        val newRowId = db.insert("ingresos", null, values)
+
+        if (newRowId == -1L) {
+            // Manejar el error de inserción
+            Log.e(TAG, "Error al insertar la entrada de usuario en la tabla ingresos.")
+        } else {
+            Log.i(TAG, "Entrada de usuario insertada correctamente en la tabla ingresos con ID: $newRowId")
+        }
+    } catch (e: Exception) {
+    // Manejar la excepción si algo sale mal
+    Log.e(TAG, "Error al insertar la entrada de usuario en la tabla ingresos.", e)
+    } finally {
+    // Cerrar la base de datos
+    db.close()
     }
 }
 

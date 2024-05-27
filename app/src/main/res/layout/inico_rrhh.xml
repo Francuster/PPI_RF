@@ -249,7 +249,7 @@
             android:id="@+id/empleados_nav"
             android:layout_width="75dp"
             android:layout_height="47dp"
-
+            android:onClick="goToCfgCerteza"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.000"
@@ -262,7 +262,7 @@
                 android:layout_width="107dp"
                 android:layout_height="20dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:text="Empleados"
+                android:text="Configurar Certeza"
                 android:textAlignment="center"
                 android:textSize="7sp"
                 android:textStyle="bold"

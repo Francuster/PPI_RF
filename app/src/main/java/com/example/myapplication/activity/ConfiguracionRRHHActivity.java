@@ -1,6 +1,8 @@
 package com.example.myapplication.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -43,5 +45,10 @@ public class ConfiguracionRRHHActivity extends AppCompatActivity {
                 // No necesitas hacer nada aquí
             }
         });
+    }
+
+    public void goBackInicioRRHH(View view) {
+        Intent intent = new Intent(getApplicationContext(), InicioRrHhActivity.class);
+        startActivity(intent);
     }
 }

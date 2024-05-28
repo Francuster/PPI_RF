@@ -8,6 +8,7 @@ import android.widget.Toast
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.database.Connection
 import com.example.myapplication.model.Log
+import com.example.myapplication.model.Registro
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -15,6 +16,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class SendDataToBackend (private val context: Context) {
@@ -36,11 +40,11 @@ class SendDataToBackend (private val context: Context) {
         // Crear el cuerpo de la solicitud HTTP
         val requestBody = FormBody.Builder()
             .add("horario", log.horario)
-            .add("nombre",log.nombre)
-            .add("apellido",log.apellido)
-            .add("dni",log.dni)
-            .add("estado",log.estado)
-            .add("tipo",log.tipo)
+            .add("nombre", log.nombre)
+            .add("apellido", log.apellido)
+            .add("dni", log.dni)
+            .add("estado", log.estado)
+            .add("tipo", log.tipo)
             .build()
 
         // Crea la solicitud POST
@@ -49,8 +53,34 @@ class SendDataToBackend (private val context: Context) {
             .post(requestBody)
             .build()
 
+        activeCall?.cancel()
+
+
+        activeCall = client.newCall(request)
+
+
         // Ejecuta la solicitud de forma asíncrona
-        client.newCall(request).enqueue(object : Callback {
+        activeCall?.enqueue(object : Callback {
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    // La solicitud fue exitosa //
+                    if (response.isSuccessful) {
+                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                    }
+                    else{
+                        Toast.makeText(context, "HTTP request unsuccessful with status code ${response.code}", Toast.LENGTH_SHORT).show()
+                    }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(context, "Error en la respuesta: ${e.message}", Toast.LENGTH_SHORT).show()
+                }finally {
+                    response.body?.close()
+                    activeCall = null
+                }
+            }
+
             override fun onFailure(call: Call, e: IOException) {
                 // Maneja el fallo de la solicitud
                 e.printStackTrace()

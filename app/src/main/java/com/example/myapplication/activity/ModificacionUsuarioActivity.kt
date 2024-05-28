@@ -129,19 +129,24 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             val requestBody = multipartBodyBuilder.build()
             val request = Request.Builder()
                 .url(BuildConfig.BASE_URL+"/api/users/$id")
-                .put(requestBody)
+                .post(requestBody)
+                .header("Content-Type", "multipart/form-data")
                 .build()
 
             client.newCall(request).enqueue(object : Callback {
                 override fun onResponse(call: Call, response: Response) {
-                    if (response.isSuccessful) {
-                        runOnUiThread {
-                            Toast.makeText(this@ModificacionUsuarioActivity, "Usuario actualizado con éxito", Toast.LENGTH_SHORT).show()
-                            goToModificacionExitosa()
-                        }
-                    } else {
-                        runOnUiThread {
-                            Toast.makeText(this@ModificacionUsuarioActivity, "Fallo en la actualización del usuario", Toast.LENGTH_SHORT).show()
+                    runOnUiThread {
+                        when (response.code) {
+                            200 -> {
+                                Toast.makeText(this@ModificacionUsuarioActivity, "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
+                                goToModificacionExitosa()
+                            }
+                            500 -> {
+                                Toast.makeText(this@ModificacionUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {
+                                Toast.makeText(this@ModificacionUsuarioActivity, "Error: ${response.message}", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 }

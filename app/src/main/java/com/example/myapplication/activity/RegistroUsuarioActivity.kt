@@ -158,9 +158,11 @@ class RegistroUsuarioActivity:AppCompatActivity() {
                             goToRegistroExitoso()
                         }
                         500 -> {
+                            goToRegistroDenegado()
                             Toast.makeText(this@RegistroUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
                         }
                         else -> {
+                            goToRegistroDenegado()
                             Toast.makeText(this@RegistroUsuarioActivity, "Error: ${response.message}", Toast.LENGTH_SHORT).show()
                         }
                     }

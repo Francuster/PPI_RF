@@ -6,6 +6,7 @@ import android.util.Base64
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.utils.NetworkChangeService
 import com.example.myapplication.utils.isServiceRunning
@@ -127,7 +128,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
             val requestBody = multipartBodyBuilder.build()
             val request = Request.Builder()
-                .url("http://192.168.1.34:5000/api/users/$id")
+                .url(BuildConfig.BASE_URL+"/api/users/$id")
                 .put(requestBody)
                 .build()
 

@@ -23,8 +23,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
-import com.example.myapplication.service.FaceRecognitionV2
+import com.example.myapplication.service.FaceRecognition
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -67,11 +68,12 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
     private var lastRequestTimeMillis = 0L
     private val requestIntervalMillis = 15000L // 1000=1 segundo
 
-    private var faceRecognitionV2: FaceRecognitionV2? = null
+    private var faceRecognition: FaceRecognition? = null
 
+    private var activeCall: Call? = null // Guardo la solicitud HTTP activa
 
     init {
-        faceRecognitionV2 = FaceRecognitionV2()
+        faceRecognition = FaceRecognition()
 
     }
 
@@ -279,14 +281,19 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
     private fun toggleScanning() {
         isScanning = !isScanning
         updateButtonState()
+        detecto = false // Reiniciar el estado de detección al iniciar un nuevo escaneo
         if (isScanning) {
-            startTimer()
+            timeUpToastShown = false // Restablecer la bandera cuando se reinicia el escaneo
+            startTimer() // Reiniciar el temporizador al iniciar el escaneo
             showToastOnUiThread("Escaneando 30 segundos...")
         } else {
-            stopTimer()
+            activeCall?.cancel()
+            stopTimer() // Detener el temporizador al detener el escaneo manualmente
             showToastOnUiThread("Escaneo detenido manualmente")
         }
     }
+
+
     //cambia el estado del boton
     private fun updateButtonState() {
         buttonScan.text = if (isScanning) "Detener Escaneo" else "Escanear"
@@ -295,17 +302,25 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
     private fun handleScanTimeout() {
         isScanning = false
         updateButtonState()
+        stopCamera() // Detener la cámara cuando se agote el tiempo
         if (!detecto && !timeUpToastShown) {
             showToastOnUiThread("Tiempo de escaneo agotado")
             timeUpToastShown = true
+            mostrarPantallaErrorIngreso()  // Redirigir a la pantalla de error
         }
     }
+
+    private fun mostrarPantallaErrorIngreso() {
+        val intent = Intent(applicationContext, IngresoDenegadoActivity::class.java)
+        startActivity(intent)
+    }
+
 
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
-                if (!detecto && (secondsRemaining <= 3&& secondsRemaining >2 ||secondsRemaining <= 15&& secondsRemaining >14 )) { //manejar tiempo que se muestra en toast
+                if (!detecto && (secondsRemaining <= 3 && secondsRemaining > 2 || secondsRemaining <= 10 && secondsRemaining > 9|| secondsRemaining <= 20 && secondsRemaining > 19)) { // Manejar tiempo que se muestra en toast
                     showToastOnUiThread("Tiempo restante: $secondsRemaining segundos")
                 }
             }
@@ -314,6 +329,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
             }
         }.start()
     }
+
 
     private fun stopTimer() {
         timer?.cancel()
@@ -406,22 +422,6 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                     // Verificar si se detectó al menos un rostro
                     if (faces.toArray().isNotEmpty()) {
 
-//                        if(!deviceIsConnected(applicationContext)){
-//                            val bitmap = convertNV21ToBitmap(data, width, height)
-//                            if(bitmap != null){
-//                                val usuario = faceRecognitionV2?.faceRecognitionGetUser(bitmap, this)
-//                                if(usuario?.label != -1){
-//                                    // Crear el Intent y pasar los datos
-//                                    val intent = Intent(this, InicioSeguridadActivity::class.java)
-//                                    intent.putExtra("nombre", usuario?.nombre)
-//                                    intent.putExtra("apellido", usuario?.apellido)
-//                                    intent.putExtra("dni", usuario?.dni)
-//                                    intent.putExtra("roles", usuario?.rol.toString())
-//                                    startActivity(intent)
-//                                }
-//                            }
-//
-//                        }
                         // Enviar la matriz RGBA completa como una solicitud HTTP
                         enviarMatrizComoHTTPRequest(rgbaMat)
 
@@ -453,7 +453,6 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
 
 
-    private var activeCall: Call? = null // Guardo la solicitud HTTP activa
 
     private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
         // Rotar la imagen 90 grados en sentido antihorario
@@ -483,7 +482,7 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
             // Construir y enviar la solicitud HTTP
             val request = Request.Builder()
-                .url("https://log3r.up.railway.app/api/authentication") // Cambiar por IP local para prueba o IP online
+                .url(BuildConfig.BASE_URL + "/api/authentication") // Cambiar por IP local para prueba o IP online
                 .post(requestBody)
                 .build()
 
@@ -519,12 +518,12 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                                 lugares = "$lugares\n${lugaresArray.getString(i)}"
                             }
 
+
                             registro_exitoso_antesala(nombre, apellido, dni, primerRol)
-                        } else {
-                            // Manejar errores HTTP específicos
-                            // Por ejemplo, el error 500 (Internal Server Error)
-                            // o el error 404 (Not Found)
-                            showToastOnUiThread("HTTP request unsuccessful with status code ${response.code}")
+                        } else if (response.code == 401) {
+                        // Si la solicitud fue no autorizada, mostrar pantalla inicio
+                            showToastOnUiThread("Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\n")
+                            //mostrarPantallaInicio()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
@@ -534,7 +533,9 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                         response.body?.close()
                         activeCall = null
                     }
+
                 }
+
 
                 override fun onFailure(call: Call, e: IOException) {
                     try {
@@ -560,6 +561,12 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
             }
             imageMat.release() // Liberar el recurso MatOfByte para liberar la memoria nativa de OpenCV
         }
+
+    }
+
+    private fun mostrarPantallaInicio() {
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
     }
 
 

@@ -3,6 +3,7 @@ package com.example.myapplication.service
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
+import com.example.myapplication.model.LabelEmbeddingsTuple
 import com.example.myapplication.model.Usuario
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.FileUtil
@@ -10,7 +11,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 
-public class FaceRecognitionV2{
+public class FaceRecognition(){
 
     // Define the input image size expected by the model
     private val INPUT_IMAGE_SIZE = 112
@@ -61,7 +62,7 @@ public class FaceRecognitionV2{
         return embeddingsTuple
     }
 
-    public fun faceRecognitionGetUser(inputImage: Bitmap, context: Context): Usuario {
+    private fun faceRecognitionGetUser(inputImage: Bitmap, context: Context): Usuario {
 
         val recognizedFaceEmbeddings = getFaceEmbeddings(inputImage, context)
 
@@ -75,7 +76,7 @@ public class FaceRecognitionV2{
         return usuario
     }
 
-    private fun getFaceEmbeddings(inputImage: Bitmap, context: Context): FloatArray {
+    public fun getFaceEmbeddings(inputImage: Bitmap, context: Context): FloatArray {
         // 1. Load the TensorFlow Lite model for face recognition
         val tfliteModel = loadModelFile("mobile_face_net.tflite", context)
 

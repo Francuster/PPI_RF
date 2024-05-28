@@ -14,12 +14,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import okhttp3.*
+import org.json.JSONArray
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
+import android.graphics.pdf.PdfDocument
+import com.example.myapplication.BuildConfig
 
-class ReportesSeguridadActivity: AppCompatActivity() {
+class ReportesSeguridadActivity : AppCompatActivity() {
     private lateinit var calendarView: CalendarView
     private lateinit var downloadButton: Button
     private var selectedDate: String? = null
@@ -57,7 +60,7 @@ class ReportesSeguridadActivity: AppCompatActivity() {
     // Función para descargar los logs en base a la fecha seleccionada
     private fun downloadLogs(date: String) {
         // Construir la URL para la solicitud HTTP
-        val url = "http://192.168.1.34:5000/api/day/logs?fecha=$date"
+        val url = BuildConfig.BASE_URL + "/api/day/logs?fecha=$date"
         val client = OkHttpClient()
 
         // Construir la solicitud HTTP GET
@@ -77,39 +80,14 @@ class ReportesSeguridadActivity: AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 // Manejar la respuesta recibida del servidor
-                when {
-                    // Si la respuesta es exitosa (código 2xx)
-                    response.isSuccessful -> {
-                        // Obtener el cuerpo de la respuesta como un flujo de bytes
-                        val responseBody = response.body?.byteStream()
-                        responseBody?.let { inputStream ->
-                            // Si el cuerpo de la respuesta no es nulo, generar el PDF de los logs
-                            saveLogsToPdf(inputStream, date)
-                        }
+                if (response.isSuccessful) {
+                    response.body?.string()?.let { responseBody ->
+                        // Si el cuerpo de la respuesta no es nulo, generar el PDF de los logs
+                        saveLogsToPdf(responseBody, date)
                     }
-                    // Si la solicitud es incorrecta (código 400)
-                    response.code == 400 -> {
-                        runOnUiThread {
-                            Toast.makeText(this@ReportesSeguridadActivity, "Solicitud incorrecta (400): Verifique los parámetros enviados.", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    // Si no se encontraron logs para la fecha seleccionada (código 404)
-                    response.code == 404 -> {
-                        runOnUiThread {
-                            Toast.makeText(this@ReportesSeguridadActivity, "No se encontraron logs para la fecha seleccionada (404).", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    // Si ocurre un error interno del servidor (código 500)
-                    response.code == 500 -> {
-                        runOnUiThread {
-                            Toast.makeText(this@ReportesSeguridadActivity, "Error interno del servidor (500). Inténtelo más tarde.", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                    // En cualquier otro caso, mostrar un mensaje de error genérico
-                    else -> {
-                        runOnUiThread {
-                            Toast.makeText(this@ReportesSeguridadActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
-                        }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@ReportesSeguridadActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -117,7 +95,7 @@ class ReportesSeguridadActivity: AppCompatActivity() {
     }
 
     // Función para guardar los logs descargados en un archivo PDF
-    private fun saveLogsToPdf(inputStream: java.io.InputStream, date: String) {
+    private fun saveLogsToPdf(responseBody: String, date: String) {
         // Crear un nombre de archivo basado en la fecha seleccionada
         val fileName = "logs_$date.pdf"
         // Obtener el directorio de almacenamiento externo donde se guardará el PDF
@@ -125,11 +103,19 @@ class ReportesSeguridadActivity: AppCompatActivity() {
         val file = File(storageDir, fileName)
 
         try {
+            // Configurar los atributos de impresión
+            val printAttributes = PrintAttributes.Builder()
+                .setMediaSize(PrintAttributes.MediaSize.ISO_A4)
+                .setResolution(PrintAttributes.Resolution("default", "default", 300, 300))
+                .setMinMargins(PrintAttributes.Margins.NO_MARGINS)
+                .build()
+
             // Inicializar un nuevo documento PDF
-            val document = PrintedPdfDocument(this, PrintAttributes.Builder().build())
+            val document = PrintedPdfDocument(this, printAttributes)
             // Comenzar una nueva página en el documento
-            val pageInfo = document.startPage(1)
-            val canvas = pageInfo.canvas
+            val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+            val page = document.startPage(pageInfo)
+            val canvas = page.canvas
             val paint = Paint()
 
             // Configuración de la página
@@ -139,20 +125,35 @@ class ReportesSeguridadActivity: AppCompatActivity() {
             paint.color = Color.BLACK
             paint.textSize = 12f
 
-            var yPos = 0f
-            val xPos = 0f
-            val lineHeight = 12f
+            var yPos = 20f
+            val xPos = 20f
+            val lineHeight = 20f
 
-            val buffer = ByteArray(4096)
-            var bytesRead: Int
-            // Leer el contenido de los logs y escribirlo en el canvas del PDF
-            while (inputStream.read(buffer).also { bytesRead = it } != -1) {
-                canvas.drawText(String(buffer, 0, bytesRead), xPos, yPos, paint)
-                yPos += lineHeight
+            // Parsear el JSON y escribir cada log en el PDF
+            val logsArray = JSONArray(responseBody)
+            for (i in 0 until logsArray.length()) {
+                val log = logsArray.getJSONObject(i)
+                val logText = """
+                    ID: ${log.getString("_id")}
+                    Horario: ${log.getString("horario")}
+                    Nombre: ${log.getString("nombre")}
+                    Apellido: ${log.getString("apellido")}
+                    DNI: ${log.getInt("dni")}
+                    Estado: ${log.getString("estado")}
+                    Tipo: ${log.getString("tipo")}
+                """.trimIndent()
+
+                // Dividir el texto en líneas para evitar desbordamiento de texto en el canvas
+                val lines = logText.split("\n")
+                for (line in lines) {
+                    canvas.drawText(line, xPos, yPos, paint)
+                    yPos += lineHeight
+                }
+                yPos += lineHeight // Espacio adicional entre logs
             }
 
             // Finalizar la página actual del documento
-            document.finishPage(pageInfo)
+            document.finishPage(page)
 
             // Guardar el documento PDF en el archivo
             FileOutputStream(file).use { outputStream ->
@@ -173,10 +174,9 @@ class ReportesSeguridadActivity: AppCompatActivity() {
             }
         }
     }
-    fun goToAtras(view: View) {
 
+    fun goToAtras(view: View) {
         val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
         startActivity(intent)
-
     }
 }

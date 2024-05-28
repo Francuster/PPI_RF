@@ -14,6 +14,7 @@ import com.example.myapplication.utils.NetworkChangeService
 import com.example.myapplication.utils.isServiceRunning
 import android.widget.Spinner
 import android.widget.Toast
+import com.example.myapplication.BuildConfig
 import com.google.android.material.textfield.TextInputEditText
 import okhttp3.Call
 import okhttp3.Callback
@@ -131,7 +132,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
         val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
         val request = Request.Builder()
-            .url("http://192.168.1.34:5000/api/users")//IP LOCAL U ONLINE
+            .url(BuildConfig.BASE_URL+"/api/users")//IP LOCAL U ONLINE
             .post(requestBody)
             .build()
 

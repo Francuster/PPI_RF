@@ -33,7 +33,7 @@ class RegistroExitosoAntesalaActivity: AppCompatActivity() {
         if (embeddingsResponse != null) {
             nombre = embeddingsResponse.data.nombre
             apellido = embeddingsResponse.data.apellido
-            val rol = embeddingsResponse.data.rol.joinToString(", ")
+            val rol = embeddingsResponse.data.rol[0]
             dni = embeddingsResponse.data.dni.toString()
             val lugares = embeddingsResponse.data.lugares.joinToString(", ")
 

@@ -16,7 +16,9 @@ class AnteEscaneaActivity: AppCompatActivity() {
     }
     fun Siguiente(view : View){
         if(deviceIsConnected(applicationContext)){
-            val intent = Intent(applicationContext, CameraIngresoEgresoActivity::class.java)
+//            val intent = Intent(applicationContext, CameraIngresoEgresoActivity::class.java)
+            val intent = Intent(applicationContext, CameraxAuthenticationActivity::class.java)
+
             startActivity(intent)
         }else{
             Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()

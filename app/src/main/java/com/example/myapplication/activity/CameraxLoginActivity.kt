@@ -269,8 +269,12 @@ class CameraxLoginActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {
                             if (response.isSuccessful) {
                                 println("Embeddings sent successfully")
-                                val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
-                                startActivity(intent)
+//                                val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
+//                                startActivity(intent)
+                                val embeddingsResponse = response.body()
+                                if (embeddingsResponse != null) {
+                                    loginExitoso(embeddingsResponse)
+                                }
                                 responseSuccess = true
                             } else {
                                 println("Failed to send Embeddings: ${response.code()}")
@@ -289,6 +293,26 @@ class CameraxLoginActivity : AppCompatActivity() {
         }
 
 //        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
+    }
+
+    private fun loginExitoso(embeddingsResponse: EmbeddingsResponse) {
+
+        // Crear el Intent y pasar los datos
+        if(embeddingsResponse.data.rol[0].equals("recursos humanos")){
+            val intent = Intent(this, InicioRrHhActivity::class.java)
+            startActivity(intent)
+        } else if(embeddingsResponse.data.rol[0].equals("seguridad")){
+            val intent = Intent(this, InicioSeguridadActivity::class.java)
+            startActivity(intent)
+        } else {
+            // Crear el Intent y pasar los datos solo si el rol no es "recursos humanos" ni "seguridad"
+            val intent = Intent(this, InicioSeguridadActivity::class.java)
+            intent.putExtra("nombre", embeddingsResponse.data.nombre)
+            intent.putExtra("apellido", embeddingsResponse.data.apellido)
+            intent.putExtra("dni", embeddingsResponse.data.dni)
+            intent.putExtra("roles", embeddingsResponse.data.rol.toString())
+            startActivity(intent)
+        }
     }
 
     private fun translateRect(

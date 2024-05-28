@@ -56,56 +56,22 @@
             app:layout_constraintVertical_bias="0.026"
             app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/ingreso"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rectangulo_celeste_ingreso"
+        <ScrollView
+            android:layout_width="361dp"
+            android:layout_height="499dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintHeight_percent="0.10"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.176"
-            app:layout_constraintWidth_percent="0.9">
+            app:layout_constraintVertical_bias="0.965">
 
-
-            <TextView
-                android:id="@+id/empleado"
-                android:layout_width="248dp"
-                android:layout_height="40dp"
-                android:fontFamily="@font/inter_extrabold"
-
-                android:text="Nombre Empleado"
-                android:textAlignment="center"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.061"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="MissingConstraints" />
-
-            <ImageView
-                android:id="@+id/imagen_flecha"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-
-                android:onClick="goToModificacionUsuario"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.90"
-                app:layout_constraintHorizontal_bias="0.553"
-                app:layout_constraintStart_toEndOf="@+id/empleado"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.521"
-                app:layout_constraintWidth_percent="0.15"
-                app:srcCompat="@drawable/expand_right_light" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <LinearLayout
+                android:id="@+id/container"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
+        </ScrollView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

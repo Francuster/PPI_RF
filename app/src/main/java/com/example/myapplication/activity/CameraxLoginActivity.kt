@@ -294,6 +294,7 @@ class CameraxLoginActivity : AppCompatActivity() {
                         override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {
                             if (response.isSuccessful) {
                                 println("Embeddings sent successfully")
+                                stopScanTimer()
 //                                val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
 //                                startActivity(intent)
                                 val embeddingsResponse = response.body()
@@ -557,7 +558,9 @@ class CameraxLoginActivity : AppCompatActivity() {
         }
         countDownTimer?.start()
     }
-
+    private fun stopScanTimer() {
+        countDownTimer?.cancel()
+    }
     override fun onDestroy() {
         super.onDestroy()
         // Detener el temporizador para evitar pérdida de memoria

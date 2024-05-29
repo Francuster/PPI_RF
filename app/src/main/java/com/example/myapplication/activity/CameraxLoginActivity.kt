@@ -14,9 +14,14 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.YuvImage
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
 import android.media.Image
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
+import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -65,17 +70,36 @@ class CameraxLoginActivity : AppCompatActivity() {
 
     private var responseSuccess = false
 
+    private var countDownTimer: CountDownTimer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.camerax_simple)
+        //contador
+        startScanTimer()
+        setContentView(R.layout.camerax)
         previewView = findViewById(R.id.previewView)
-        previewView?.scaleType = (PreviewView.ScaleType.FIT_CENTER)
         graphicOverlay = findViewById(R.id.graphic_overlay)
         detectionTextView = findViewById(R.id.detection_text)
 
         //        loadModel();
         faceRecognition = FaceRecognition()
+        val switchCameraButton: ImageButton = findViewById(R.id.switch_camera)
+        switchCameraButton.setOnClickListener {
+            switchCamer(it)
+        }
+        val ovalOverlay: View = findViewById(R.id.oval_overlay)
+
+        // Crear un ShapeDrawable con un OvalShape
+        val shapeDrawable = ShapeDrawable(OvalShape()).apply {
+            // Configurar el color del borde
+            paint.color = ContextCompat.getColor(applicationContext, R.color.white)
+            // Configurar el grosor del borde
+            paint.style = android.graphics.Paint.Style.STROKE
+            paint.strokeWidth = 8f // Puedes ajustar el grosor del borde aquí
+        }
+
+        // Asignar el ShapeDrawable como fondo del View
+        ovalOverlay.background = shapeDrawable
     }
 
     override fun onResume() {
@@ -204,17 +228,18 @@ class CameraxLoginActivity : AppCompatActivity() {
     protected val rotation: Int
         get() = previewView!!.display.rotation
 
-    private fun switchCamera() {
-        if (lensFacing == CameraSelector.LENS_FACING_BACK) {
-            lensFacing = CameraSelector.LENS_FACING_FRONT
-            flipX = true
-        } else {
-            lensFacing = CameraSelector.LENS_FACING_BACK
-            flipX = false
-        }
+    private fun switchCamer(view: View) {
 
-        if (cameraProvider != null) cameraProvider!!.unbindAll()
-        startCamera()
+            if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+                lensFacing = CameraSelector.LENS_FACING_FRONT
+                flipX = true
+            } else {
+                lensFacing = CameraSelector.LENS_FACING_BACK
+                flipX = false
+            }
+            if (cameraProvider != null) cameraProvider!!.unbindAll()
+            startCamera()
+
     }
 
     /** Face detection processor  */
@@ -505,4 +530,42 @@ class CameraxLoginActivity : AppCompatActivity() {
             return nv21
         }
     }
+    private fun showToast(message: String) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
+    private fun startScanTimer() {
+        // Iniciar un temporizador de 30 segundos
+        countDownTimer = object : CountDownTimer(31000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsRemaining = millisUntilFinished / 1000
+                // Mostrar un mensaje Toast cuando falten 20, 10 y 3 segundos
+                if (secondsRemaining == 30L) {
+                    showToast("Escaneando... 30 segundos restantes")
+                } else if (secondsRemaining == 20L) {
+                    showToast("Escaneando... 20 segundos restantes")
+                }else if (secondsRemaining == 10L) {
+                    showToast("Escaneando... 10 segundos restantes")
+                } else if (secondsRemaining == 3L) {
+                    showToast("Escaneando... 3 segundos restantes")
+                }
+            }
+
+            override fun onFinish() {
+                // Cuando el temporizador finaliza, puedes ir al siguiente intent
+                mostrarPantallaErrorIngreso()
+            }
+        }
+        countDownTimer?.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Detener el temporizador para evitar pérdida de memoria
+        countDownTimer?.cancel()
+    }
+    private fun mostrarPantallaErrorIngreso() {
+        val intent = Intent(applicationContext, IngresoDenegadoActivity::class.java)
+        startActivity(intent)
+    }
+
 }

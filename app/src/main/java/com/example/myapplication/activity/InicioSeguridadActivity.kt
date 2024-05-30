@@ -45,6 +45,14 @@ class InicioSeguridadActivity: AppCompatActivity() {
         }
     }
 
+    fun goToFormEspecial(view: View) {
+        if(deviceIsConnected(applicationContext)){
+            Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
+            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
 }
 
 

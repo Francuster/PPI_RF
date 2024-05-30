@@ -50,14 +50,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.database.TAG
+import com.example.myapplication.database.obtenerFechaActualISO
 import com.example.myapplication.database.registrarLogs
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun RenderFormulario(context: Context, onFinish: () -> Unit) {
+fun RenderFormulario(context: Context, offline: Boolean, onFinish: () -> Unit) {
     var showForm by remember { mutableStateOf(true) }
 
     Column(
@@ -77,9 +89,81 @@ fun RenderFormulario(context: Context, onFinish: () -> Unit) {
                 Formulario ({ nombre, apellido, mail, dni, categoria, estado ->
                     println("NOMBRE VISITANTE: $nombre, MAIL: $mail, DNI: $dni, TIPO DE CUENTA: $categoria")
                     if(dni.isNotEmpty()) {
-                        registrarLogs(context, nombre, apellido, dni.toInt(), estado, "offline")
-                        Toast.makeText(context, "Usuario ingresado exitosamente", Toast.LENGTH_LONG).show()
-                        Log.println(Log.INFO, TAG,"Ingreso de datos : "+nombre+", "+apellido+", "+dni)
+                        if(offline==false) {
+                            registrarLogs(context, nombre, apellido, dni.toInt(), estado, "offline")
+                            Toast.makeText(
+                                context,
+                                "Usuario ingresado exitosamente",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            Log.println(
+                                Log.INFO,
+                                TAG,
+                                "Ingreso de datos : " + nombre + ", " + apellido + ", " + dni
+                            )
+                        }else{
+                            val client = OkHttpClient.Builder()
+                                .connectTimeout(5, TimeUnit.SECONDS)
+                                .writeTimeout(5, TimeUnit.SECONDS)
+                                .readTimeout(20, TimeUnit.SECONDS)
+                                .build()
+                            var activeCall: Call? = null
+                            val requestBody = MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)
+                                .addFormDataPart("horario", obtenerFechaActualISO())
+                                .addFormDataPart("nombre", nombre)
+                                .addFormDataPart("apellido", apellido)
+                                .addFormDataPart("dni", dni)
+                                .addFormDataPart("estado", estado)
+                                .addFormDataPart("tipo", "Formulario")
+                                .build()
+                            val request = Request.Builder()
+                                .url("https://log3r.up.railway.app/api/authentication/logs") // Cambiar por IP local para prueba o IP online
+                                .post(requestBody)
+                                .build()
+
+                            activeCall?.cancel()
+
+                            // Enviar la solicitud HTTP y guardar una referencia a la solicitud activa
+                            activeCall = client.newCall(request)
+                            activeCall?.enqueue(object : Callback {
+                                override fun onResponse(call: Call, response: Response) {
+                                    try {
+                                        if (response.isSuccessful) {
+                                            // La solicitud fue exitosa
+                                            val responseBody = response.body?.string() ?: throw IOException("Response body is null")
+                                            val jsonObject = JSONObject(responseBody)
+
+                                        } else {
+                                            // Manejar errores HTTP específicos
+                                            // Por ejemplo, el error 500 (Internal Server Error)
+                                            // o el error 404 (Not Found)
+                                            val errorBody = response.body?.string()
+                                            Log.println(Log.ERROR, TAG, "HTTP request unsuccessful with status code ${response.code}, message: $errorBody")
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        Log.println(Log.ERROR, TAG,"Error en la respuesta: ${e.message}")
+                                    } finally {
+                                        // Cerrar el cuerpo de la respuesta y limpiar la referencia a la solicitud activa
+                                        response.body?.close()
+                                        activeCall = null
+                                    }
+                                }
+
+                                override fun onFailure(call: Call, e: IOException) {
+                                    try {
+                                        // OnFailure se utiliza para manejar fallos de conexión,
+                                        // errores de tiempo de espera y otros problemas de red.
+                                        e.printStackTrace()
+                                        Toast.makeText(context,"Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\nError en la solicitud HTTP",Toast.LENGTH_LONG)
+                                    } finally {
+                                        // Limpiar la referencia a la solicitud activa
+                                        activeCall = null
+                                    }
+                                }
+                            })
+                        }
                     } else {
                         Log.e(TAG, "Error de registro: No se encontró el legajo del visitante en la base local.")
                         Toast.makeText(context, "Error de registro.", Toast.LENGTH_LONG).show()
@@ -91,20 +175,6 @@ fun RenderFormulario(context: Context, onFinish: () -> Unit) {
             }
         }
     }
-}
-
-fun obtenerFechaActualISO(): String {
-    // Crear un objeto Calendar para obtener la fecha y hora actual
-    val calendar = Calendar.getInstance()
-
-    // Crear un formato de fecha ISO 8601
-    val formatoISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-
-    // Obtener la fecha actual en formato ISO 8601
-    val fechaActualISO = formatoISO.format(calendar.time)
-
-    // Retornar la fecha en formato ISO
-    return fechaActualISO
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

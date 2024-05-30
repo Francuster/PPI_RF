@@ -2,6 +2,7 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -23,28 +24,48 @@ import java.io.IOException
 
 class InicioRrHhActivity: AppCompatActivity() {
     private val client = OkHttpClient()
-    private var JsonArray = JSONArray()
+    private var jsonArray = JSONArray()
+    private val handler = Handler()
+    private lateinit var runnable: Runnable
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inico_rrhh)
         fetchUsers()
+
+        // Programa la actualización de usuarios cada 10 segundos
+        scheduleUserUpdate()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Detén la actualización periódica cuando la actividad se destruye
+        handler.removeCallbacks(runnable)
+    }
+
+    private fun scheduleUserUpdate() {
+        runnable = Runnable {
+            fetchUsers()
+            // Vuelve a programar la actualización después de 10 segundos
+            handler.postDelayed(runnable, 10000)
+        }
+        // Programa la primera ejecución después de 10 segundos
+        handler.postDelayed(runnable, 10000)
     }
 
     private fun mostrarTodosLosEmpleados() {
         val container: LinearLayout = findViewById(R.id.container)
 
         runOnUiThread {
-            Log.d("MostrarEmpleados", "JsonArray length: ${JsonArray.length()}")
+            container.removeAllViews() // Elimina vistas antiguas antes de agregar las nuevas
 
-            for (i in 0 until JsonArray.length()) {
-                val lastUserJsonObject = JsonArray.getJSONObject(i)
+            for (i in 0 until jsonArray.length()) {
+                val lastUserJsonObject = jsonArray.getJSONObject(i)
                 val userIdObject = lastUserJsonObject.getJSONObject("_id")
                 val userId = userIdObject.getString("\$oid")
                 val userName = lastUserJsonObject.getString("nombre")
                 val userSurname = lastUserJsonObject.getString("apellido")
                 val fullName = "$userName $userSurname"
-
-                Log.d("MostrarEmpleados", "User: $fullName")
 
                 val inflater: LayoutInflater = LayoutInflater.from(this)
                 val itemView: View = inflater.inflate(R.layout.item_usuario, container, false)
@@ -53,8 +74,6 @@ class InicioRrHhActivity: AppCompatActivity() {
                 textViewEmpleado.text = fullName
 
                 container.addView(itemView)
-
-                Log.d("LinearLayout", "Se ha agregado una vista de usuario al LinearLayout")
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
                     goToModificacionUsuario(userId)
@@ -79,7 +98,7 @@ class InicioRrHhActivity: AppCompatActivity() {
                     val responseData = response.body?.string()
                     responseData?.let {
                         Log.d("FetchUsers", "Response data: $it")
-                        JsonArray = JSONArray(it)
+                        jsonArray = JSONArray(it)
                         mostrarTodosLosEmpleados()
                     }
                 } else {
@@ -110,6 +129,7 @@ class InicioRrHhActivity: AppCompatActivity() {
         startActivity(intent)
 
     }
+    
 
 }
 

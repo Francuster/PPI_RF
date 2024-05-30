@@ -4,7 +4,13 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import android.widget.Toast
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import com.example.myapplication.model.Registro
+
+import java.util.Calendar
+
 
 //import com.example.myapplication.entities.Usuario
 /*
@@ -15,10 +21,41 @@ object API {
 
   fun salidaUsuario(ingreso: Ingreso usuario: Usuario)
 }*/
+fun registrarLogs(context: Context, nombre: String, apellido: String, dni: Int, estado: String, tipo: String) {
+    val databaseConnection = Connection(context)
+    val db = databaseConnection.writableDatabase
+    val fechaActual = obtenerFechaActualISO()
+    try {
+        // Registrar el visitante en la tabla de Logs
+        val queryLogs = "INSERT INTO logs (horario, nombre, apellido, dni, estado, tipo) VALUES (?, ?, ?, ?, ?, ?)"
+        db.execSQL(queryLogs, arrayOf(fechaActual, nombre, apellido, dni, estado, tipo))
+    } catch (e: Exception) {
+        // Manejar cualquier excepción
+        Log.e(TAG, "Error al registrar Log", e)
+    } finally {
+        // Cerrar la conexión a la base de datos
+        Log.i(TAG, "Entrada de usuario insertada correctamente en la tabla LOGS con horario: $fechaActual")
+        db.close()
+    }
+}
 
-fun entradaVisitante(context: Context, usuarioID: Int, fechaHoraEntrada: String, entradaSalidaOnline: Int) {
+fun obtenerFechaActualISO(): String {
+    // Crear un objeto Calendar para obtener la fecha y hora actual
+    val calendar = Calendar.getInstance()
+
+    // Crear un formato de fecha ISO 8601
+    val formatoISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+
+    // Obtener la fecha actual en formato ISO 8601
+    val fechaActualISO = formatoISO.format(calendar.time)
+
+    // Retornar la fecha en formato ISO
+    return fechaActualISO
+}
+fun insertIntoIngresos(context: Context, usuarioID: Int?, fechaHoraEntrada: String, entradaSalidaOnline: Int) {
     val databaseConnection = Connection(context)
     val db: SQLiteDatabase = databaseConnection.writableDatabase
+
 
     try {
         // Crea un objeto ContentValues para almacenar los datos que se insertarán
@@ -45,6 +82,42 @@ fun entradaVisitante(context: Context, usuarioID: Int, fechaHoraEntrada: String,
     } finally {
         // Cerrar la base de datos
         db.close()
+    }
+}
+
+//Funcion de prueba (No utilizada para sincronizar datos y no testeada). Deberia juntar los datos del registro offline e ingresarlos a la SQliteDB local
+//Se implementó nueva data class Registro en ves de la data class Log, ya que es amibugua con android.com.util.Log
+
+fun ingresarRegistro(context: Context,reg: Registro){
+    val databaseConnection = Connection(context)
+    val db: SQLiteDatabase = databaseConnection.writableDatabase
+
+    try {
+        val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+        val horario = formato.format(Date())
+        reg.horario=horario
+        val values = ContentValues().apply {
+            put("horario", reg.horario)
+            put("nombre", reg.nombre)
+            put("apellido",reg.apellido)
+            put("dni",reg.dni)
+            put("estado",reg.estado)
+            put("tipo",reg.tipo)
+        }
+        val newRowId = db.insert("ingresos", null, values)
+
+        if (newRowId == -1L) {
+            // Manejar el error de inserción
+            Log.e(TAG, "Error al insertar la entrada de usuario en la tabla ingresos.")
+        } else {
+            Log.i(TAG, "Entrada de usuario insertada correctamente en la tabla ingresos con ID: $newRowId")
+        }
+    } catch (e: Exception) {
+    // Manejar la excepción si algo sale mal
+    Log.e(TAG, "Error al insertar la entrada de usuario en la tabla ingresos.", e)
+    } finally {
+    // Cerrar la base de datos
+    db.close()
     }
 }
 
@@ -118,3 +191,4 @@ fun obtenerIdUsuarioPorLegajo(context: Context, legajo: String): Int? {
     // Devolver el id_usuario (o null si no se encontró)
     return idUsuario
 }
+

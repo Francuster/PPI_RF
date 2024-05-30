@@ -21,12 +21,20 @@ android {
     }
 
     buildTypes {
+        debug{
+            buildConfigField("String", "BASE_URL", "\"https://log3r.up.railway.app\"");
+//            buildConfigField("String", "BASE_URL", "\"http://192.168.68.112:5000\"");
+
+        }
         release {
+            buildConfigField("String", "BASE_URL", "\"https://log3r.up.railway.app\"");
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -37,6 +45,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        android.buildFeatures.buildConfig = true
         compose = true
     }
     composeOptions {
@@ -66,9 +75,14 @@ dependencies {
     implementation("org.opencv:opencv:4.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1") // Cambia la versión si es necesario
     implementation("androidx.core:core-ktx:1.10.1")
+    implementation ("org.json:json:20210307") // Para trabajar con JSON
     implementation(libs.core.ktx)
     implementation(libs.androidx.junit.ktx)
-    implementation(libs.androidx.runner) // Cambia la versión si es necesario
+    implementation(libs.androidx.runner)
+    implementation(libs.androidx.leanback)
+    implementation(libs.androidx.legacy.support.v4) // Cambia la versión si es necesario
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -76,8 +90,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation ("com.squareup.okhttp3:okhttp:4.9.2")// OKhttp para peticiones y solicitudes
-
+    // OKhttp para peticiones y solicitudes
+    implementation ("com.squareup.okhttp3:okhttp:4.9.2")
+    // Kotlin Extensions for OkHttp
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.2")
 
     var camerax_version = "1.2.2"
     implementation ("androidx.camera:camera-core:${camerax_version}")
@@ -97,6 +113,9 @@ dependencies {
     implementation ("org.tensorflow:tensorflow-lite-gpu:2.4.0")
     implementation ("org.tensorflow:tensorflow-lite-support:0.2.0")
 
+    // json
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
 
     //ML KIT Google

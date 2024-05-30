@@ -23,8 +23,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
-import com.example.myapplication.service.FaceRecognitionV2
+import com.example.myapplication.service.FaceRecognition
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -67,11 +68,12 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
     private var lastRequestTimeMillis = 0L
     private val requestIntervalMillis = 15000L // 1000=1 segundo
 
-    private var faceRecognitionV2: FaceRecognitionV2? = null
+    private var faceRecognition: FaceRecognition? = null
 
+    private var activeCall: Call? = null // Guardo la solicitud HTTP activa
 
     init {
-        faceRecognitionV2 = FaceRecognitionV2()
+        faceRecognition = FaceRecognition()
 
     }
 
@@ -280,13 +282,16 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         isScanning = !isScanning
         updateButtonState()
         if (isScanning) {
-            startTimer()
+            timeUpToastShown = false // Restablecer la bandera cuando se reinicia el escaneo
+            startTimer() // Reiniciar el temporizador al iniciar el escaneo
             showToastOnUiThread("Escaneando 30 segundos...")
         } else {
-            stopTimer()
+            stopTimer() // Detener el temporizador al detener el escaneo manualmente
             showToastOnUiThread("Escaneo detenido manualmente")
         }
     }
+
+
     //cambia el estado del boton
     private fun updateButtonState() {
         buttonScan.text = if (isScanning) "Detener Escaneo" else "Escanear"
@@ -298,8 +303,15 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         if (!detecto && !timeUpToastShown) {
             showToastOnUiThread("Tiempo de escaneo agotado")
             timeUpToastShown = true
+            mostrarPantallaErrorIngreso()  // Redirigir a la pantalla de error
         }
     }
+
+    private fun mostrarPantallaErrorIngreso() {
+        val intent = Intent(applicationContext, IngresoDenegadoActivity::class.java)
+        startActivity(intent)
+    }
+
 
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
@@ -325,12 +337,21 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
     private fun registro_exitoso_antesala(nombre: String, apellido: String, dni: Int, roles: String) {
 
         // Crear el Intent y pasar los datos
-        val intent = Intent(this, InicioSeguridadActivity::class.java)
-        intent.putExtra("nombre", nombre)
-        intent.putExtra("apellido", apellido)
-        intent.putExtra("dni", dni)
-        intent.putExtra("roles", roles)
-        startActivity(intent)
+        if(roles.equals("recursos humanos")){
+            val intent = Intent(this, InicioRrHhActivity::class.java)
+            startActivity(intent)
+        } else if(roles.equals("seguridad")){
+            val intent = Intent(this, InicioSeguridadActivity::class.java)
+            startActivity(intent)
+        } else {
+            // Crear el Intent y pasar los datos solo si el rol no es "recursos humanos" ni "seguridad"
+            val intent = Intent(this, InicioSeguridadActivity::class.java)
+            intent.putExtra("nombre", nombre)
+            intent.putExtra("apellido", apellido)
+            intent.putExtra("dni", dni)
+            intent.putExtra("roles", roles)
+            startActivity(intent)
+        }
     }
 
 
@@ -397,22 +418,6 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
                     // Verificar si se detectó al menos un rostro
                     if (faces.toArray().isNotEmpty()) {
 
-//                        if(!deviceIsConnected(applicationContext)){
-//                            val bitmap = convertNV21ToBitmap(data, width, height)
-//                            if(bitmap != null){
-//                                val usuario = faceRecognitionV2?.faceRecognitionGetUser(bitmap, this)
-//                                if(usuario?.label != -1){
-//                                    // Crear el Intent y pasar los datos
-//                                    val intent = Intent(this, InicioSeguridadActivity::class.java)
-//                                    intent.putExtra("nombre", usuario?.nombre)
-//                                    intent.putExtra("apellido", usuario?.apellido)
-//                                    intent.putExtra("dni", usuario?.dni)
-//                                    intent.putExtra("roles", usuario?.rol.toString())
-//                                    startActivity(intent)
-//                                }
-//                            }
-//
-//                        }
                         // Enviar la matriz RGBA completa como una solicitud HTTP
                         enviarMatrizComoHTTPRequest(rgbaMat)
 
@@ -444,8 +449,8 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
 
 
 
-    private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
 
+    private fun enviarMatrizComoHTTPRequest(faceMat: Mat) {
         // Rotar la imagen 90 grados en sentido antihorario
         Core.rotate(faceMat, faceMat, Core.ROTATE_90_COUNTERCLOCKWISE)
 
@@ -455,69 +460,111 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
             Imgproc.cvtColor(faceMat, faceMat, Imgproc.COLOR_BGR2RGB)
         }
 
-        // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej, JPEG,JPG)
         val byteStream = ByteArrayOutputStream()
         val imageMat = MatOfByte()
-        Imgcodecs.imencode(".png", faceMat, imageMat)
-        byteStream.write(imageMat.toArray())
 
-        // Crear el cuerpo de la solicitud HTTP
-        val requestBody = MultipartBody.Builder()
-            .setType(MultipartBody.FORM)
-            .addFormDataPart("image", "filename.png", byteStream.toByteArray().toRequestBody("image/png".toMediaTypeOrNull()))
-            .build()
+        try {
+            // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej, JPEG, PNG)
+            if (!Imgcodecs.imencode(".png", faceMat, imageMat)) {
+                throw IOException("Failed to encode image")
+            }
+            byteStream.write(imageMat.toArray())
 
-        // Construir y enviar la solicitud HTTP
-        val request = Request.Builder()
-            .url("https://log3r.up.railway.app/api/login")//cambiar por ip local para prueba o ip online
-            .post(requestBody)
-            .build()
+            // Crear el cuerpo de la solicitud HTTP
+            val requestBody = MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("image", "filename.png", byteStream.toByteArray().toRequestBody("image/png".toMediaTypeOrNull()))
+                .build()
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                // Manejar la respuesta del servidor aquí
-                if (response.isSuccessful) {
-                    // La solicitud fue exitosa //
-                    //showToastOnUiThread("La solicitud fue exitosa")
-                    val responseBody = response.body?.string() // Obtener la respuesta como una cadena
-                    val jsonObject = JSONObject(responseBody) // Convertir la cadena JSON a un objeto JSONObject
+            // Construir y enviar la solicitud HTTP
+            val request = Request.Builder()
+                .url(BuildConfig.BASE_URL + "/api/authentication") // Cambiar por IP local para prueba o IP online
+                .post(requestBody)
+                .build()
 
-                    // Obtener el objeto "data" que contiene los datos de la persona
-                    val dataObject = jsonObject.getJSONObject("data")
+            // Cancelar cualquier solicitud HTTP activa antes de enviar la nueva solicitud
+            activeCall?.cancel()
 
-                    // Extraer los datos de la persona del objeto "data"
-                    val nombre = dataObject.getString("nombre")
-                    val apellido = dataObject.getString("apellido")
-                    val dni = dataObject.getInt("dni")
-                    val rolArray = dataObject.getJSONArray("rol")
+            // Enviar la solicitud HTTP y guardar una referencia a la solicitud activa
+            activeCall = client.newCall(request)
+            activeCall?.enqueue(object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                    try {
+                        if (response.isSuccessful) {
+                            // La solicitud fue exitosa
+                            val responseBody = response.body?.string() ?: throw IOException("Response body is null")
+                            val jsonObject = JSONObject(responseBody)
 
-                    // Convertir el JSONArray de roles a una lista de cadenas
-                    val primerRol = rolArray.getString(0)
+                            // Obtener el objeto "data" que contiene los datos de la persona
+                            val dataObject = jsonObject.getJSONObject("data")
+
+                            // Extraer los datos de la persona del objeto "data"
+                            val nombre = dataObject.getString("nombre")
+                            val apellido = dataObject.getString("apellido")
+                            val dni = dataObject.getInt("dni")
+                            val rolArray = dataObject.getJSONArray("rol")
+
+                            // Convertir el JSONArray de roles a una lista de cadenas
+                            val primerRol = rolArray.getString(0)
+                            val lugaresArray = dataObject.getJSONArray("lugares")
+                            var lugares = lugaresArray.getString(0)
+
+                            // Recorrer el JSONArray y almacenar cada elemento en el array
+                            for (i in 1 until lugaresArray.length()) {
+                                lugares = "$lugares\n${lugaresArray.getString(i)}"
+                            }
 
 
-                    registro_exitoso_antesala(nombre, apellido, dni, primerRol)
-                    // Mostrar los datos de la persona en un Toast para pruebas
-                    /*val personaInfo = "Nombre: $nombre\n" +
-                            "Apellido: $apellido\n" +
-                            "DNI: $dni\n" +
-                            "Roles: ${roles.joinToString(", ")}"
-                    showToastOnUiThread(personaInfo)*/
-
+                            registro_exitoso_antesala(nombre, apellido, dni, primerRol)
+                        } else if (response.code == 401) {
+                        // Si la solicitud fue no autorizada, mostrar pantalla inicio
+                            showToastOnUiThread("Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\n")
+                            //mostrarPantallaInicio()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        showToastOnUiThread("Error en la respuesta: ${e.message}")
+                    } finally {
+                        // Cerrar el cuerpo de la respuesta y limpiar la referencia a la solicitud activa
+                        response.body?.close()
+                        activeCall = null
+                    }
 
                 }
-                // Cerrar el cuerpo de la respuesta
-                response.body?.close()
-            }
 
-            override fun onFailure(call: Call, e: IOException) {
-                // Manejar el fallo de la solicitud aquí PANTALLA ERROR INGRESO
-                e.printStackTrace()
-                showToastOnUiThread("Rostro detectado no registrado en la base de datos\n" +
-                        "Por favor regístrese y vuelva a intentarlo\n" +
-                        "Error en la solicitud HTTP")
+
+                override fun onFailure(call: Call, e: IOException) {
+                    try {
+                        // OnFailure se utiliza para manejar fallos de conexión,
+                        // errores de tiempo de espera y otros problemas de red.
+                        e.printStackTrace()
+                        showToastOnUiThread("Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\nError en la solicitud HTTP")
+                    } finally {
+                        // Limpiar la referencia a la solicitud activa
+                        activeCall = null
+                    }
+                }
+            })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            showToastOnUiThread("Error en la conversión o envío de la imagen: ${e.message}")
+        } finally {
+            // Bloque de liberación de recursos que siempre se ejecuta
+            try {
+                byteStream.close() // Cerrar ByteArrayOutputStream para liberar el recurso de memoria
+            } catch (e: IOException) {
+                e.printStackTrace() // Registrar el error si no se puede cerrar el flujo
             }
-        })
+            imageMat.release() // Liberar el recurso MatOfByte para liberar la memoria nativa de OpenCV
+        }
+
     }
+
+    private fun mostrarPantallaInicio() {
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
+    }
+
 
 
     private fun convertNV21ToBitmap(data: ByteArray, width: Int, height: Int): Bitmap? {

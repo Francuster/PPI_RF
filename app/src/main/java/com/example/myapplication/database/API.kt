@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import com.example.myapplication.model.Registro
 
 //import com.example.myapplication.entities.Usuario
 /*
@@ -42,11 +43,6 @@ fun registrarLogs(context: Context, nombre: String, apellido: String, dni: Int, 
 }
 
 fun obtenerFechaActualISO(): String {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-    return dateFormat.format(Date())
-}
-
-/**fun obtenerFechaActualISO(): String {
     // Crear un objeto Calendar para obtener la fecha y hora actual
     val calendar = Calendar.getInstance()
 
@@ -58,7 +54,7 @@ fun obtenerFechaActualISO(): String {
 
     // Retornar la fecha en formato ISO
     return fechaActualISO
-}**/
+}
 fun insertIntoIngresos(context: Context, usuarioID: Int?, fechaHoraEntrada: String, entradaSalidaOnline: Int) {
     val databaseConnection = Connection(context)
     val db: SQLiteDatabase = databaseConnection.writableDatabase

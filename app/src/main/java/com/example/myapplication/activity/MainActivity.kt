@@ -25,10 +25,11 @@ class MainActivity: AppCompatActivity() {
     fun Siguiente(view: View) {
 
         if (deviceIsConnected(applicationContext)) {
-            val intent = Intent(applicationContext, CameraLoginActivity::class.java)
+//            val intent = Intent(applicationContext, CameraLoginActivity::class.java)
+            val intent = Intent(applicationContext, CameraxLoginActivity::class.java)
             startActivity(intent)
         } else {
-            val intent = Intent(applicationContext, CameraxActivity::class.java)
+            val intent = Intent(applicationContext, CameraxOfllineActivity::class.java)
             startActivity(intent)
         }
 

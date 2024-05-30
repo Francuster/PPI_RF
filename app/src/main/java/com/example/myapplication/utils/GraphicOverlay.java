@@ -15,7 +15,7 @@ import androidx.annotation.Nullable;
 
 
 public class GraphicOverlay extends View {
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "GraphicOverlay";
     private final Paint rectPaint = new Paint();
     private float scaleX = 1.0f;
     private float scaleY = 1.0f;

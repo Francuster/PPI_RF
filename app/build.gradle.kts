@@ -21,12 +21,20 @@ android {
     }
 
     buildTypes {
+        debug{
+            buildConfigField("String", "BASE_URL", "\"https://log3r.up.railway.app\"");
+//            buildConfigField("String", "BASE_URL", "\"http://192.168.68.112:5000\"");
+
+        }
         release {
+            buildConfigField("String", "BASE_URL", "\"https://log3r.up.railway.app\"");
+
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -37,6 +45,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        android.buildFeatures.buildConfig = true
         compose = true
     }
     composeOptions {
@@ -70,7 +79,10 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.runner)
-    implementation(libs.androidx.leanback) // Cambia la versión si es necesario
+    implementation(libs.androidx.leanback)
+    implementation(libs.androidx.legacy.support.v4) // Cambia la versión si es necesario
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -101,6 +113,9 @@ dependencies {
     implementation ("org.tensorflow:tensorflow-lite-gpu:2.4.0")
     implementation ("org.tensorflow:tensorflow-lite-support:0.2.0")
 
+    // json
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
 
     //ML KIT Google

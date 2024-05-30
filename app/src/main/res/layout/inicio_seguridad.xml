@@ -309,11 +309,12 @@
             android:layout_width="70dp"
             android:layout_height="47dp"
 
+            android:onClick="goToReporteSeguridad"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.75"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintHorizontal_bias="0.75"
             app:layout_constraintVertical_bias="0.5">
 
             <TextView
@@ -401,8 +402,6 @@
         android:id="@+id/imagen_scan"
         android:layout_width="49dp"
         android:layout_height="47dp"
-
-
         android:onClick="goToAnteEscanea"
         app:layout_constraintBottom_toBottomOf="@+id/elipse_scan"
         app:layout_constraintEnd_toEndOf="@+id/elipse_scan"
@@ -474,7 +473,7 @@
             android:layout_weight="1"
             android:background="@drawable/boton"
             android:fontFamily="@font/inter_extrabold"
-            android:onClick="Siguiente"
+            android:onClick="reconectar"
             android:text="RECONECTAR"
             android:textColor="#7D7A73"
 

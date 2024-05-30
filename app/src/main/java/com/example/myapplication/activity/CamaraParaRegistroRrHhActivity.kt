@@ -270,6 +270,7 @@ class CamaraParaRegistroRrHhActivity : AppCompatActivity(), Camera.PreviewCallba
         }
     }
 
+
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -407,9 +408,10 @@ class CamaraParaRegistroRrHhActivity : AppCompatActivity(), Camera.PreviewCallba
         // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej. JPEG)
         val byteStream = ByteArrayOutputStream()
         val imageMat = MatOfByte()
-        Imgcodecs.imencode(".jpg", faceMat, imageMat)
+        Imgcodecs.imencode(".png", faceMat, imageMat)
         byteStream.write(imageMat.toArray())
 
+        // Obtener el array de bytes de la imagen
         val byteArray = byteStream.toByteArray()
 
         // Crear un intent para pasar la imagen a la actividad anterior
@@ -419,5 +421,6 @@ class CamaraParaRegistroRrHhActivity : AppCompatActivity(), Camera.PreviewCallba
         setResult(RESULT_OK, resultIntent)
         finish()
     }
+
 }
 

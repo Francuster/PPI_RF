@@ -260,65 +260,53 @@ class CameraxLoginActivity : AppCompatActivity() {
             .addOnFailureListener { e: Exception? -> Log.e(TAG, "Barcode process failure", e) }
             .addOnCompleteListener { task: Task<List<Face?>?>? -> image.close() }
     }
+    private var currentCall: Call<EmbeddingsResponse>? = null
 
     private fun onSuccessListener(faces: List<Face>, inputImage: InputImage) {
         var boundingBox: Rect? = null
-        var name: String? = null
         val scaleX = previewView!!.width.toFloat() / inputImage.height.toFloat()
         val scaleY = previewView!!.height.toFloat() / inputImage.width.toFloat()
 
-        if (faces.size > 0) {
+        if (faces.isNotEmpty() && !responseSuccess) {
             detectionTextView!!.setText(R.string.face_detected)
-            // get first face detected
             val face = faces[0]
-
-            // get bounding box of face;
             boundingBox = face.boundingBox
 
-
-            // convert img to bitmap & crop img
-            val bitmap = mediaImgToBmp(
-                inputImage.mediaImage,
-                inputImage.rotationDegrees,
-                boundingBox
-            )
-
+            val bitmap = mediaImgToBmp(inputImage.mediaImage, inputImage.rotationDegrees, boundingBox)
             val embeddings = faceRecognition?.getFaceEmbeddings(bitmap, this)
 
             if (embeddings != null && embeddings.isNotEmpty()) {
-                if (!responseSuccess) {
+                currentCall?.cancel() // Cancelar cualquier llamada anterior
 
-                    val embeddingsRequest= EmbeddingsRequest(embeddings)
-                    // http request
-                    RetrofitClient.apiService.loginWithEmbeddings(embeddingsRequest).enqueue(object : Callback<EmbeddingsResponse> {
-                        override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {
-                            if (response.isSuccessful) {
-                                println("Embeddings sent successfully")
-                                stopScanTimer()
-//                                val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
-//                                startActivity(intent)
-                                val embeddingsResponse = response.body()
-                                if (embeddingsResponse != null) {
-                                    loginExitoso(embeddingsResponse)
-                                }
-                                responseSuccess = true
-                            } else {
-                                println("Failed to send Embeddings: ${response.code()}")
+                val embeddingsRequest = EmbeddingsRequest(embeddings)
+                currentCall = RetrofitClient.apiService.authenticationWithEmbeddings(embeddingsRequest)
+
+                currentCall?.enqueue(object : Callback<EmbeddingsResponse> {
+                    override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {
+                        if (response.isSuccessful) {
+                            println("Embeddings sent successfully")
+                            stopScanTimer()
+                            val embeddingsResponse = response.body()
+                            if (embeddingsResponse != null) {
+                                loginExitoso(embeddingsResponse)
                             }
+                            responseSuccess = true
+                        } else {
+                            println("Failed to send Embeddings: ${response.code()}")
                         }
+                        currentCall = null
+                    }
 
-                        override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
-                            println("Error sending Embeddings: ${t.message}")
-                        }
-                    })
-                }
+                    override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
+                        println("Error sending Embeddings: ${t.message}")
+                        currentCall = null
+                    }
+                })
             }
-            detectionTextView!!.text = name
+            detectionTextView!!.text = "Processing"
         } else {
             detectionTextView!!.setText(R.string.no_face_detected)
         }
-
-//        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
     }
 
     private fun loginExitoso(embeddingsResponse: EmbeddingsResponse) {

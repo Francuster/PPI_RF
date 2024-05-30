@@ -156,13 +156,22 @@ class RegistroUsuarioActivity:AppCompatActivity() {
                             Toast.makeText(this@RegistroUsuarioActivity, "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
                             goToRegistroExitoso()
                         }
+                        201 -> {
+                            Toast.makeText(this@RegistroUsuarioActivity, "USUARIO REGISTRADO, PERO CON ERROR 201", Toast.LENGTH_SHORT).show()
+                            goToRegistroExitoso()
+                        }
+                        400 ->{
+                            Toast.makeText(this@RegistroUsuarioActivity, "ERROR: Debe llenar todos los campos y luego tomar la foto", Toast.LENGTH_SHORT).show()
+
+                            goToRegistroDenegado()
+                        }
                         500 -> {
                             goToRegistroDenegado()
                             Toast.makeText(this@RegistroUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
                         }
                         else -> {
                             goToRegistroDenegado()
-                            Toast.makeText(this@RegistroUsuarioActivity, "Error: ${response.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegistroUsuarioActivity, "Error busque en consola del servidor: ${response.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

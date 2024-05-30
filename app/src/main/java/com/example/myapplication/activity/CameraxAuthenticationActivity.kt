@@ -260,6 +260,7 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
             .addOnFailureListener { e: Exception? -> Log.e(TAG, "Barcode process failure", e) }
             .addOnCompleteListener { task: Task<List<Face?>?>? -> image.close() }
     }
+    private var currentCall: Call<EmbeddingsResponse>? = null
 
     private fun onSuccessListener(faces: List<Face>, inputImage: InputImage) {
         var boundingBox: Rect? = null
@@ -287,11 +288,18 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
 
             if (embeddings != null && embeddings.isNotEmpty()) {
                 if (!responseSuccess) {
+                    currentCall?.cancel()
 
-                    val embeddingsRequest= EmbeddingsRequest(embeddings)
+
+                    // Crear la solicitud de Retrofit
+                    val embeddingsRequest = EmbeddingsRequest(embeddings)
+                    currentCall = RetrofitClient.apiService.authenticationWithEmbeddings(embeddingsRequest)
                     // http request
-                    RetrofitClient.apiService.authenticationWithEmbeddings(embeddingsRequest).enqueue(object : Callback<EmbeddingsResponse> {
-                        override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {
+                    currentCall?.enqueue(object : Callback<EmbeddingsResponse> {
+                        override fun onResponse(
+                            call: Call<EmbeddingsResponse>,
+                            response: Response<EmbeddingsResponse>
+                        ) {
                             if (response.isSuccessful) {
                                 stopScanTimer()
                                 println("Embeddings sent successfully")
@@ -303,10 +311,14 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
                             } else {
                                 println("Failed to send Embeddings: ${response.code()}")
                             }
+                            // Limpiar la referencia de la llamada actual
+                            currentCall = null
                         }
 
                         override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
                             println("Error sending Embeddings: ${t.message}")
+                            // Limpiar la referencia de la llamada actual
+                            currentCall = null
                         }
                     })
                 }

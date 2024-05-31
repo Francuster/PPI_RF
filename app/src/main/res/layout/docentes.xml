@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondo_blanco"
-    tools:context=".Li">
+    tools:context=".activity.LicenciasDocenteActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
@@ -128,6 +128,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/menu" />
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/licencia_nav"
             android:layout_width="57dp"
@@ -136,7 +137,7 @@
             tools:layout_editor_absoluteY="1dp">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/textview"
                 android:layout_width="64dp"
                 android:layout_height="14dp"
                 android:fontFamily="@font/inter_extrabold"

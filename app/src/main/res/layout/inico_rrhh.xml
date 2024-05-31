@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondo_blanco"
-    tools:context=".Escanea">
+    tools:context=".activity.InicioRrHhActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
@@ -157,6 +157,7 @@
                 android:layout_width="33dp"
                 android:layout_height="32dp"
                 android:background="@android:color/transparent"
+                android:onClick="goToLicences"
                 android:src="@android:drawable/ic_menu_my_calendar"
                 tools:layout_editor_absoluteX="12dp"
                 tools:layout_editor_absoluteY="-1dp" />

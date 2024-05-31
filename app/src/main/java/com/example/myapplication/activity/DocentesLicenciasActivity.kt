@@ -19,8 +19,7 @@ import okhttp3.Response
 import org.json.JSONArray
 import java.io.IOException
 
-
-class InicioRrHhActivity: AppCompatActivity() {
+class DocentesLicenciasActivity: AppCompatActivity() {
     private val client = OkHttpClient()
     private var jsonArray = JSONArray()
     private val handler = Handler()
@@ -28,13 +27,11 @@ class InicioRrHhActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.inico_rrhh)
-        fetchUsers()
+        setContentView(R.layout.docentes)
+        fetchTeachers()
 
-        // Programa la actualización de usuarios cada 10 segundos
         scheduleUserUpdate()
     }
-
     override fun onDestroy() {
         super.onDestroy()
         // Detén la actualización periódica cuando la actividad se destruye
@@ -43,7 +40,7 @@ class InicioRrHhActivity: AppCompatActivity() {
 
     private fun scheduleUserUpdate() {
         runnable = Runnable {
-            fetchUsers()
+            fetchTeachers()
             // Vuelve a programar la actualización después de 10 segundos
             handler.postDelayed(runnable, 10000)
         }
@@ -51,7 +48,7 @@ class InicioRrHhActivity: AppCompatActivity() {
         handler.postDelayed(runnable, 10000)
     }
 
-    private fun mostrarTodosLosEmpleados() {
+    private fun mostrarTodosLosDocentes() {
         val container: LinearLayout = findViewById(R.id.container)
 
         runOnUiThread {
@@ -74,68 +71,46 @@ class InicioRrHhActivity: AppCompatActivity() {
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
-                    goToModificacionUsuario(userId)
+                    goToCargarLicencia(userId)
                 }
             }
         }
     }
 
-    private fun fetchUsers() {
+    private fun goToCargarLicencia(userId: String) {
+        val intent = Intent(applicationContext, LicenciasDocenteActivity::class.java)
+        intent.putExtra("user_id", userId)
+        startActivity(intent)
+
+    }
+
+    private fun fetchTeachers() {
         val request = Request.Builder()
-            .url(BuildConfig.BASE_URL + "/api/users") // Cambia esto por la URL de tu API
+            .url(BuildConfig.BASE_URL + "/api/teachers") // Cambia esto por la URL de tu API
             .build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
-                Log.e("FetchUsers", "Failed to fetch users", e)
+                Log.e("FetchTeachers", "Failed to fetch teachers", e)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
                     val responseData = response.body?.string()
                     responseData?.let {
-                        Log.d("FetchUsers", "Response data: $it")
+                        Log.d("FetchTeachers", "Response data: $it")
                         jsonArray = JSONArray(it)
-                        mostrarTodosLosEmpleados()
+                        mostrarTodosLosDocentes()
                     }
                 } else {
-                    Log.e("FetchUsers", "Unsuccessful response")
+                    Log.e("FetchTeachers", "Unsuccessful response")
                 }
             }
         })
-    }
 
-    private fun goToModificacionUsuario(userId: String) {
-        val intent = Intent(applicationContext, ModificacionUsuarioActivity::class.java)
-        intent.putExtra("user_id", userId)
-        startActivity(intent)
-    }
-
-
-    fun goToRegistroRrHhPrimeraSala(view: View) {
-
-        val intent = Intent(applicationContext, RegistroUsuarioActivity::class.java)
-        startActivity(intent)
-
-    }
-
-
-    fun goToCfgCerteza(view: View) {
-
-        val intent = Intent(applicationContext, ConfiguracionRRHHActivity::class.java)
-        startActivity(intent)
-
-    }
-    fun goToLicences(view: View){
-
-        val intent = Intent(applicationContext, DocentesLicenciasActivity::class.java)
-        startActivity(intent)
 
     }
 
 }
-
-
-
 

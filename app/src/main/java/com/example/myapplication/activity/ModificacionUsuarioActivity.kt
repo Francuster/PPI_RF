@@ -29,7 +29,8 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private val ROLE_REQUEST_CODE = 102
     private val HOURS_REQUEST_CODE = 103
     private var userId: String? = null
-
+    private var userName: String? = null
+    private var userSurname: String? = null
     private var nombre: String? = null
     private var apellido: String? = null
     private var mail: String? = null
@@ -54,12 +55,15 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
         setContentView(R.layout.modificacion_usuario)
         userId = intent.getStringExtra("user_id")
-
+        userName=intent.getStringExtra("user_name")//nombre para mostrar
+        userSurname=intent.getStringExtra("user_apellido")//apellido para mostrar
         nombreTextView = findViewById(R.id.nombre_texto)
         apellidoTextView = findViewById(R.id.apellido_texto)
         mailTextView = findViewById(R.id.mail_texto)
         documentoTextView = findViewById(R.id.documento_texto)
         rolTextView = findViewById(R.id.tipo_cuenta_texto)
+        val textoNombreUsuario = findViewById<TextView>(R.id.modificacion_titulo)
+        textoNombreUsuario.text = "Modificando usuario:\n$userName $userSurname "
     }
 
     fun goToModificacionRol(view: View) {

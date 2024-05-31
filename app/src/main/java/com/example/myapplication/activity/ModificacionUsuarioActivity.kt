@@ -43,6 +43,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private lateinit var apellidoTextView: TextView
     private lateinit var mailTextView: TextView
     private lateinit var documentoTextView: TextView
+    private lateinit var rolTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +59,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         apellidoTextView = findViewById(R.id.apellido_texto)
         mailTextView = findViewById(R.id.mail_texto)
         documentoTextView = findViewById(R.id.documento_texto)
-
+        rolTextView = findViewById(R.id.tipo_cuenta_texto)
     }
 
     fun goToModificacionRol(view: View) {
@@ -90,6 +91,10 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
 
+    fun actualizarUsuario() {
+        enviarDatosModificacion() // Llama a enviarDatosModificacion aquí
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
@@ -118,6 +123,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
                 }
                 ROLE_REQUEST_CODE -> {
                     rol = data?.getStringExtra("rol_modificado")
+                    rolTextView.text=rol
                     // Actualiza el TextView correspondiente si tienes uno para el rol
                 }
                 HOURS_REQUEST_CODE -> {
@@ -127,7 +133,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
                 }
                 CAMERA_REQUEST_CODE -> {
                     imageByteArray = data?.getByteArrayExtra("image")
-                    enviarDatosModificacion() // Llama a enviarDatosModificacion aquí
+                    //enviarDatosModificacion() // Llama a enviarDatosModificacion aquí
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.example.myapplication.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BuildConfig
@@ -38,6 +39,10 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private var horaSalida: String? = null
     private var imageByteArray: ByteArray? = null
     private val client = OkHttpClient()
+    private lateinit var nombreTextView: TextView
+    private lateinit var apellidoTextView: TextView
+    private lateinit var mailTextView: TextView
+    private lateinit var documentoTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,8 +52,13 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.modificacion_usuario)
-        // Recupera el ID del usuario del intent
         userId = intent.getStringExtra("user_id")
+
+        nombreTextView = findViewById(R.id.nombre_texto)
+        apellidoTextView = findViewById(R.id.apellido_texto)
+        mailTextView = findViewById(R.id.mail_texto)
+        documentoTextView = findViewById(R.id.documento_texto)
+
     }
 
     fun goToModificacionRol(view: View) {
@@ -88,18 +98,32 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
                     val campo = data?.getStringExtra("campo")
                     val textoModificado = data?.getStringExtra("texto_modificado")
                     when (campo) {
-                        "nombre" -> nombre = textoModificado
-                        "apellido" -> apellido = textoModificado
-                        "mail" -> mail = textoModificado
-                        "documento" -> documento = textoModificado
+                        "nombre" -> {
+                            nombre = textoModificado
+                            nombreTextView.text = nombre
+                        }
+                        "apellido" -> {
+                            apellido = textoModificado
+                            apellidoTextView.text = apellido
+                        }
+                        "mail" -> {
+                            mail = textoModificado
+                            mailTextView.text = mail
+                        }
+                        "documento" -> {
+                            documento = textoModificado
+                            documentoTextView.text = documento
+                        }
                     }
                 }
                 ROLE_REQUEST_CODE -> {
                     rol = data?.getStringExtra("rol_modificado")
+                    // Actualiza el TextView correspondiente si tienes uno para el rol
                 }
                 HOURS_REQUEST_CODE -> {
                     horaEntrada = data?.getStringExtra("hora_entrada")
                     horaSalida = data?.getStringExtra("hora_salida")
+                    // Actualiza los TextView correspondientes si tienes
                 }
                 CAMERA_REQUEST_CODE -> {
                     imageByteArray = data?.getByteArrayExtra("image")

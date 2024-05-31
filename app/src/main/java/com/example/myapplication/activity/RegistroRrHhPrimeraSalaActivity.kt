@@ -1,4 +1,7 @@
-package com.example.myapplication.activity
+/*package com.example.myapplication.activity
+
+CLASE DEPRECADA LA VERDADERA ES REGISRO USUARIO
+
 
 import android.content.Intent
 import android.os.Bundle
@@ -112,3 +115,4 @@ class RegistroRrHhPrimeraSalaActivity : AppCompatActivity() {
         startActivity(intent)
     }
 }
+*/

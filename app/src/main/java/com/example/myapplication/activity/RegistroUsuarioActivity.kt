@@ -88,7 +88,9 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
     }
 
-
+    fun registrarUsuario(){
+        enviarDatosRegistro()
+    }
 
     fun goToCamaraParaRegistro(view: View) {
         val intent = Intent(this, CamaraParaRegistroRrHhActivity::class.java)
@@ -102,7 +104,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
             if (byteArray != null) {
                 imageByteArray = byteArray
                 //imagenBase64 = Base64.encodeToString(byteArray, Base64.DEFAULT)
-                enviarDatosRegistro()
+                //enviarDatosRegistro()
             }
         }
     }

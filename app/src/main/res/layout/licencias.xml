@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondo_blanco"
-    tools:context=".Escanea">
+    tools:context=".Li">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
@@ -24,21 +24,21 @@
 
 
         <TextView
-            android:id="@+id/empleados_titulo"
+            android:id="@+id/docentes_titulo"
             android:layout_width="0dp"
             android:layout_height="38dp"
             android:fontFamily="@font/inter_extrabold"
-            android:text="EMPLEADOS"
+            android:text="DOCENTES"
             android:textAlignment="textStart"
-            android:textSize="17sp"
+            android:textSize="20sp"
             android:textStyle="bold"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.119"
+            app:layout_constraintHorizontal_bias="0.253"
             app:layout_constraintStart_toEndOf="@+id/logo_empleados"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.053"
+            app:layout_constraintVertical_bias="0.049"
             app:layout_constraintWidth_percent="0.5"
             tools:ignore="MissingConstraints" />
 
@@ -158,8 +158,8 @@
                 android:layout_height="32dp"
                 android:background="@android:color/transparent"
                 android:src="@android:drawable/ic_menu_my_calendar"
-                tools:layout_editor_absoluteX="12dp"
-                tools:layout_editor_absoluteY="-1dp" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

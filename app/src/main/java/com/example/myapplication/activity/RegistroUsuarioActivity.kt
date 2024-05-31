@@ -51,7 +51,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         elementos.add("ESTUDIANTE")
         elementos.add("PROFESOR")
         elementos.add("SEGURIDAD")
-        elementos.add("RRHH")
+        elementos.add("RECURSOS HUMANOS")
         val adaptador=ArrayAdapter(this,R.layout.desplegable_tipo_cuenta,elementos)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter=adaptador

@@ -76,7 +76,7 @@ class CameraxActivity : AppCompatActivity() {
         previewView = findViewById(R.id.previewView)
         previewView?.scaleType = PreviewView.ScaleType.FIT_CENTER
         graphicOverlay = findViewById(R.id.graphic_overlay)
-        previewImg = findViewById(R.id.preview_img)
+        //previewImg = findViewById(R.id.preview_img)
         detectionTextView = findViewById(R.id.detection_text)
 
         val addBtn = findViewById<ImageButton>(R.id.add_btn)

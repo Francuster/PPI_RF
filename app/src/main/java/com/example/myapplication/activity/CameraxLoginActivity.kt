@@ -312,15 +312,15 @@ class CameraxLoginActivity : AppCompatActivity() {
     private fun loginExitoso(embeddingsResponse: EmbeddingsResponse) {
 
         // Crear el Intent y pasar los datos
-        if(embeddingsResponse.data.rol[0].equals("recursos humanos")){
+        if(embeddingsResponse.data.rol[0].equals("recursos humanos")||embeddingsResponse.data.rol[0].equals("RECURSOS HUMANOS")){
             val intent = Intent(this, InicioRrHhActivity::class.java)
             startActivity(intent)
-        } else if(embeddingsResponse.data.rol[0].equals("seguridad")){
+        } else if(embeddingsResponse.data.rol[0].equals("seguridad")||embeddingsResponse.data.rol[0].equals("SEGURIDAD")){
             val intent = Intent(this, InicioSeguridadActivity::class.java)
             startActivity(intent)
         } else {
             // Crear el Intent y pasar los datos solo si el rol no es "recursos humanos" ni "seguridad"
-            val intent = Intent(this, InicioSeguridadActivity::class.java)
+            val intent = Intent(this, IngresoDenegadoActivity::class.java)
             intent.putExtra("nombre", embeddingsResponse.data.nombre)
             intent.putExtra("apellido", embeddingsResponse.data.apellido)
             intent.putExtra("dni", embeddingsResponse.data.dni)

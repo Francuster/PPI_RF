@@ -46,25 +46,14 @@ class InicioSeguridadActivity: AppCompatActivity() {
 
     }
     fun goToReporteSeguridad(view: View) {
-
         val intent = Intent(applicationContext, ReportesSeguridadActivity::class.java)
         startActivity(intent)
-
     }
-    
-    fun reconectar(view: View){
-         if(deviceIsConnected(applicationContext)){
-            Toast.makeText(this, "Sincronizando...", Toast.LENGTH_SHORT).show()
-            val regRequest = SendDataToBackend(applicationContext)
-            if(regRequest.sendLocalRegs()){
-                Toast.makeText(this, "Sincronización exitosa", Toast.LENGTH_SHORT).show()
-            }
-            else{
-                Toast.makeText(this, "No existen nuevos registros para sincronizar.", Toast.LENGTH_SHORT).show()
-            }
-        }else{
-            Toast.makeText(this, "Para sincronizar debes estar conectado a Internet", Toast.LENGTH_SHORT).show()
-        }
+
+    //Obtener el estado de la red y cambiar el color y la info del boton (Boton informa ultima hora de conexion en toast)
+
+    fun changeButtonNetworkStatus(){
+
     }
 
 }

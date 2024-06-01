@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondo_blanco"
-    tools:context=".activity.InicioRrHhActivity">
+    tools:context=".Escanea">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
@@ -91,12 +91,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cuenta_nav"
-            android:layout_width="48dp"
-            android:layout_height="47dp"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.99"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5">
@@ -127,52 +127,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/menu" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/licencia_nav"
-            android:layout_width="57dp"
-            android:layout_height="45dp"
-            tools:layout_editor_absoluteX="297dp"
-            tools:layout_editor_absoluteY="1dp">
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="64dp"
-                android:layout_height="14dp"
-                android:fontFamily="@font/inter_extrabold"
-                android:text="Licencias"
-                android:textAlignment="center"
-                android:textSize="7sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0"
-                tools:ignore="MissingConstraints" />
-
-            <ImageView
-                android:id="@+id/licimagen_nav"
-                android:layout_width="33dp"
-                android:layout_height="32dp"
-                android:background="@android:color/transparent"
-                android:onClick="goToLicences"
-                android:src="@android:drawable/ic_menu_my_calendar"
-                tools:layout_editor_absoluteX="12dp"
-                tools:layout_editor_absoluteY="-1dp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/logs_nav"
-            android:layout_width="51dp"
-            android:layout_height="47dp"
+            android:layout_width="57dp"
+            android:layout_height="46dp"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/cuenta_nav"
-            app:layout_constraintHorizontal_bias="0.672"
+            app:layout_constraintHorizontal_bias="0.703"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.428">
 
             <TextView
                 android:id="@id/cuenta"
@@ -285,6 +253,46 @@
                 app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/licencia_nav"
+            android:layout_width="80dp"
+            android:layout_height="47dp"
+
+            app:layout_constraintEnd_toEndOf="@+id/cuenta_nav"
+            app:layout_constraintHorizontal_bias="0.88"
+            app:layout_constraintStart_toStartOf="@+id/empleados_nav"
+            tools:layout_editor_absoluteY="4dp">
+
+            <TextView
+                android:id="@id/licencia_nav"
+                android:layout_width="64dp"
+                android:layout_height="14dp"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="Licencias"
+                android:textAlignment="center"
+                android:textSize="7sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.787"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imagen_licencia_nav"
+                android:layout_width="28dp"
+                android:layout_height="25dp"
+
+
+                android:onClick="goToLicences"
+                app:layout_constraintBottom_toTopOf="@+id/licencia_nav"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:src="@android:drawable/ic_menu_my_calendar"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -375,4 +383,3 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

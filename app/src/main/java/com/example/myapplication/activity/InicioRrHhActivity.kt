@@ -128,7 +128,6 @@ class InicioRrHhActivity: AppCompatActivity() {
 
     }
     fun goToLicences(view: View){
-
         val intent = Intent(applicationContext, DocentesLicenciasActivity::class.java)
         startActivity(intent)
 

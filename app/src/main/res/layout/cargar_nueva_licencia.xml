@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/fondo_blanco"
-    tools:context=".activity.DocentesLicenciasActivity">
+    tools:context=".activity.CargarLicenciaActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
@@ -24,85 +24,69 @@
 
 
         <TextView
-            android:id="@+id/docentes_titulo"
-            android:layout_width="252dp"
-            android:layout_height="33dp"
-            android:layout_marginEnd="48dp"
+            android:id="@+id/create_license"
+            android:layout_width="300dp"
+            android:layout_height="38dp"
             android:fontFamily="@font/inter_extrabold"
-            android:text="DOCENTES"
-            android:textAlignment="textStart"
-            android:textSize="20sp"
-
+            android:text="CREAR LICENCIA"
+            android:textAlignment="center"
+            android:textSize="17sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/imagen_volver"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/flecha_atras"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.05"
-            app:layout_constraintWidth_percent="0.5"
+            app:layout_constraintVertical_bias="0.036"
             tools:ignore="MissingConstraints" />
 
         <ImageView
-            android:id="@+id/imagen_volver"
+            android:id="@+id/flecha_atras"
             android:layout_width="62dp"
-            android:layout_height="40dp"
-
-
-            android:onClick="goToAtras"
+            android:layout_height="44dp"
+            android:onClick="goToLicenciasDocentes"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.028"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.05"
+            app:layout_constraintVertical_bias="0.026"
             app:srcCompat="@drawable/arrow_left" />
 
-        <ScrollView
-            android:layout_width="361dp"
-            android:layout_height="499dp"
+        <CalendarView
+            android:id="@+id/licence_calendarView"
+            android:layout_width="311dp"
+            android:layout_height="308dp"
+            android:background="@drawable/rectangulo_alerta"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.965">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:id="@+id/container"
-                android:gravity="center"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-        </ScrollView>
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/nav"
-        android:layout_width="match_parent"
-        android:layout_height="53dp"
-        android:background="@drawable/rectangulo_nav"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="0.00"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintWidth_percent="0.90"
-        tools:layout_editor_absoluteX="0dp">
-
-
+        <Button
+            android:id="@+id/boton_create"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/rectangulo_alerta"
+            android:fontFamily="@font/inter_extrabold"
+            android:text="CREAR"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.48"
+            android:textColor="#36565B" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="53dp"
         android:background="@drawable/rectangulo_superior"
-
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent="0.00"
         app:layout_constraintTop_toTopOf="parent"
@@ -128,7 +112,6 @@
             app:layout_constraintHorizontal_bias="0.048"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.482"
             app:layout_constraintWidth_percent="0.18"
             tools:ignore="MissingConstraints" />
 
@@ -150,12 +133,9 @@
             app:layout_constraintHorizontal_bias="0.914"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5"
             app:layout_constraintWidth_percent="0.23"
             tools:ignore="MissingConstraints" />
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

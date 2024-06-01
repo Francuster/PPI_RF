@@ -104,7 +104,18 @@
         <!-- Configuracion RRHH -->
         <activity android:name=".activity.ConfiguracionRRHHActivity" android:label="ConfiguracionRRHHActivity" android:exported="true">
 
+        <!-- LICENCIAS -->
         </activity>
+        <activity android:name=".activity.DocentesLicenciasActivity" android:label="DocentesLicenciasActivity" android:exported="true">
+
+        </activity>
+        <activity android:name=".activity.LicenciasDocenteActivity" android:label="LicenciasDocenteActivity" android:exported="true">
+
+        </activity>
+        <activity android:name=".activity.CargarLicenciaActivity" android:label="CargarLicenciaActivity"  android:exported="true">
+
+        </activity>
+
         <!-- Declara tu servicio dentro de la sección <application> -->
         <meta-data
             android:name="preloaded_fonts"

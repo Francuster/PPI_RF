@@ -14,9 +14,14 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.YuvImage
+import android.graphics.drawable.ShapeDrawable
+import android.graphics.drawable.shapes.OvalShape
 import android.media.Image
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
+import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -65,17 +70,36 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
 
     private var responseSuccess = false
 
+    private var countDownTimer: CountDownTimer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.camerax_simple)
+        //contador
+        startScanTimer()
+        setContentView(R.layout.camerax)
         previewView = findViewById(R.id.previewView)
-        previewView?.scaleType = (PreviewView.ScaleType.FIT_CENTER)
         graphicOverlay = findViewById(R.id.graphic_overlay)
         detectionTextView = findViewById(R.id.detection_text)
 
         //        loadModel();
         faceRecognition = FaceRecognition()
+        val switchCameraButton: ImageButton = findViewById(R.id.switch_camera)
+        switchCameraButton.setOnClickListener {
+            switchCamera(it)
+        }
+        val ovalOverlay: View = findViewById(R.id.oval_overlay)
+
+        // Crear un ShapeDrawable con un OvalShape
+        val shapeDrawable = ShapeDrawable(OvalShape()).apply {
+            // Configurar el color del borde
+            paint.color = ContextCompat.getColor(applicationContext, R.color.white)
+            // Configurar el grosor del borde
+            paint.style = android.graphics.Paint.Style.STROKE
+            paint.strokeWidth = 8f // Puedes ajustar el grosor del borde aquí
+        }
+
+        // Asignar el ShapeDrawable como fondo del View
+        ovalOverlay.background = shapeDrawable
     }
 
     override fun onResume() {
@@ -204,7 +228,8 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
     protected val rotation: Int
         get() = previewView!!.display.rotation
 
-    private fun switchCamera() {
+    private fun switchCamera(view: View) {
+
         if (lensFacing == CameraSelector.LENS_FACING_BACK) {
             lensFacing = CameraSelector.LENS_FACING_FRONT
             flipX = true
@@ -212,9 +237,9 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
             lensFacing = CameraSelector.LENS_FACING_BACK
             flipX = false
         }
-
         if (cameraProvider != null) cameraProvider!!.unbindAll()
         startCamera()
+
     }
 
     /** Face detection processor  */
@@ -235,6 +260,7 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
             .addOnFailureListener { e: Exception? -> Log.e(TAG, "Barcode process failure", e) }
             .addOnCompleteListener { task: Task<List<Face?>?>? -> image.close() }
     }
+    private var currentCall: Call<EmbeddingsResponse>? = null
 
     private fun onSuccessListener(faces: List<Face>, inputImage: InputImage) {
         var boundingBox: Rect? = null
@@ -262,12 +288,20 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
 
             if (embeddings != null && embeddings.isNotEmpty()) {
                 if (!responseSuccess) {
+                    currentCall?.cancel()
 
-                    val embeddingsRequest= EmbeddingsRequest(embeddings)
+
+                    // Crear la solicitud de Retrofit
+                    val embeddingsRequest = EmbeddingsRequest(embeddings)
+                    currentCall = RetrofitClient.apiService.authenticationWithEmbeddings(embeddingsRequest)
                     // http request
-                    RetrofitClient.apiService.authenticationWithEmbeddings(embeddingsRequest).enqueue(object : Callback<EmbeddingsResponse> {
-                        override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {
+                    currentCall?.enqueue(object : Callback<EmbeddingsResponse> {
+                        override fun onResponse(
+                            call: Call<EmbeddingsResponse>,
+                            response: Response<EmbeddingsResponse>
+                        ) {
                             if (response.isSuccessful) {
+                                stopScanTimer()
                                 println("Embeddings sent successfully")
 
                                 val intent = Intent(this@CameraxAuthenticationActivity, RegistroExitosoAntesalaActivity::class.java)
@@ -277,10 +311,14 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
                             } else {
                                 println("Failed to send Embeddings: ${response.code()}")
                             }
+                            // Limpiar la referencia de la llamada actual
+                            currentCall = null
                         }
 
                         override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
                             println("Error sending Embeddings: ${t.message}")
+                            // Limpiar la referencia de la llamada actual
+                            currentCall = null
                         }
                     })
                 }
@@ -485,4 +523,45 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
             return nv21
         }
     }
+    private fun showToast(message: String) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
+    private fun startScanTimer() {
+        // Iniciar un temporizador de 30 segundos
+        countDownTimer = object : CountDownTimer(31000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsRemaining = millisUntilFinished / 1000
+                // Mostrar un mensaje Toast cuando falten 20, 10 y 3 segundos
+                if (secondsRemaining == 30L) {
+                    showToast("Escaneando... 30 segundos restantes")
+                } else if (secondsRemaining == 20L) {
+                    showToast("Escaneando... 20 segundos restantes")
+                }else if (secondsRemaining == 10L) {
+                    showToast("Escaneando... 10 segundos restantes")
+                } else if (secondsRemaining == 3L) {
+                    showToast("Escaneando... 3 segundos restantes")
+                }
+            }
+
+            override fun onFinish() {
+                // Cuando el temporizador finaliza, puedes ir al siguiente intent
+                mostrarPantallaErrorIngreso()
+            }
+        }
+        countDownTimer?.start()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // Detener el temporizador para evitar pérdida de memoria
+        countDownTimer?.cancel()
+    }
+    private fun mostrarPantallaErrorIngreso() {
+        val intent = Intent(applicationContext, RegistroDenegadoActivity::class.java)
+        startActivity(intent)
+    }
+    private fun stopScanTimer() {
+        countDownTimer?.cancel()
+    }
+
 }

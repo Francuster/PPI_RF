@@ -95,7 +95,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
 
-    fun actualizarUsuario() {
+    fun actualizarUsuario(view: View) {
         enviarDatosModificacion() // Llama a enviarDatosModificacion aquí
     }
 

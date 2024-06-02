@@ -88,7 +88,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
     }
 
-    fun registrarUsuario(){
+    fun registrarUsuario(view: View){
         enviarDatosRegistro()
     }
 

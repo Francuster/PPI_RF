@@ -384,14 +384,12 @@
             tools:ignore="MissingConstraints" />
 
         <Button
-            android:id="@+id/botonIngresar"
+            android:id="@+id/botonConnectionStatus"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@drawable/boton"
             android:fontFamily="@font/inter_extrabold"
-            android:onClick="reconectar"
-            android:text="RECONECTAR"
             android:textColor="#7D7A73"
 
             android:textSize="11sp"

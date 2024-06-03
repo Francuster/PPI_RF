@@ -1,16 +1,18 @@
 package com.example.myapplication.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
-import com.example.myapplication.service.SendDataToBackend
 import com.example.myapplication.utils.deviceIsConnected
 
 
 class InicioSeguridadActivity: AppCompatActivity() {
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.inicio_seguridad)
@@ -50,14 +52,8 @@ class InicioSeguridadActivity: AppCompatActivity() {
         startActivity(intent)
     }
 
-    //Obtener el estado de la red y cambiar el color y la info del boton (Boton informa ultima hora de conexion en toast)
-
-    fun changeButtonNetworkStatus(){
-
-    }
 
 }
-
 
 
 

@@ -28,6 +28,7 @@ class NetworkChangeService : Service() {
                         else{
                             Toast.makeText(this, "No existen nuevos registros para sincronizar.", Toast.LENGTH_SHORT).show()
                         }
+
                     }
 
                 } else {

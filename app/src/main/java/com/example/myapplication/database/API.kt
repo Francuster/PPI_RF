@@ -47,7 +47,7 @@ fun obtenerFechaActualISO(): String {
     val calendar = Calendar.getInstance()
 
     // Crear un formato de fecha ISO 8601
-    val formatoISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    val formatoISO = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
     // Obtener la fecha actual en formato ISO 8601
     val fechaActualISO = formatoISO.format(calendar.time)

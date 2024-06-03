@@ -1,5 +1,6 @@
 package com.example.myapplication.activity
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -115,7 +116,7 @@ fun RenderFormulario(context: Context, offline: Boolean, onFinish: () -> Unit) {
                                 .addFormDataPart("apellido", apellido)
                                 .addFormDataPart("dni", dni)
                                 .addFormDataPart("estado", estado)
-                                .addFormDataPart("tipo", "Formulario")
+                                .addFormDataPart("tipo", "especial")
                                 .build()
                             val request = Request.Builder()
                                 .url("https://log3r.up.railway.app/api/authentication/logs") // Cambiar por IP local para prueba o IP online
@@ -133,7 +134,9 @@ fun RenderFormulario(context: Context, offline: Boolean, onFinish: () -> Unit) {
                                             // La solicitud fue exitosa
                                             val responseBody = response.body?.string() ?: throw IOException("Response body is null")
                                             val jsonObject = JSONObject(responseBody)
-
+                                            (context as Activity).runOnUiThread {
+                                                Toast.makeText(context, "Usuario ingresado exitosamente", Toast.LENGTH_LONG).show()
+                                            }
                                         } else {
                                             // Manejar errores HTTP específicos
                                             // Por ejemplo, el error 500 (Internal Server Error)
@@ -152,14 +155,9 @@ fun RenderFormulario(context: Context, offline: Boolean, onFinish: () -> Unit) {
                                 }
 
                                 override fun onFailure(call: Call, e: IOException) {
-                                    try {
-                                        // OnFailure se utiliza para manejar fallos de conexión,
-                                        // errores de tiempo de espera y otros problemas de red.
-                                        e.printStackTrace()
-                                        Toast.makeText(context,"Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\nError en la solicitud HTTP",Toast.LENGTH_LONG)
-                                    } finally {
-                                        // Limpiar la referencia a la solicitud activa
-                                        activeCall = null
+                                    e.printStackTrace()
+                                    (context as Activity).runOnUiThread {
+                                        Toast.makeText(context, "Error en la solicitud HTTP", Toast.LENGTH_LONG).show()
                                     }
                                 }
                             })

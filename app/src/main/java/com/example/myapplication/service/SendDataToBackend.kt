@@ -184,24 +184,13 @@ class SendDataToBackend (private val context: Context) {
                 try {
                     // La solicitud fue exitosa //
                     if (response.isSuccessful) {
-                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                        sended=true
                     } else {
-                        Toast.makeText(
-                            context,
-                            "HTTP request unsuccessful with status code ${response.code}",
-                            Toast.LENGTH_SHORT
-                        ).show()
                         sended=false
 
                     }
 
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Toast.makeText(
-                        context,
-                        "Error en la respuesta: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                } catch (e: Exception) {e.printStackTrace()
                     sended=false
                 } finally {
                     response.body?.close()
@@ -211,8 +200,6 @@ class SendDataToBackend (private val context: Context) {
 
             override fun onFailure(call: Call, e: IOException) {
                 // Maneja el fallo de la solicitud
-                e.printStackTrace()
-                Toast.makeText(context,"No se ha podido hacer la sincronizacion",Toast.LENGTH_SHORT).show()
                 activeCall = null
                 sended=false
 

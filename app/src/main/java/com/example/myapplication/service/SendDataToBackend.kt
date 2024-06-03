@@ -1,9 +1,6 @@
 package com.example.myapplication.service
 
 import android.content.Context
-import android.database.Cursor
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.database.Connection
@@ -29,7 +26,7 @@ class SendDataToBackend (private val context: Context) {
 
         // URL
 
-        val url = BuildConfig.BASE_URL + "/api/authentication/logs"
+        val url = BuildConfig.BASE_URL + "/api/logs/authentication"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)
@@ -150,7 +147,7 @@ class SendDataToBackend (private val context: Context) {
         // URL
         var sended:Boolean=true
 
-        val url = BuildConfig.BASE_URL + "/api/authentication/logs"
+        val url = BuildConfig.BASE_URL + "/api/logs/authentication"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)

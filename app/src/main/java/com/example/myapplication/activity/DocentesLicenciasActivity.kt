@@ -25,7 +25,7 @@ import java.util.Locale
 class DocentesLicenciasActivity: AppCompatActivity() {
     val licenciasDocente = mutableListOf<Licencia>()
     private val client = OkHttpClient()
-    private var licencesJSONArray = JSONArray()
+    private var licenciasJSONArray = JSONArray()
     private var docentesJSONArray = JSONArray()
     private var jsonArray = JSONArray()
     private val handler = Handler()
@@ -34,8 +34,8 @@ class DocentesLicenciasActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.docentes)
-        fetch("Teachers","/api/teachers","FetchTeachers")
-        fetch("Licenses","/api/licences","FetchLicenses")
+        fetch("Profesores","/api/profesores","FetchProfesores")
+        fetch("Licencias","/api/licencias","FetchLicencias")
 
         scheduleUserUpdate()
     }
@@ -47,7 +47,7 @@ class DocentesLicenciasActivity: AppCompatActivity() {
 
     private fun scheduleUserUpdate() {
         runnable = Runnable {
-            fetch("Teachers","/api/teachers","FetchTeachers")
+            fetch("Profesores","/api/profesores","FetchProfesores")
             // Vuelve a programar la actualización después de 10 segundos
             handler.postDelayed(runnable, 10000)
         }
@@ -110,12 +110,12 @@ class DocentesLicenciasActivity: AppCompatActivity() {
                     responseData?.let {
                         Log.d(tag, "Response data: $it")
                         jsonArray = JSONArray(it)
-                        if(search == "Teachers"){
+                        if(search == "Profesores"){
                             docentesJSONArray = jsonArray
                             mostrarTodosLosDocentes()
                         }
-                        if(search == "Licenses"){
-                            licencesJSONArray = jsonArray
+                        if(search == "Licencias"){
+                            licenciasJSONArray = jsonArray
                         }
 
                     }
@@ -129,8 +129,8 @@ class DocentesLicenciasActivity: AppCompatActivity() {
     private fun cargarLicenciasDelDocente(userId: String) {
         runOnUiThread {
 
-            for (i in 0 until licencesJSONArray.length()) {
-                val lastUserJsonObject = licencesJSONArray.getJSONObject(i)
+            for (i in 0 until licenciasJSONArray.length()) {
+                val lastUserJsonObject = licenciasJSONArray.getJSONObject(i)
                 // Depuración: imprimir el JSON completo del objeto actual
                 println("JSON del objeto actual: $lastUserJsonObject")
                 

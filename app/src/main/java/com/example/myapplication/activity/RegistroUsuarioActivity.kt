@@ -51,7 +51,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         elementos.add("ESTUDIANTE")
         elementos.add("PROFESOR")
         elementos.add("SEGURIDAD")
-        elementos.add("RRHH")
+        elementos.add("RECURSOS HUMANOS")
         val adaptador=ArrayAdapter(this,R.layout.desplegable_tipo_cuenta,elementos)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter=adaptador
@@ -88,7 +88,9 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
     }
 
-
+    fun registrarUsuario(view: View){
+        enviarDatosRegistro()
+    }
 
     fun goToCamaraParaRegistro(view: View) {
         val intent = Intent(this, CamaraParaRegistroRrHhActivity::class.java)
@@ -102,7 +104,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
             if (byteArray != null) {
                 imageByteArray = byteArray
                 //imagenBase64 = Base64.encodeToString(byteArray, Base64.DEFAULT)
-                enviarDatosRegistro()
+                //enviarDatosRegistro()
             }
         }
     }

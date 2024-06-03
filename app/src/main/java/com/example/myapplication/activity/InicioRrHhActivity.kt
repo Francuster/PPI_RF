@@ -74,7 +74,7 @@ class InicioRrHhActivity: AppCompatActivity() {
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
-                    goToModificacionUsuario(userId)
+                    goToModificacionUsuario(userId,userName,userSurname)
                 }
             }
         }
@@ -106,9 +106,11 @@ class InicioRrHhActivity: AppCompatActivity() {
         })
     }
 
-    private fun goToModificacionUsuario(userId: String) {
+    private fun goToModificacionUsuario(userId: String, userName: String, userSurname: String) {
         val intent = Intent(applicationContext, ModificacionUsuarioActivity::class.java)
         intent.putExtra("user_id", userId)
+        intent.putExtra("user_name", userName)
+        intent.putExtra("user_apellido", userSurname)
         startActivity(intent)
     }
 

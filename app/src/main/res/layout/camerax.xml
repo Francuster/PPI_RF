@@ -12,43 +12,43 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="3:4"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.example.myapplication.utils.GraphicOverlay
         android:id="@+id/graphic_overlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="3:4"
-        app:layout_constraintTop_toTopOf="@id/previewView"
         app:layout_constraintBottom_toBottomOf="@id/previewView"
+        app:layout_constraintDimensionRatio="3:4"
+        app:layout_constraintEnd_toEndOf="@id/previewView"
         app:layout_constraintStart_toStartOf="@id/previewView"
-        app:layout_constraintEnd_toEndOf="@id/previewView"/>
+        app:layout_constraintTop_toTopOf="@id/previewView" />
 
     <View
         android:id="@+id/oval_overlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="2:3"
-        app:layout_constraintTop_toTopOf="@id/previewView"
         app:layout_constraintBottom_toBottomOf="@id/previewView"
+        app:layout_constraintDimensionRatio="2:3"
+        app:layout_constraintEnd_toEndOf="@id/previewView"
         app:layout_constraintStart_toStartOf="@id/previewView"
-        app:layout_constraintEnd_toEndOf="@id/previewView"/>
+        app:layout_constraintTop_toTopOf="@id/previewView" />
 
     <TextView
         android:id="@+id/detection_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:textSize="18sp"
-        android:textColor="@color/white"
         android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/add_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/previewView"
-        app:layout_constraintBottom_toTopOf="@id/add_btn"/>
-    
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/previewView" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/preview_img_card"
         android:layout_width="wrap_content"
@@ -56,23 +56,11 @@
         app:cardBackgroundColor="#00000000"
         app:cardCornerRadius="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/detection_text"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/add_btn"
-        app:layout_constraintDimensionRatio="1:1">
+        app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:id="@+id/preview_img"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/roundedcorner"
-            android:src="@drawable/outline_image_24"
-            android:scaleType="centerInside"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:contentDescription="@string/preview_photo" />
+
     </androidx.cardview.widget.CardView>
 
     <ImageButton
@@ -80,25 +68,28 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:background="@drawable/white_roundedcorner"
-        android:src="@drawable/outline_add_black_48"
-        app:layout_constraintStart_toEndOf="@id/preview_img_card"
-        app:layout_constraintEnd_toStartOf="@id/switch_camera"
+        android:contentDescription="@string/register_face"
+        android:src="@drawable/escaneo72px"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/switch_camera"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/preview_img_card"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/detection_text"
-        app:tint="@color/teal_700"
-        android:contentDescription="@string/register_face" />
+        app:tint="@color/teal_700" />
 
     <ImageButton
         android:id="@+id/switch_camera"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="73dp"
+        android:layout_height="77dp"
         android:background="@drawable/roundedcorner"
-        android:src="@drawable/outline_flip_camera_android_24"
+        android:contentDescription="@string/switch_camera"
         android:onClick="switchCamera"
-        app:layout_constraintStart_toEndOf="@id/add_btn"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/outline_flip_camera_android_24"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/detection_text"
-        android:contentDescription="@string/switch_camera" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/add_btn"
+        app:layout_constraintTop_toBottomOf="@id/detection_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

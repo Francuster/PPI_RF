@@ -9,8 +9,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.model.Licencia
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class LicenciasDocenteActivity: AppCompatActivity() {
     private lateinit var licenciasDocente: ArrayList<Licencia>
@@ -28,8 +26,6 @@ class LicenciasDocenteActivity: AppCompatActivity() {
 
     private fun mostrarTodasLasLicencias() {
         val container: LinearLayout = findViewById(R.id.container)
-        val originalFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
-        val targetFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         runOnUiThread {
             container.removeAllViews() // Elimina vistas antiguas antes de agregar las nuevas
 
@@ -52,6 +48,7 @@ class LicenciasDocenteActivity: AppCompatActivity() {
     fun goToCargarLicencia(view: View) {
         val intent = Intent(applicationContext, CargarLicenciaActivity::class.java)
         intent.putExtra("user_id", userId)
+        intent.putParcelableArrayListExtra("licenciasDocente", ArrayList(licenciasDocente))
         startActivity(intent)
     }
 

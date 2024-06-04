@@ -19,8 +19,6 @@ import okhttp3.Request
 import okhttp3.Response
 import org.json.JSONArray
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class DocentesLicenciasActivity: AppCompatActivity() {
     val licenciasDocente = mutableListOf<Licencia>()
@@ -61,10 +59,9 @@ class DocentesLicenciasActivity: AppCompatActivity() {
         runOnUiThread {
             container.removeAllViews() // Elimina vistas antiguas antes de agregar las nuevas
 
-            for (i in 0 until jsonArray.length()) {
-                val lastUserJsonObject = jsonArray.getJSONObject(i)
-                val userIdObject = lastUserJsonObject.getJSONObject("_id")
-                val userId = userIdObject.getString("\$oid")
+            for (i in 0 until docentesJSONArray.length()) {
+                val lastUserJsonObject = docentesJSONArray.getJSONObject(i)
+                val userId = lastUserJsonObject.getString("_id")
                 val userName = lastUserJsonObject.getString("nombre")
                 val userSurname = lastUserJsonObject.getString("apellido")
                 val fullName = "$userName $userSurname"
@@ -128,22 +125,16 @@ class DocentesLicenciasActivity: AppCompatActivity() {
 
     private fun cargarLicenciasDelDocente(userId: String) {
         runOnUiThread {
-
             for (i in 0 until licenciasJSONArray.length()) {
                 val lastUserJsonObject = licenciasJSONArray.getJSONObject(i)
                 // Depuración: imprimir el JSON completo del objeto actual
                 println("JSON del objeto actual: $lastUserJsonObject")
-                
-                val userIdObject = lastUserJsonObject.getJSONObject("userId")
-                val teacherId = userIdObject.getString("\$oid")
-                if (userId == teacherId) {
-                    val dateDesdeObject = lastUserJsonObject.getJSONObject("fechaDesde")
-                    val dateDesde = dateDesdeObject.getString("\$date")
-                    val fechaDesde = convertDate(dateDesde)
 
-                    val dateHastaObject = lastUserJsonObject.getJSONObject("fechaHasta")
-                    val dateHasta = dateHastaObject.getString("\$date")
-                    val fechaHasta = convertDate(dateHasta)
+                val teacherId = lastUserJsonObject.getString("userId")
+
+                if (userId == teacherId) {
+                    val fechaDesde = lastUserJsonObject.getString("fechaDesde")
+                    val fechaHasta = lastUserJsonObject.getString("fechaHasta")
 
                     // Crear una nueva instancia de Licencia y añadirla a la lista
                     val licencia = Licencia(fechaDesde, fechaHasta, userId)
@@ -152,24 +143,11 @@ class DocentesLicenciasActivity: AppCompatActivity() {
                     println("Licencia añadida: $licencia")
                 }
             }
-
-
-
-            }
-        }
-
-
-    private fun convertDate(originalDate: String): String {
-        val originalFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-        val targetFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        return try {
-            val date = originalFormat.parse(originalDate)
-            targetFormat.format(date)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ""
         }
     }
+
+
+
     fun goToAtras(view: View) {
         val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
         startActivity(intent)

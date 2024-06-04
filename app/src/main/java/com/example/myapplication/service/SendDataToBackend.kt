@@ -9,6 +9,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.database.Connection
 import com.example.myapplication.model.Log
 import com.example.myapplication.model.Registro
+import com.example.myapplication.model.CorteInternet
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -20,6 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import com.example.myapplication.utils.NetworkChangeService
 
 class SendDataToBackend (private val context: Context) {
 
@@ -92,7 +94,7 @@ class SendDataToBackend (private val context: Context) {
         })
     }
 
-    fun sendLocalRegs(): Boolean {
+    fun sendLocalRegs(): Int {
             var count:Int=0
             val connection = Connection(context)
             val db = connection.writableDatabase
@@ -138,12 +140,13 @@ class SendDataToBackend (private val context: Context) {
 
             puntero.close()
             db.close()
-            return true
+
         } else {
             puntero.close()
             db.close()
-            return false
+
         }
+        return count
     }
 
     fun sendRegistro(reg: Registro): Boolean {
@@ -169,6 +172,68 @@ class SendDataToBackend (private val context: Context) {
             .add("dni", reg.dni)
             .add("estado", reg.estado)
             .add("tipo", reg.tipo)
+            .build()
+
+        // Crea la solicitud POST
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        activeCall?.cancel()
+
+        activeCall = client.newCall(request)
+
+        activeCall?.enqueue(object : Callback {
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    // La solicitud fue exitosa //
+                    if (response.isSuccessful) {
+                        sended=true
+                    } else {
+                        sended=false
+
+                    }
+
+                } catch (e: Exception) {e.printStackTrace()
+                    sended=false
+                } finally {
+                    response.body?.close()
+                    activeCall = null
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                // Maneja el fallo de la solicitud
+                activeCall = null
+                sended=false
+
+            }
+        })
+        return sended
+    }
+
+    //Hacer endpoint en backendLog3r
+
+    fun sendDisconnectReports(corte : CorteInternet): Boolean{
+
+        var sended:Boolean=true
+
+        val url = BuildConfig.BASE_URL + "/api/authentication/cortes"
+
+        // CREAR CONEXION
+        val client = OkHttpClient().newBuilder()
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .build()
+
+        // Crear el cuerpo de la solicitud HTTP
+        val requestBody = FormBody.Builder()
+            .add("horarioDesconexion", corte.horarioDesconexion.toString())
+            .add("horarioReconexion", corte.horarioReconexion.toString())
+            .add("cantRegSincronizados", corte.cantRegistros.toString())
             .build()
 
         // Crea la solicitud POST

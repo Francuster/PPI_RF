@@ -123,7 +123,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         runOnUiThread {
             for (i in 0 until licenciasJSONArray.length()) {
                 val lastUserJsonObject = licenciasJSONArray.getJSONObject(i)
-
+                val licenciaId = lastUserJsonObject.getString("_id")
                 val userIdCheck = lastUserJsonObject.getString("userId")
 
                 if (userId == userIdCheck) {
@@ -131,7 +131,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                     val fechaHasta = lastUserJsonObject.getString("fechaHasta")
 
                     // Crear una nueva instancia de Licencia y añadirla a la lista
-                    val licencia = Licencia(fechaDesde, fechaHasta, userId)
+                    val licencia = Licencia(licenciaId,fechaDesde, fechaHasta, userId)
                     licenciasEmpleado.add(licencia)
 
                 }

@@ -61,7 +61,7 @@ class CargarLicenciaActivity : AppCompatActivity() {
                 // Verificar que fechaDesde no sea posterior a fechaHasta
                 var validationResult = esFechaValida(fechaDesde!!, fechaHasta!!)
                 if (validationResult.resultado) {
-                    val licencia = Licencia(fechaDesde!!, fechaHasta!!, empleado?.userId!!)
+                    val licencia = Licencia("",fechaDesde!!, fechaHasta!!, empleado?.userId!!)
                     licenciasEmpleado.add(licencia)
                     guardarLicencia()
                 } else {

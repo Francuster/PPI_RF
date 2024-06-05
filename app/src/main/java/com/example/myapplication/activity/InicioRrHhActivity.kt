@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
+import com.example.myapplication.model.Empleado
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -24,6 +25,7 @@ class InicioRrHhActivity: AppCompatActivity() {
     private val client = OkHttpClient()
     private var jsonArray = JSONArray()
     private val handler = Handler()
+    val listaEmpleados = mutableListOf<Empleado>()
     private lateinit var runnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +72,8 @@ class InicioRrHhActivity: AppCompatActivity() {
 
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
                 textViewEmpleado.text = fullName
-
+                var empleado = Empleado(fullName,userId)
+                listaEmpleados.add(empleado)
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
@@ -130,7 +133,8 @@ class InicioRrHhActivity: AppCompatActivity() {
 
     }
     fun goToLicences(view: View){
-        val intent = Intent(applicationContext, DocentesLicenciasActivity::class.java)
+        val intent = Intent(applicationContext, EmpleadosLicenciasActivity::class.java)
+        intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
         startActivity(intent)
 
     }

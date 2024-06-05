@@ -41,12 +41,6 @@
 
         </activity>
         <!--Login-->
-        <activity
-            android:name=".activity.OfflineFaceRecognitionActivity"
-            android:exported="false"
-            android:label="@string/title_activity_offline_face_recognition"
-            android:theme="@style/Theme.MyApplication" />
-
 
         <activity
             android:name=".activity.RegistroExitosoAntesalaActivity"
@@ -85,7 +79,6 @@
         <activity android:name=".activity.ModificacionRolActivity" android:label="ModificacionRolActivity" android:exported="true">
 
         </activity>
-        <activity android:name=".activity.RegistroRrHhPrimeraSalaActivity" android:label="RegistroRrHhPrimeraSalaActivity" />
         <activity android:name=".activity.CamaraParaRegistroRrHhActivity" android:label="CamaraParaRegistroRrHhActivity" />
         <activity android:name=".activity.ModificacionHoraActivity" android:label="ModificacionHoraActivityActivity" android:exported="true">
         </activity>
@@ -106,10 +99,10 @@
 
         <!-- LICENCIAS -->
         </activity>
-        <activity android:name=".activity.DocentesLicenciasActivity" android:label="DocentesLicenciasActivity" android:exported="true">
+        <activity android:name=".activity.EmpleadosLicenciasActivity" android:label="DocentesLicenciasActivity" android:exported="true">
 
         </activity>
-        <activity android:name=".activity.LicenciasDocenteActivity" android:label="LicenciasDocenteActivity" android:exported="true">
+        <activity android:name=".activity.LicenciasEmpleadoActivity" android:label="LicenciasDocenteActivity" android:exported="true">
 
         </activity>
         <activity android:name=".activity.CargarLicenciaActivity" android:label="CargarLicenciaActivity"  android:exported="true">

@@ -44,7 +44,7 @@
             android:id="@+id/flecha_atras"
             android:layout_width="62dp"
             android:layout_height="44dp"
-            android:onClick="goToLicenciasDocentes"
+            android:onClick="goToLicenciasEmpleados"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

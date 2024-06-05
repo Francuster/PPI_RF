@@ -8,17 +8,26 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
+import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.Licencia
 
-class LicenciasDocenteActivity: AppCompatActivity() {
-    private lateinit var licenciasDocente: ArrayList<Licencia>
-    private var userId: String? = null
+class LicenciasEmpleadoActivity: AppCompatActivity() {
+    private lateinit var licenciasEmpleado: ArrayList<Licencia>
+    private lateinit var listaEmpleados: ArrayList<Empleado>
+    private var empleado: Empleado? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.licencias_docente)
-        userId = intent.getStringExtra("user_id")
-        licenciasDocente = intent.getParcelableArrayListExtra<Licencia>("licenciasDocente") ?: arrayListOf()
+        setContentView(R.layout.licencias_empleado)
+        empleado = intent.getParcelableExtra("empleado")
+        licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasEmpleado") ?: arrayListOf()
+        listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
+
+        // Obtén una referencia al TextView
+        val empleadoLicenciasTitulo: TextView = findViewById(R.id.empleado_licencias_titulo)
+        // Establece el nuevo texto
+        val texto = "LICENCIAS DE :\n${empleado?.fullName}"
+        empleadoLicenciasTitulo.text = texto
         mostrarTodasLasLicencias()
     }
 
@@ -29,7 +38,7 @@ class LicenciasDocenteActivity: AppCompatActivity() {
         runOnUiThread {
             container.removeAllViews() // Elimina vistas antiguas antes de agregar las nuevas
 
-            for (licencia in licenciasDocente) {
+            for (licencia in licenciasEmpleado) {
 
                 val diasDeLicencia = "Del ${licencia.fechaDesde}  al ${licencia.fechaHasta}"
 
@@ -47,13 +56,14 @@ class LicenciasDocenteActivity: AppCompatActivity() {
 
     fun goToCargarLicencia(view: View) {
         val intent = Intent(applicationContext, CargarLicenciaActivity::class.java)
-        intent.putExtra("user_id", userId)
-        intent.putParcelableArrayListExtra("licenciasDocente", ArrayList(licenciasDocente))
+        intent.putExtra("empleado", empleado)
+        intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))
         startActivity(intent)
     }
 
-    fun goToAtras(view: View) {
-        val intent = Intent(applicationContext, DocentesLicenciasActivity::class.java)
+    fun goToAtrasEmpleadosLicencias(view: View) {
+        val intent = Intent(applicationContext, EmpleadosLicenciasActivity::class.java)
+        intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
         startActivity(intent)
     }
 

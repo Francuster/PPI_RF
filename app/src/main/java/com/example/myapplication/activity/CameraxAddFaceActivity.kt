@@ -21,10 +21,12 @@ import android.media.Image
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -334,6 +336,9 @@ class CameraxAddFaceActivity : AppCompatActivity() {
                 boundingBox
             )
 
+            // Rotate the image in -90 degrees and send it to the previous activity
+            sendRotatedImageToPreviousActivity(bitmap)
+
             //            if(start) name = recognizeImage(bitmap);
             embeddings = faceRecognition!!.getFaceEmbeddings(bitmap, this)
 
@@ -343,6 +348,44 @@ class CameraxAddFaceActivity : AppCompatActivity() {
         }
 
 //        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
+    }
+
+    private fun sendRotatedImageToPreviousActivity(bitmap: Bitmap) {
+        val rotatedBitmap = rotateBitmap(bitmap, 360f)
+        showImageInToast(rotatedBitmap)
+
+        val outputStream = ByteArrayOutputStream()
+        rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        val byteArray = outputStream.toByteArray()
+
+        val intent = Intent().apply {
+        putExtra("rotatedImage", byteArray)
+        }
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+    private fun showImageInToast(image: Bitmap) {
+        val toast = Toast.makeText(this, "", Toast.LENGTH_LONG)
+        toast.setGravity(Gravity.CENTER, 0, 0)
+
+        val toastLayout = LinearLayout(this)
+        toastLayout.orientation = LinearLayout.HORIZONTAL
+        toastLayout.setBackgroundColor(Color.TRANSPARENT)
+
+        val imageView = ImageView(this)
+        imageView.setImageBitmap(image)
+        imageView.adjustViewBounds = true
+        imageView.maxWidth = 200
+        imageView.maxHeight = 200
+
+        toastLayout.addView(imageView)
+        toast.view = toastLayout
+        toast.show()
+    }
+    private fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(angle)
+        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
     /** Recognize Processor  */

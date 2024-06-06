@@ -93,10 +93,10 @@ class RegistroUsuarioActivity:AppCompatActivity() {
     }
 
     fun goToCamaraParaRegistro(view: View) {
-        val intent = Intent(this, CamaraParaRegistroRrHhActivity::class.java)
+        val intent = Intent(this, CameraxAddFaceActivity::class.java)
+        intent.putExtra("fromActivity", "RegistroUsuarioActivity")
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {

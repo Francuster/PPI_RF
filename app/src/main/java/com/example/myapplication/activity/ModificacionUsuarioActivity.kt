@@ -91,11 +91,12 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     }
 
     fun goToCameraParaRegistro(view: View) {
-        val intent = Intent(applicationContext, CameraxAddFaceActivity::class.java)
+        val intent = Intent(this, CameraxAddFaceActivity::class.java)
+        intent.putExtra("fromActivity", "ModificacionUsuarioActivity")
         intent.putExtra("userId", userId)
-        startActivity(intent)
-//        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+        startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
+
 
     fun actualizarUsuario(view: View) {
         enviarDatosModificacion() // Llama a enviarDatosModificacion aquí
@@ -180,9 +181,11 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
                                 goToModificacionExitosa()
                             }
                             500 -> {
+                                goToModificacionError()
                                 Toast.makeText(this@ModificacionUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
                             }
                             else -> {
+                                goToModificacionError()
                                 Toast.makeText(this@ModificacionUsuarioActivity, "Error: ${response.message}", Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -200,6 +203,10 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
     fun goToModificacionExitosa() {
         val intent = Intent(applicationContext, RegistroExitoso2Activity::class.java)
+        startActivity(intent)
+    }
+    fun goToModificacionError() {
+        val intent = Intent(applicationContext, RegistroDenegado2Activity::class.java)
         startActivity(intent)
     }
 }

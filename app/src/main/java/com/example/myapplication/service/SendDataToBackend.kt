@@ -1,9 +1,6 @@
 package com.example.myapplication.service
 
 import android.content.Context
-import android.database.Cursor
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.database.Connection
@@ -21,7 +18,6 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
-import com.example.myapplication.utils.NetworkChangeService
 
 class SendDataToBackend (private val context: Context) {
 
@@ -94,7 +90,7 @@ class SendDataToBackend (private val context: Context) {
         })
     }
 
-    fun sendLocalRegs(): Int {
+    fun getLocalRegs(): Int {
             var count:Int=0
             val connection = Connection(context)
             val db = connection.writableDatabase
@@ -214,7 +210,6 @@ class SendDataToBackend (private val context: Context) {
         return sended
     }
 
-    //Hacer endpoint en backendLog3r
 
     fun sendDisconnectReports(corte : CorteInternet): Boolean{
 
@@ -231,9 +226,10 @@ class SendDataToBackend (private val context: Context) {
 
         // Crear el cuerpo de la solicitud HTTP
         val requestBody = FormBody.Builder()
-            .add("horarioDesconexion", corte.horarioDesconexion.toString())
-            .add("horarioReconexion", corte.horarioReconexion.toString())
+            .add("horarioDesconexion", corte.horarioDesconexion)
+            .add("horarioReconexion", corte.horarioReconexion)
             .add("cantRegSincronizados", corte.cantRegistros.toString())
+            .add("periodoDeCorte",corte.periodoDeCorte)
             .build()
 
         // Crea la solicitud POST

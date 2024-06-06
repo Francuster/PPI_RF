@@ -16,8 +16,8 @@ import java.util.Locale
 class NetworkChangeService : Service() {
     private lateinit var networkChangeReceiver: NetworkChangeReceiver
 
-     private var horarioDesconexion: String? = null
-     private var horarioReconexion: String? = null
+     private lateinit var horarioDesconexion: String
+     private lateinit var horarioReconexion: String
 
     override fun onCreate() {
         super.onCreate()
@@ -33,7 +33,7 @@ class NetworkChangeService : Service() {
 
                         val regRequest = SendDataToBackend(applicationContext)
 
-                        val cantRegistrosSincronizados=regRequest.sendLocalRegs()
+                        val cantRegistrosSincronizados=regRequest.getLocalRegs()
 
                         if(cantRegistrosSincronizados>0){
                             Toast.makeText(this, "Sincronización exitosa", Toast.LENGTH_SHORT).show()
@@ -41,9 +41,12 @@ class NetworkChangeService : Service() {
                         else{
                             Toast.makeText(this, "No existen nuevos registros para sincronizar.", Toast.LENGTH_SHORT).show()
                         }
-                        //Enviar el período de corte acá
-                        val corte=CorteInternet(horarioDesconexion,horarioReconexion,cantRegistrosSincronizados)
-                        //regRequest.sendDisconnectReports(corte)
+
+                        //Calcular y enviar el período de corte acá
+                        val periodoDeCorte= calcularPeriodoCorte(horarioDesconexion,horarioReconexion)
+                        val corte=CorteInternet(horarioDesconexion,horarioReconexion,cantRegistrosSincronizados,periodoDeCorte)
+
+                        regRequest.sendDisconnectReports(corte)
                     }
 
                 } else {
@@ -71,5 +74,19 @@ class NetworkChangeService : Service() {
     private fun getCurrentTime(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
         return dateFormat.format(Date())
+    }
+
+    private fun calcularPeriodoCorte(horarioDesconexion: String, horarioReconexion: String): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+        val dateDesconexion = dateFormat.parse(horarioDesconexion)
+        val dateReconexion = dateFormat.parse(horarioReconexion)
+
+        val diferencia = dateReconexion.time - dateDesconexion.time
+
+        val segundos = diferencia / 1000 % 60
+        val minutos = diferencia / (1000 * 60) % 60
+        val horas = diferencia / (1000 * 60 * 60) % 24
+
+        return String.format("%02d:%02d:%02d", horas, minutos, segundos)
     }
 }

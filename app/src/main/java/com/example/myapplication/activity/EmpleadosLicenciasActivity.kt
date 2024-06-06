@@ -33,7 +33,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.empleados)
-        fetch("Licencias","/api/licencias","FetchLicencias")
+        fetch("Licencias","/api/licencias/","FetchLicencias")
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         scheduleUserUpdate()
         mostrarTodosLosDocentes()

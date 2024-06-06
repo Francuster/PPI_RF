@@ -112,7 +112,7 @@ class CargarLicenciaActivity : AppCompatActivity() {
     // Función para guardar la licencia
     private fun guardarLicencia() {
         // Construir la URL para la solicitud HTTP
-        val url = BuildConfig.BASE_URL + "/api/licencias"
+        val url = BuildConfig.BASE_URL + "/api/licencias/"
         val client = OkHttpClient()
 
         val multipartBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)

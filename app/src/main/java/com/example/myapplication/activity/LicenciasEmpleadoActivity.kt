@@ -89,7 +89,7 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
 
     private fun eliminarLicencia(licenciaId: String) {
         // Construir la URL para la solicitud HTTP
-        val url = "${BuildConfig.BASE_URL}/api/licencias/$licenciaId"
+        val url = "${BuildConfig.BASE_URL}/api/licencias/$licenciaId/"
         val client = OkHttpClient()
 
         // Construir la solicitud HTTP DELETE

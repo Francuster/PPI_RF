@@ -28,10 +28,18 @@ class InicioRrHhActivity: AppCompatActivity() {
     private val handler = Handler()
     private lateinit var runnable: Runnable
 
+    private var nombre: String? = null
+    private var apellido: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inico_rrhh)
         fetchUsers()
+        nombre = intent.getStringExtra("nombre")
+        apellido=intent.getStringExtra("apellido")//nombre para mostrar
+
+        val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
+        textoNombreUsuario.text = "$nombre $apellido"
 
         // Programa la actualización de usuarios cada 10 segundos
         scheduleUserUpdate()

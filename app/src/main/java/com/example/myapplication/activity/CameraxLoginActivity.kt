@@ -314,9 +314,15 @@ class CameraxLoginActivity : AppCompatActivity() {
         // Crear el Intent y pasar los datos
         if(embeddingsResponse.data.rol.equals("recursos humanos")||embeddingsResponse.data.rol.equals("RECURSOS HUMANOS")){
             val intent = Intent(this, InicioRrHhActivity::class.java)
+
+            intent.putExtra("nombre", embeddingsResponse.data.nombre)
+            intent.putExtra("apellido", embeddingsResponse.data.apellido)
             startActivity(intent)
         } else if(embeddingsResponse.data.rol.equals("seguridad")||embeddingsResponse.data.rol.equals("SEGURIDAD")){
             val intent = Intent(this, InicioSeguridadActivity::class.java)
+
+            intent.putExtra("nombre", embeddingsResponse.data.nombre)
+            intent.putExtra("apellido", embeddingsResponse.data.apellido)
             startActivity(intent)
         } else {
             // Crear el Intent y pasar los datos solo si el rol no es "recursos humanos" ni "seguridad"

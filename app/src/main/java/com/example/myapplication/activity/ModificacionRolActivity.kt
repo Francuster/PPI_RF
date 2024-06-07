@@ -24,7 +24,8 @@ class ModificacionRolActivity : AppCompatActivity() {
 
         setContentView(R.layout.modificacion_rol)
         spinner = findViewById<Spinner>(R.id.tipo_cuenta_modificacion)
-        val elementos = listOf("ESTUDIANTE", "PROFESOR", "SEGURIDAD", "RRHH")
+        val elementos = listOf("DOCENTE","NO DOCENTE", "SEGURIDAD","PERSONAL JERÁRQUICO","ADMINISTRADOR","ESTUDIANTE","RECURSOS HUMANOS")
+
 
         val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, elementos)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)

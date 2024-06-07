@@ -279,7 +279,7 @@ class CameraxLoginActivity : AppCompatActivity() {
                 currentCall?.cancel() // Cancelar cualquier llamada anterior
 
                 val embeddingsRequest = EmbeddingsRequest(embeddings)
-                currentCall = RetrofitClient.apiService.authenticationWithEmbeddings(embeddingsRequest)
+                currentCall = RetrofitClient.apiService.loginWithEmbeddings(embeddingsRequest)
 
                 currentCall?.enqueue(object : Callback<EmbeddingsResponse> {
                     override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {

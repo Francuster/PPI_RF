@@ -43,14 +43,16 @@ class InicioRrHhActivity: AppCompatActivity() {
         handler.removeCallbacks(runnable)
     }
 
+    //TODO: sigue corriendo incluso despues de ir a otro activity
     private fun scheduleUserUpdate() {
-        runnable = Runnable {
-            fetchUsers()
-            // Vuelve a programar la actualización después de 10 segundos
-            handler.postDelayed(runnable, 10000)
-        }
-        // Programa la primera ejecución después de 10 segundos
-        handler.postDelayed(runnable, 10000)
+//        runnable = Runnable {
+//            fetchUsers()
+//            // Vuelve a programar la actualización después de 10 segundos
+//            handler.postDelayed(runnable, 10000)
+//        }
+
+//        // Programa la primera ejecución después de 10 segundos
+//        handler.postDelayed(runnable, 10000)
     }
 
     private fun mostrarTodosLosEmpleados() {
@@ -114,6 +116,7 @@ class InicioRrHhActivity: AppCompatActivity() {
         intent.putExtra("user_name", userName)
         intent.putExtra("user_apellido", userSurname)
         startActivity(intent)
+//        handler.removeCallbacks(runnable)
     }
 
 

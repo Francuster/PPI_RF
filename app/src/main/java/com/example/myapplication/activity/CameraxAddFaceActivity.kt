@@ -119,16 +119,16 @@ class CameraxAddFaceActivity : AppCompatActivity() {
     fun onAddButtonClick(view: View) {
         if (embeddings != null) {
             val imgModel = ImagenModel("", embeddings!!, userId)
-            val call: Call<Void> =
-                if (intent.getStringExtra("fromActivity") == "RegistroUsuarioActivity") {
-                    RetrofitClient.imagenApiService.postImagenes(imgModel)
-                } else {
-                    val userId = intent.getStringExtra("userId").toString()
-                    RetrofitClient.imagenApiService.putImagenes(userId, imgModel)
-                }
+            val call: Call<ImagenModel> = RetrofitClient.imagenApiService.postImagenes(imgModel)
+//                if (intent.getStringExtra("fromActivity") == "RegistroUsuarioActivity") {
+//                    RetrofitClient.imagenApiService.postImagenes(imgModel)
+//                } else {
+//                    val userId = intent.getStringExtra("userId").toString()
+//                    RetrofitClient.imagenApiService.putImagenes(userId, imgModel)
+//                }
 
-            call.enqueue(object : Callback<Void> {
-                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+            call.enqueue(object : Callback<ImagenModel> {
+                override fun onResponse(call: Call<ImagenModel>, response: Response<ImagenModel>) {
                     if (response.isSuccessful) {
                         println("Embeddings sent successfully")
                         Toast.makeText(
@@ -149,7 +149,7 @@ class CameraxAddFaceActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<Void>, t: Throwable) {
+                override fun onFailure(call: Call<ImagenModel>, t: Throwable) {
                     println("Error sending Embeddings: ${t.message}")
                 }
             })
@@ -337,7 +337,7 @@ class CameraxAddFaceActivity : AppCompatActivity() {
             )
 
             // Rotate the image in -90 degrees and send it to the previous activity
-            sendRotatedImageToPreviousActivity(bitmap)
+//            sendRotatedImageToPreviousActivity(bitmap)
 
             //            if(start) name = recognizeImage(bitmap);
             embeddings = faceRecognition!!.getFaceEmbeddings(bitmap, this)

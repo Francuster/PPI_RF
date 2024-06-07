@@ -14,6 +14,7 @@ import com.example.myapplication.utils.NetworkChangeService
 import com.example.myapplication.utils.isServiceRunning
 import android.widget.Spinner
 import android.widget.Toast
+import androidx.compose.ui.text.toLowerCase
 import com.example.myapplication.BuildConfig
 import com.google.android.material.textfield.TextInputEditText
 import okhttp3.Call
@@ -30,6 +31,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
+import java.util.Locale
 
 
 class RegistroUsuarioActivity:AppCompatActivity() {
@@ -48,10 +50,13 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         val spinner:Spinner = findViewById<Spinner>(R.id.tipo_cuenta)
         var elementos=ArrayList<String>()
 
-        elementos.add("ESTUDIANTE")
-        elementos.add("PROFESOR")
+        elementos.add("ADMINISTRADOR")
+        elementos.add("DOCENTE")
+        elementos.add("NO DOCENTE")
         elementos.add("SEGURIDAD")
         elementos.add("RECURSOS HUMANOS")
+        elementos.add("PERSONAL JERÁRQUICO")
+
         val adaptador=ArrayAdapter(this,R.layout.desplegable_tipo_cuenta,elementos)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter=adaptador
@@ -97,6 +102,8 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         intent.putExtra("fromActivity", "RegistroUsuarioActivity")
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
+
+    //TODO: no se usa
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
@@ -130,10 +137,11 @@ class RegistroUsuarioActivity:AppCompatActivity() {
             .addFormDataPart("nombre", nombre)
             .addFormDataPart("apellido", apellido)
             .addFormDataPart("dni", documento)
-            .addFormDataPart("rol", tipoCuenta)
+            .addFormDataPart("rol", tipoCuenta.lowercase(Locale.ENGLISH))
             .addFormDataPart("horariosEntrada", horaEntrada)
             .addFormDataPart("horariosSalida", horaSalida)
             .addFormDataPart("email", email)
+            .addFormDataPart("image", "")
 
         imageByteArray?.let {
             val tempFile = File.createTempFile("image", ".jpg", cacheDir)

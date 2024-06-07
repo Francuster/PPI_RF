@@ -14,10 +14,10 @@ import retrofit2.http.Query
 
 interface ImagenesApiService {
 
-    @POST("images")
-    fun postImagenes(@Body imagenModel: ImagenModel): Call<Void>
-    @PUT("images/{userId}")
-    fun putImagenes(@Path("userId") userId: String, @Body imagenModel: ImagenModel): Call<Void>
+    @POST("/api/imagenes")
+    fun postImagenes(@Body imagenModel: ImagenModel): Call<ImagenModel>
+    @PUT("/api/imagenes")
+    fun putImagenes(@Body imagenModel: ImagenModel): Call<Void>
     @GET("/api/imagenes")
     fun getImagenes(@Query("userId") userId: String): Call<List<ImagenModel>>
 

@@ -25,6 +25,11 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Locale
+import android.text.Editable
+import android.text.InputFilter
+import android.text.Spanned
+import android.text.TextWatcher
+import android.util.Patterns
 
 class ModificacionUsuarioActivity : AppCompatActivity() {
 
@@ -51,6 +56,10 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private lateinit var rolSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
+
+
         super.onCreate(savedInstanceState)
         if (!isServiceRunning(applicationContext, NetworkChangeService::class.java)) {
             val intent = Intent(this, NetworkChangeService::class.java)
@@ -84,6 +93,11 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         mailEditText = findViewById(R.id.email_texto)
         documentoEditText = findViewById(R.id.documento_texto)
         rolSpinner = findViewById(R.id.tipo_cuenta)
+
+        // Agregar filtros y validaciones
+        agregarFiltros()
+        agregarValidaciones()
+
     }
 
     fun goToModificacionRol(view: View) {
@@ -93,7 +107,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
     fun goToModificacionHora(view: View) {
         val intent = Intent(applicationContext, ModificacionHoraActivity::class.java)
-        startActivity(intent)
+        startActivityForResult(intent, HOURS_REQUEST_CODE) // Asegúrate de usar startActivityForResult
     }
 
     fun goToModificacionTexto(view: View) {
@@ -117,9 +131,138 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
 
-    fun actualizarUsuario(view: View) {
-        enviarDatosModificacion()
+    private fun agregarFiltros() {
+        val letrasFilter = object : InputFilter {
+            override fun filter(source: CharSequence?, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
+                val builder = StringBuilder()
+                for (i in start until end) {
+                    val char = source?.get(i)
+                    if (char != null && (char.isLetter() || char.isWhitespace())) {
+                        builder.append(char)
+                    }
+                }
+                return if (builder.isEmpty()) {
+                    nombreEditText.error = "Solo se permiten letras"
+                    apellidoEditText.error="Solo se permiten letras"
+                    ""
+                } else {
+                    null
+                }
+            }
+        }
+
+        val numerosFilter = object : InputFilter {
+            override fun filter(source: CharSequence?, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
+                val builder = StringBuilder()
+                for (i in start until end) {
+                    val char = source?.get(i)
+                    if (char != null && char.isDigit()) {
+                        builder.append(char)
+                    }
+                }
+                return if (builder.isEmpty()) {
+                    documentoEditText.error = "Solo se permiten números"
+                    ""
+                } else {
+                    null
+                }
+            }
+        }
+
+        nombreEditText.filters = arrayOf(letrasFilter)
+        apellidoEditText.filters = arrayOf(letrasFilter)
+        documentoEditText.filters = arrayOf(numerosFilter)
     }
+
+    private fun agregarValidaciones() {
+        nombreEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    nombreEditText.error = "El campo no puede estar vacío"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val filteredText = s.toString().filter { it.isLetter() || it.isWhitespace() }
+                if (s.toString() != filteredText) {
+                    nombreEditText.setText(filteredText)
+                    nombreEditText.setSelection(filteredText.length)
+                }
+            }
+        })
+
+        apellidoEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    apellidoEditText.error = "El campo no puede estar vacío"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val filteredText = s.toString().filter { it.isLetter() || it.isWhitespace() }
+                if (s.toString() != filteredText) {
+                    apellidoEditText.setText(filteredText)
+                    apellidoEditText.setSelection(filteredText.length)
+                }
+            }
+        })
+
+        mailEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    mailEditText.error = "El campo no puede estar vacío"
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+                    mailEditText.error = "Formato de email incorrecto"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        documentoEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    documentoEditText.error = "El campo no puede estar vacío"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val filteredText = s.toString().filter { it.isDigit() }
+                if (s.toString() != filteredText) {
+                    documentoEditText.setText(filteredText)
+                    documentoEditText.setSelection(filteredText.length)
+                }
+            }
+        })
+    }
+
+    fun actualizarUsuario(view: View) {
+        if (validarCampos()) {
+            enviarDatosModificacion()
+        } else {
+            Toast.makeText(this, "Por favor, corrige los errores antes de continuar", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun validarCampos(): Boolean {
+        return nombreEditText.error == null &&
+                apellidoEditText.error == null &&
+                mailEditText.error == null &&
+                documentoEditText.error == null &&
+                !nombreEditText.text.isNullOrEmpty() &&
+                !apellidoEditText.text.isNullOrEmpty() &&
+                !mailEditText.text.isNullOrEmpty() &&
+                !documentoEditText.text.isNullOrEmpty()
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -128,11 +271,11 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
                 HOURS_REQUEST_CODE -> {
                     horaEntrada = data?.getStringExtra("hora_entrada")
                     horaSalida = data?.getStringExtra("hora_salida")
-                    // Actualiza los TextView correspondientes si tienes
+                    // Agrega un log para asegurarte de que los valores se están recibiendo correctamente
+                    println("Hora de entrada: $horaEntrada, Hora de salida: $horaSalida")
                 }
                 CAMERA_REQUEST_CODE -> {
                     imageByteArray = data?.getByteArrayExtra("image")
-                    //enviarDatosModificacion() // Llama a enviarDatosModificacion aquí
                 }
             }
         }

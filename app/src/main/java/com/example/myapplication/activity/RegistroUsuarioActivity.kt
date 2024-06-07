@@ -4,8 +4,14 @@ package com.example.myapplication.activity
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.Spanned
+import android.text.TextWatcher
 import android.util.Base64
+import android.util.Patterns
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +19,7 @@ import com.example.myapplication.R
 import com.example.myapplication.utils.NetworkChangeService
 import com.example.myapplication.utils.isServiceRunning
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.compose.ui.text.toLowerCase
 import com.example.myapplication.BuildConfig
@@ -74,6 +81,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
             // Mostrar el TimePickerDialog
             timePickerDialog.show()
+
         }
 
         val hora_salida=findViewById<TextInputEditText>(R.id.hora_salida)
@@ -90,13 +98,205 @@ class RegistroUsuarioActivity:AppCompatActivity() {
             // Mostrar el TimePickerDialog
             timePickerDialog.show()
         }
+        agregarFiltrosValidaciones()
 
     }
 
-    fun registrarUsuario(view: View){
-        enviarDatosRegistro()
+    private fun agregarFiltrosValidaciones() {
+        val nombreEditText = findViewById<EditText>(R.id.nombre_texto)
+        val apellidoEditText = findViewById<EditText>(R.id.apellido_texto)
+        val documentoEditText = findViewById<EditText>(R.id.documento_texto)
+        val emailEditText = findViewById<EditText>(R.id.email_texto)
+        val horaEntradaEditText = findViewById<EditText>(R.id.hora_entrada)
+        val horaSalidaEditText = findViewById<EditText>(R.id.hora_salida)
+        val tipoCuentaSpinner = findViewById<Spinner>(R.id.tipo_cuenta)
+
+        // Filtro para permitir solo letras y espacios en el nombre y apellido
+        val letrasFilter = object : InputFilter {
+            override fun filter(source: CharSequence?, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
+                val builder = StringBuilder()
+                for (i in start until end) {
+                    val char = source?.get(i)
+                    if (char != null && (char.isLetter() || char.isWhitespace())) {
+                        builder.append(char)
+                    }
+                }
+                return if (builder.isEmpty()) {
+                    nombreEditText.error = "Solo se permiten letras"
+                    apellidoEditText.error="Solo se permiten letras"
+                    ""
+                } else {
+                    null
+                }
+            }
+        }
+
+        // Filtro para permitir solo números en el documento
+        val numerosFilter = object : InputFilter {
+            override fun filter(source: CharSequence?, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
+                val builder = StringBuilder()
+                for (i in start until end) {
+                    val char = source?.get(i)
+                    if (char != null && char.isDigit()) {
+                        builder.append(char)
+                    }
+                }
+                return if (builder.isEmpty()) {
+                    documentoEditText.error = "Solo se permiten números"
+                    ""
+                } else {
+                    null
+                }
+            }
+        }
+
+        nombreEditText.filters = arrayOf(letrasFilter)
+        apellidoEditText.filters = arrayOf(letrasFilter)
+        documentoEditText.filters = arrayOf(numerosFilter)
+
+        nombreEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    nombreEditText.error = "El campo no puede estar vacío"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val filteredText = s.toString().filter { it.isLetter() || it.isWhitespace() }
+                if (s.toString() != filteredText) {
+                    nombreEditText.setText(filteredText)
+                    nombreEditText.setSelection(filteredText.length)
+                }
+            }
+        })
+
+        apellidoEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    apellidoEditText.error = "El campo no puede estar vacío"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val filteredText = s.toString().filter { it.isLetter() || it.isWhitespace() }
+                if (s.toString() != filteredText) {
+                    apellidoEditText.setText(filteredText)
+                    apellidoEditText.setSelection(filteredText.length)
+                }
+            }
+        })
+
+        emailEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    emailEditText.error = "El campo no puede estar vacío"
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+                    emailEditText.error = "Formato de email incorrecto"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        documentoEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (s.isNullOrEmpty()) {
+                    documentoEditText.error = "El campo no puede estar vacío"
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                val filteredText = s.toString().filter { it.isDigit() }
+                if (s.toString() != filteredText) {
+                    documentoEditText.setText(filteredText)
+                    documentoEditText.setSelection(filteredText.length)
+                }
+            }
+        })
+
+
+
+        horaEntradaEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val text = horaEntradaEditText.text.toString()
+                if (text.isEmpty()) {
+                    horaEntradaEditText.error = "El campo no puede estar vacío"
+                }
+            }
+        }
+
+        horaSalidaEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val text = horaSalidaEditText.text.toString()
+                if (text.isEmpty()) {
+                    horaSalidaEditText.error = "El campo no puede estar vacío"
+                }
+            }
+        }
+
+        tipoCuentaSpinner.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selectedItem = parent?.getItemAtPosition(position).toString()
+                if (selectedItem.isNullOrEmpty()) {
+                    (parent?.getChildAt(0) as? TextView)?.error = "Seleccione un tipo de cuenta válido"
+                } else {
+                    (parent?.getChildAt(0) as? TextView)?.error = null
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                (parent?.getChildAt(0) as? TextView)?.error = "Seleccione un tipo de cuenta válido"
+            }
+        })
     }
 
+
+
+    private fun validarCampos(): Boolean {
+        val nombreEditText = findViewById<EditText>(R.id.nombre_texto)
+        val apellidoEditText = findViewById<EditText>(R.id.apellido_texto)
+        val documentoEditText = findViewById<EditText>(R.id.documento_texto)
+        val emailEditText = findViewById<EditText>(R.id.email_texto)
+        val horaEntradaEditText = findViewById<EditText>(R.id.hora_entrada)
+        val horaSalidaEditText = findViewById<EditText>(R.id.hora_salida)
+        val tipoCuentaSpinner = findViewById<Spinner>(R.id.tipo_cuenta)
+
+        val nombre = nombreEditText.text.toString()
+        val apellido = apellidoEditText.text.toString()
+        val documento = documentoEditText.text.toString()
+        val email = emailEditText.text.toString()
+        val horaEntrada = horaEntradaEditText.text.toString()
+        val horaSalida = horaSalidaEditText.text.toString()
+        val tipoCuenta = tipoCuentaSpinner.selectedItem.toString()
+
+        // Validar que ningún campo esté vacío
+        if (nombre.isEmpty() || apellido.isEmpty() || documento.isEmpty() || email.isEmpty() || horaEntrada.isEmpty() || horaSalida.isEmpty() || tipoCuenta.isEmpty()) {
+            return false
+        }
+
+        // Validar email
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            return false
+        }
+
+        return true
+    }
+
+    fun registrarUsuario(view: View) {
+        if (validarCampos()) {
+            enviarDatosRegistro()
+        } else {
+            // Mostrar mensaje de error general si algún campo no es válido
+            Toast.makeText(this, "Por favor, complete todos los campos correctamente", Toast.LENGTH_SHORT).show()
+        }
+    }
     fun goToCamaraParaRegistro(view: View) {
         val intent = Intent(this, CameraxAddFaceActivity::class.java)
         intent.putExtra("fromActivity", "RegistroUsuarioActivity")
@@ -115,6 +315,8 @@ class RegistroUsuarioActivity:AppCompatActivity() {
             }
         }
     }
+
+
 
     fun enviarDatosRegistro() {
         val nombreEditText = findViewById<EditText>(R.id.nombre_texto)

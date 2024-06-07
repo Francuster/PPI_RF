@@ -47,6 +47,7 @@
             android:label="Registro Exitoso Antesala" />
 
         <activity android:name=".activity.CameraIngresoEgresoActivity" android:label="Escanea" />
+        <activity android:name=".activity.CameraxAddFaceActivity" android:label="CameraxAddFaceActivity" />
         <activity android:name=".activity.AnteEscaneaActivity" android:label="AnteEscanea" />
         <activity android:name=".activity.FormularioOfflineActivity" android:label="FormularioOffline" />
         <activity android:name=".activity.RegistroDenegadoActivity" android:label="RegistroDenegado" />

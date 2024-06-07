@@ -28,10 +28,18 @@ class InicioRrHhActivity: AppCompatActivity() {
     val listaEmpleados = mutableListOf<Empleado>()
     private lateinit var runnable: Runnable
 
+    private var nombre: String? = null
+    private var apellido: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inico_rrhh)
         fetchUsers()
+        nombre = intent.getStringExtra("nombre")
+        apellido=intent.getStringExtra("apellido")//nombre para mostrar
+
+        val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
+        textoNombreUsuario.text = "$nombre $apellido"
 
         // Programa la actualización de usuarios cada 10 segundos
         scheduleUserUpdate()
@@ -43,14 +51,16 @@ class InicioRrHhActivity: AppCompatActivity() {
         handler.removeCallbacks(runnable)
     }
 
+    //TODO: sigue corriendo incluso despues de ir a otro activity
     private fun scheduleUserUpdate() {
-        runnable = Runnable {
-            fetchUsers()
-            // Vuelve a programar la actualización después de 10 segundos
-            handler.postDelayed(runnable, 10000)
-        }
-        // Programa la primera ejecución después de 10 segundos
-        handler.postDelayed(runnable, 10000)
+//        runnable = Runnable {
+//            fetchUsers()
+//            // Vuelve a programar la actualización después de 10 segundos
+//            handler.postDelayed(runnable, 10000)
+//        }
+
+//        // Programa la primera ejecución después de 10 segundos
+//        handler.postDelayed(runnable, 10000)
     }
 
     private fun mostrarTodosLosEmpleados() {
@@ -115,6 +125,7 @@ class InicioRrHhActivity: AppCompatActivity() {
         intent.putExtra("user_name", userName)
         intent.putExtra("user_apellido", userSurname)
         startActivity(intent)
+//        handler.removeCallbacks(runnable)
     }
 
 

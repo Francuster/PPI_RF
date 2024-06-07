@@ -16,7 +16,7 @@ data class Data(
     val label: Int,
     val lugares: List<String>,
     val nombre: String,
-    val rol: List<String>
+    val rol: String
 ) : Serializable
 
 data class Id(

@@ -4,7 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
@@ -13,9 +13,17 @@ import com.example.myapplication.utils.deviceIsConnected
 
 class InicioSeguridadActivity: AppCompatActivity() {
 
+        private var nombre: String? = null
+        private var apellido: String? = null
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.inicio_seguridad)
+
+            nombre = intent.getStringExtra("nombre")
+            apellido=intent.getStringExtra("apellido")//nombre para mostrar
+
+            val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
+            textoNombreUsuario.text = "$nombre $apellido"
 
         }
         override fun onResume() {

@@ -48,56 +48,36 @@
             android:id="@+id/documento"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@drawable/rectangulo_alerta"
-            android:onClick="goToModificacionTexto"
-            app:layout_constraintBottom_toBottomOf="parent"
 
+            android:background="@drawable/rectangulo_alerta"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.589"
+            app:layout_constraintVertical_bias="0.611"
             app:layout_constraintWidth_percent="0.90">
 
-            <ImageView
-                android:id="@+id/imagen_flecha_documento"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
 
-                android:onClick="goToModificacionTexto"
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.60"
-                app:layout_constraintHorizontal_bias="0.553"
-
-                app:layout_constraintStart_toEndOf="@+id/documento_texto"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.521"
-                app:layout_constraintWidth_percent="0.10"
-                app:srcCompat="@drawable/expand_right_light" />
-
-            <TextView
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/documento_texto"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/inter_extrabold"
 
-                android:onClick="goToModificacionTexto"
-                android:tag="documento"
-                android:text="DOCUMENTO"
+                android:hint="DOCUMENTO"
                 android:textAlignment="center"
                 android:textColor="#36565B"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imagen_flecha_documento"
                 app:layout_constraintHeight_percent="0.55"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/imagen_documento"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.533"
                 app:layout_constraintWidth_percent="0.68"
@@ -126,57 +106,36 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
-            android:onClick="goToModificacionTexto"
-            android:tag="nombre"
             app:layout_constraintBottom_toBottomOf="parent"
-
             app:layout_constraintEnd_toEndOf="parent"
+
             app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.192"
+            app:layout_constraintVertical_bias="0.22"
             app:layout_constraintWidth_percent="0.90">
 
-            <ImageView
-                android:id="@+id/imagen_flecha_nombre"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:onClick="goToModificacionTexto"
 
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.60"
-                app:layout_constraintHorizontal_bias="0.553"
-
-                app:layout_constraintStart_toEndOf="@+id/nombre_texto"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.521"
-                app:layout_constraintWidth_percent="0.10"
-                app:srcCompat="@drawable/expand_right_light" />
-
-            <TextView
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nombre_texto"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/inter_extrabold"
-                android:onClick="goToModificacionTexto"
-                android:tag="nombre"
-                android:text="NOMBRE"
+                android:hint="NOMBRE"
                 android:textAlignment="center"
                 android:textColor="#36565B"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imagen_flecha_nombre"
                 app:layout_constraintHeight_percent="0.55"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/imagen_nombre"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.466"
+                app:layout_constraintVertical_bias="0.533"
                 app:layout_constraintWidth_percent="0.68"
                 tools:ignore="DuplicateIds,MissingConstraints" />
 
@@ -203,54 +162,34 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
-            android:onClick="goToModificacionTexto"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+
             app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.32"
+            app:layout_constraintVertical_bias="0.351"
             app:layout_constraintWidth_percent="0.90">
 
-            <ImageView
-                android:id="@+id/imagen_flecha_apellido"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
 
-                android:onClick="goToModificacionTexto"
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.60"
-                app:layout_constraintHorizontal_bias="0.553"
-
-                app:layout_constraintStart_toEndOf="@+id/apellido_texto"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.521"
-                app:layout_constraintWidth_percent="0.10"
-                app:srcCompat="@drawable/expand_right_light" />
-
-            <TextView
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/apellido_texto"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/inter_extrabold"
-                android:onClick="goToModificacionTexto"
-                android:tag="apellido"
-                android:text="APELLIDO"
+                android:hint="APELLIDO"
                 android:textAlignment="center"
                 android:textColor="#36565B"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imagen_flecha_apellido"
                 app:layout_constraintHeight_percent="0.55"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/imagen_apellido"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.533"
                 app:layout_constraintWidth_percent="0.68"
@@ -279,54 +218,35 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
-            android:onClick="goToModificacionTexto"
 
-            app:layout_constraintBottom_toTopOf="@+id/documento"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.954"
+            app:layout_constraintVertical_bias="0.478"
             app:layout_constraintWidth_percent="0.90">
 
-            <ImageView
-                android:id="@+id/imagen_flecha_mail"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
 
-                android:onClick="goToModificacionTexto"
+            <com.google.android.material.textfield.TextInputEditText
 
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.60"
-                app:layout_constraintHorizontal_bias="0.553"
-
-                app:layout_constraintStart_toEndOf="@+id/mail_texto"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.521"
-                app:layout_constraintWidth_percent="0.10"
-                app:srcCompat="@drawable/expand_right_light" />
-
-            <TextView
-
-                android:id="@+id/mail_texto"
+                android:id="@+id/email_texto"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/inter_extrabold"
-                android:onClick="goToModificacionTexto"
-                android:tag="mail"
-                android:text="MAIL"
+                android:hint="MAIL"
                 android:textAlignment="center"
                 android:textColor="#36565B"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imagen_flecha_mail"
                 app:layout_constraintHeight_percent="0.55"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/imagen_mail"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.533"
                 app:layout_constraintWidth_percent="0.68"
@@ -340,7 +260,7 @@
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/mail_texto"
+                app:layout_constraintEnd_toStartOf="@+id/email_texto"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -424,80 +344,37 @@
             app:layout_constraintVertical_bias="0.382"
             app:layout_constraintWidth_percent="0.38" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <Spinner
             android:id="@+id/tipo_cuenta"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
-            android:onClick="goToModificacionRol"
-
-            app:layout_constraintBottom_toTopOf="@+id/boton_siguiente"
+            android:hint="TIPO CUENTA"
+            android:popupBackground="@drawable/rectangulo_alerta"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/documento"
-            app:layout_constraintVertical_bias="0.5"
-            app:layout_constraintWidth_percent="0.90">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.741"
+            app:layout_constraintWidth_percent="0.90" />
 
-            <ImageView
-                android:id="@+id/imagen_flecha_tipo_cuenta"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-
-
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_percent="0.60"
-                app:layout_constraintHorizontal_bias="0.553"
-
-                app:layout_constraintStart_toEndOf="@+id/tipo_cuenta_texto"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.521"
-                app:layout_constraintWidth_percent="0.10"
-                app:srcCompat="@drawable/expand_right_light" />
-
-            <TextView
-
-                android:id="@+id/tipo_cuenta_texto"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@android:color/transparent"
-                android:fontFamily="@font/inter_extrabold"
-                android:onClick="goToModificacionRol"
-                android:text="TIPO CUENTA"
-                android:textAlignment="center"
-                android:textColor="#36565B"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/imagen_flecha_tipo_cuenta"
-                app:layout_constraintHeight_percent="0.55"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/imagen_tipo_cuenta"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.533"
-                app:layout_constraintWidth_percent="0.68"
-                tools:ignore="DuplicateIds,MissingConstraints" />
-
-            <ImageView
-                android:id="@+id/imagen_tipo_cuenta"
-                android:layout_width="62dp"
-                android:layout_height="40dp"
+        <ImageView
+            android:id="@+id/imagen_tipo_cuenta"
+            android:layout_width="54dp"
+            android:layout_height="39dp"
 
 
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tipo_cuenta_texto"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5"
-                app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_marginTop="29dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.109"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.716"
+            app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

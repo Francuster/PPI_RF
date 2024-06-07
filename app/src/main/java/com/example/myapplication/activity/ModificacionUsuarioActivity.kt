@@ -3,6 +3,9 @@ package com.example.myapplication.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,6 +24,7 @@ import okhttp3.Response
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.util.Locale
 
 class ModificacionUsuarioActivity : AppCompatActivity() {
 
@@ -40,11 +44,11 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private var horaSalida: String? = null
     private var imageByteArray: ByteArray? = null
     private val client = OkHttpClient()
-    private lateinit var nombreTextView: TextView
-    private lateinit var apellidoTextView: TextView
-    private lateinit var mailTextView: TextView
-    private lateinit var documentoTextView: TextView
-    private lateinit var rolTextView: TextView
+    private lateinit var nombreEditText: EditText
+    private lateinit var apellidoEditText: EditText
+    private lateinit var mailEditText: EditText
+    private lateinit var documentoEditText: EditText
+    private lateinit var rolSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,15 +59,31 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
         setContentView(R.layout.modificacion_usuario)
         userId = intent.getStringExtra("user_id")
-        userName=intent.getStringExtra("user_name")//nombre para mostrar
-        userSurname=intent.getStringExtra("user_apellido")//apellido para mostrar
-        nombreTextView = findViewById(R.id.nombre_texto)
-        apellidoTextView = findViewById(R.id.apellido_texto)
-        mailTextView = findViewById(R.id.mail_texto)
-        documentoTextView = findViewById(R.id.documento_texto)
-        rolTextView = findViewById(R.id.tipo_cuenta_texto)
+        userName = intent.getStringExtra("user_name") // nombre para mostrar
+        userSurname = intent.getStringExtra("user_apellido") // apellido para mostrar
         val textoNombreUsuario = findViewById<TextView>(R.id.modificacion_titulo)
         textoNombreUsuario.text = "Modificando usuario:\n$userName $userSurname "
+
+        val spinner: Spinner = findViewById(R.id.tipo_cuenta)
+        val elementos = arrayListOf(
+            "ADMINISTRADOR",
+            "DOCENTE",
+            "NO DOCENTE",
+            "SEGURIDAD",
+            "RECURSOS HUMANOS",
+            "PERSONAL JERÁRQUICO"
+        )
+
+        val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, elementos)
+        adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
+        spinner.adapter = adaptador
+
+        // Obtén las referencias a los campos de texto y spinner
+        nombreEditText = findViewById(R.id.nombre_texto)
+        apellidoEditText = findViewById(R.id.apellido_texto)
+        mailEditText = findViewById(R.id.email_texto)
+        documentoEditText = findViewById(R.id.documento_texto)
+        rolSpinner = findViewById(R.id.tipo_cuenta)
     }
 
     fun goToModificacionRol(view: View) {
@@ -97,42 +117,14 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
 
-
     fun actualizarUsuario(view: View) {
-        enviarDatosModificacion() // Llama a enviarDatosModificacion aquí
+        enviarDatosModificacion()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK) {
             when (requestCode) {
-                TEXT_REQUEST_CODE -> {
-                    val campo = data?.getStringExtra("campo")
-                    val textoModificado = data?.getStringExtra("texto_modificado")
-                    when (campo) {
-                        "nombre" -> {
-                            nombre = textoModificado
-                            nombreTextView.text = nombre
-                        }
-                        "apellido" -> {
-                            apellido = textoModificado
-                            apellidoTextView.text = apellido
-                        }
-                        "mail" -> {
-                            mail = textoModificado
-                            mailTextView.text = mail
-                        }
-                        "documento" -> {
-                            documento = textoModificado
-                            documentoTextView.text = documento
-                        }
-                    }
-                }
-                ROLE_REQUEST_CODE -> {
-                    rol = data?.getStringExtra("rol_modificado")
-                    rolTextView.text=rol
-                    // Actualiza el TextView correspondiente si tienes uno para el rol
-                }
                 HOURS_REQUEST_CODE -> {
                     horaEntrada = data?.getStringExtra("hora_entrada")
                     horaSalida = data?.getStringExtra("hora_salida")
@@ -148,14 +140,21 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
     fun enviarDatosModificacion() {
         userId?.let { id ->
+
+            val nombre = nombreEditText.text.toString()
+            val apellido = apellidoEditText.text.toString()
+            val documento = documentoEditText.text.toString()
+            val tipoCuenta = rolSpinner.selectedItem.toString()
+            val email = mailEditText.text.toString()
+
             val multipartBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
-            nombre?.let { multipartBodyBuilder.addFormDataPart("nombre", it) }
-            apellido?.let { multipartBodyBuilder.addFormDataPart("apellido", it) }
-            documento?.let { multipartBodyBuilder.addFormDataPart("dni", it) }
-            rol?.let { multipartBodyBuilder.addFormDataPart("rol", it) }
-            horaEntrada?.let { multipartBodyBuilder.addFormDataPart("horariosEntrada", it) }
-            horaSalida?.let { multipartBodyBuilder.addFormDataPart("horariosSalida", it) }
-            mail?.let { multipartBodyBuilder.addFormDataPart("email", it) }
+                .addFormDataPart("nombre", nombre)
+                .addFormDataPart("apellido", apellido)
+                .addFormDataPart("dni", documento)
+                .addFormDataPart("rol", tipoCuenta.lowercase(Locale.ENGLISH))
+                .addFormDataPart("horariosEntrada", horaEntrada ?: "")
+                .addFormDataPart("horariosSalida", horaSalida ?: "")
+                .addFormDataPart("email", email)
 
             imageByteArray?.let {
                 val tempFile = File.createTempFile("image", ".jpg", cacheDir)
@@ -167,7 +166,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
             val requestBody = multipartBodyBuilder.build()
             val request = Request.Builder()
-                .url(BuildConfig.BASE_URL+"/api/users/$id")
+                .url("${BuildConfig.BASE_URL}/api/users/$id")
                 .put(requestBody)
                 .header("Content-Type", "multipart/form-data")
                 .build()
@@ -205,6 +204,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         val intent = Intent(applicationContext, RegistroExitoso2Activity::class.java)
         startActivity(intent)
     }
+
     fun goToModificacionError() {
         val intent = Intent(applicationContext, RegistroDenegado2Activity::class.java)
         startActivity(intent)

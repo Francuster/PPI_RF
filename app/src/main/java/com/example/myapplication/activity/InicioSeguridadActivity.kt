@@ -1,5 +1,6 @@
 package com.example.myapplication.activity
 
+import com.example.myapplication.activity.QRScannerActivity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -27,7 +28,7 @@ class InicioSeguridadActivity: AppCompatActivity() {
             finish()
         }else{
             Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
-            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
+            val intent = Intent(applicationContext, QRScannerActivity::class.java)
             startActivity(intent)
         }
     }
@@ -43,6 +44,22 @@ class InicioSeguridadActivity: AppCompatActivity() {
             startActivity(intent)
         }
 
+    }
+
+    fun goToQREspecial(view: View) {
+        if(deviceIsConnected(applicationContext)){
+            Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
+            val intent = Intent(applicationContext, QRScannerActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    fun goToFormEspecial(view: View) {
+        if(deviceIsConnected(applicationContext)){
+            Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
+            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
+            startActivity(intent)
+        }
     }
     fun goToReporteSeguridad(view: View) {
 

@@ -2,6 +2,7 @@ package com.example.myapplication.database
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import java.text.SimpleDateFormat
@@ -29,12 +30,12 @@ fun registrarLogs(context: Context, nombre: String, apellido: String, dni: Int, 
         // Registrar el visitante en la tabla de Logs
         val queryLogs = "INSERT INTO logs (horario, nombre, apellido, dni, estado, tipo) VALUES (?, ?, ?, ?, ?, ?)"
         db.execSQL(queryLogs, arrayOf(fechaActual, nombre, apellido, dni, estado, tipo))
+        Log.i("TAG", "Entrada de usuario insertada correctamente en la tabla LOGS con horario: $fechaActual, nombre: $nombre, apellido: $apellido, dni: $dni, estado: $estado, tipo: $tipo")
     } catch (e: Exception) {
         // Manejar cualquier excepción
         Log.e(TAG, "Error al registrar Log", e)
     } finally {
         // Cerrar la conexión a la base de datos
-        Log.i(TAG, "Entrada de usuario insertada correctamente en la tabla LOGS con horario: $fechaActual")
         db.close()
     }
 }
@@ -190,5 +191,32 @@ fun obtenerIdUsuarioPorLegajo(context: Context, legajo: String): Int? {
 
     // Devolver el id_usuario (o null si no se encontró)
     return idUsuario
+}
+
+fun getNuevoEstadoByDniLocal(context: Context, dni: Int): String {
+    val databaseConnection = Connection(context)
+    val db = databaseConnection.readableDatabase
+    var estado: String? = null
+
+    val cursor: Cursor? = db.rawQuery(
+        "SELECT estado FROM logs WHERE dni = ? ORDER BY horario DESC LIMIT 1",
+        arrayOf(dni.toString())
+    )
+
+    cursor?.use {
+        if (it.moveToFirst()) {
+            estado = it.getString(it.getColumnIndexOrThrow("estado"))
+        }
+    }
+
+    db.close()
+
+    Log.i("TAG", "Último estado : $estado para dni $dni")
+
+    return if (estado != null && estado == "Ingresando") {
+        "Saliendo"
+    } else {
+        "Ingresando"
+    }
 }
 

@@ -109,7 +109,7 @@ class SendDataToBackend (private val context: Context) {
                         puntero.getString(puntero.getColumnIndexOrThrow("tipo")),
                     )
                     // Envía el registro
-                    if (sendRegistro(reg)) {
+                    if (sendRegistroLocal(reg)) {
                         count+=
                         // Borra el registro si se envió correctamente
                         db.delete(
@@ -145,11 +145,11 @@ class SendDataToBackend (private val context: Context) {
         return count
     }
 
-    fun sendRegistro(reg: Registro): Boolean {
+    fun sendRegistroLocal(reg: Registro): Boolean {
         // URL
         var sended:Boolean=true
 
-        val url = BuildConfig.BASE_URL + "/api/logs/authentication"
+        val url = BuildConfig.BASE_URL + "/api/logs/authenticationOffline"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)

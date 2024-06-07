@@ -2,6 +2,7 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -23,19 +24,18 @@ import java.util.Calendar
 class LicenciasEmpleadoActivity: AppCompatActivity() {
     private lateinit var licenciasEmpleado: ArrayList<Licencia>
     private lateinit var listaEmpleados: ArrayList<Empleado>
-    private var empleado: Empleado? = null
+    private lateinit var empleadoBuscado: ArrayList<Empleado>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.licencias_empleado)
-        empleado = intent.getParcelableExtra("empleado")
         licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasEmpleado") ?: arrayListOf()
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
-
+        empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()
         // Obtén una referencia al TextView
         val empleadoLicenciasTitulo: TextView = findViewById(R.id.empleado_licencias_titulo)
         // Establece el nuevo texto
-        val texto = "LICENCIAS DE :\n${empleado?.fullName}"
+        val texto = "LICENCIAS DE :\n${empleadoBuscado[0].fullName}"
         empleadoLicenciasTitulo.text = texto
         mostrarTodasLasLicencias()
     }
@@ -76,8 +76,10 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
 
     fun goToCargarLicencia(view: View) {
         val intent = Intent(applicationContext, CargarLicenciaActivity::class.java)
-        intent.putExtra("empleado", empleado)
+        intent.putParcelableArrayListExtra("empleadoBuscado", ArrayList(empleadoBuscado))
         intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))
+        intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
+
         startActivity(intent)
     }
 
@@ -89,13 +91,17 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
 
     private fun eliminarLicencia(licenciaId: String) {
         // Construir la URL para la solicitud HTTP
-        val url = "${BuildConfig.BASE_URL}/api/licencias/$licenciaId/"
+        val url = "${BuildConfig.BASE_URL}/api/licencias/$licenciaId"
         val client = OkHttpClient()
+
+        // Log de la URL para depuración
+        Log.d("URL", url)
 
         // Construir la solicitud HTTP DELETE
         val request = Request.Builder()
             .url(url)
             .delete()
+            .addHeader("Content-Type", "application/json")
             .build()
 
         // Realizar la solicitud HTTP asíncronamente
@@ -103,6 +109,7 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 // Manejar el caso en que la solicitud falle
                 runOnUiThread {
+                    Log.e("HTTP DELETE Error", e.message ?: "Unknown error")
                     Toast.makeText(this@LicenciasEmpleadoActivity, "Error al eliminar la licencia: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -112,9 +119,13 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
                 if (response.isSuccessful) {
                     runOnUiThread {
                         Toast.makeText(this@LicenciasEmpleadoActivity, "Licencia eliminada exitosamente", Toast.LENGTH_SHORT).show()
+                        // Iterar sobre la lista y eliminar la licencia con el ID deseado
+                        licenciasEmpleado.removeAll { it.licenciaId == licenciaId }
+                        mostrarTodasLasLicencias()
                     }
                 } else {
                     runOnUiThread {
+                        Log.e("HTTP DELETE Error", "Error: ${response.code} - ${response.message}")
                         Toast.makeText(this@LicenciasEmpleadoActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
                     }
                 }

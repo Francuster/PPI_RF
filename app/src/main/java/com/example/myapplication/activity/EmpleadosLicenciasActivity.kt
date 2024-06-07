@@ -24,6 +24,7 @@ import java.io.IOException
 class EmpleadosLicenciasActivity: AppCompatActivity() {
     private val licenciasEmpleado = mutableListOf<Licencia>()
     private lateinit var listaEmpleados: ArrayList<Empleado>
+    private lateinit var empleadoBuscado: ArrayList<Empleado>
     private val client = OkHttpClient()
     private var licenciasJSONArray = JSONArray()
     private var jsonArray = JSONArray()
@@ -33,10 +34,10 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.empleados)
-        fetch("Licencias","/api/licencias/","FetchLicencias")
+        fetch("Licencias","/api/licencias","FetchLicencias")
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         scheduleUserUpdate()
-        mostrarTodosLosDocentes()
+        mostrarTodosLosEmpleados()
     }
     override fun onDestroy() {
         super.onDestroy()
@@ -46,7 +47,6 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
 
     private fun scheduleUserUpdate() {
         runnable = Runnable {
-            mostrarTodosLosDocentes()
             fetch("Licencias","/api/licencias","FetchLicencias")
             // Vuelve a programar la actualización después de 10 segundos
             handler.postDelayed(runnable, 10000)
@@ -55,7 +55,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         handler.postDelayed(runnable, 10000)
     }
 
-    private fun mostrarTodosLosDocentes() {
+    private fun mostrarTodosLosEmpleados() {
         val container: LinearLayout = findViewById(R.id.container_empleado_licencias)
 
         runOnUiThread {
@@ -65,6 +65,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
 
                 val userId = empleado.userId
                 val fullName = empleado.fullName
+                empleadoBuscado.add(empleado)
 
                 val inflater: LayoutInflater = LayoutInflater.from(this)
                 val itemView: View = inflater.inflate(R.layout.item_usuario, container, false)
@@ -75,16 +76,16 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
-                    cargarLicenciasDelDocente(userId)
-                    goToMostrarLicenciasDelDocente(empleado)
+                    cargarLicenciasDelEmpleado(userId)
+                    goToMostrarLicenciasDelEmpleado(empleado)
                 }
             }
         }
     }
 
-    private fun goToMostrarLicenciasDelDocente(empleado: Empleado) {
+    private fun goToMostrarLicenciasDelEmpleado(empleado: Empleado) {
         val intent = Intent(applicationContext, LicenciasEmpleadoActivity::class.java)
-        intent.putExtra("empleado",empleado)
+        intent.putParcelableArrayListExtra("empleadoBuscado", ArrayList(empleadoBuscado))
         intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))
         intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
         startActivity(intent)
@@ -119,7 +120,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         })
     }
 
-    private fun cargarLicenciasDelDocente(userId: String) {
+    private fun cargarLicenciasDelEmpleado(userId: String) {
         runOnUiThread {
             for (i in 0 until licenciasJSONArray.length()) {
                 val lastUserJsonObject = licenciasJSONArray.getJSONObject(i)

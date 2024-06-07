@@ -22,9 +22,9 @@ android {
 
     buildTypes {
         debug{
-            buildConfigField("String", "BASE_URL", "\"https://log3r-dev.up.railway.app\"");
+            //buildConfigField("String", "BASE_URL", "\"https://log3r-dev.up.railway.app\"");
             //buildConfigField("String", "BASE_URL", "\"https://log3r.up.railway.app\"");
-            //buildConfigField("String", "BASE_URL", "\"http://192.168.0.107:5000\"");
+            buildConfigField("String", "BASE_URL", "\"http://192.168.0.107:5000\"");
 
         }
         release {

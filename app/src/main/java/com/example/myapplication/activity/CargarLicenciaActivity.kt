@@ -2,19 +2,29 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat.startActivity
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.Licencia
+import com.example.myapplication.model.LicenciaRequest
+import com.example.myapplication.model.LicenciaResponse
+import com.example.myapplication.service.RetrofitClient.apiService
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.Call
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
+import retrofit2.Callback
+import retrofit2.Response
 
 class CargarLicenciaActivity : AppCompatActivity() {
     private lateinit var calendarView: CalendarView
@@ -22,8 +32,9 @@ class CargarLicenciaActivity : AppCompatActivity() {
     private lateinit var cargarButton: Button
     private var fechaDesde: String? = null
     private var fechaHasta: String? = null
+    private lateinit var listaEmpleados: ArrayList<Empleado>
     private lateinit var licenciasEmpleado: ArrayList<Licencia>
-    private var empleado: Empleado? = null
+    private lateinit var empleadoBuscado: ArrayList<Empleado>
     private var seleccionFecha = true
     val fechasSeleccionadas: MutableList<Calendar> = mutableListOf()
 
@@ -32,8 +43,9 @@ class CargarLicenciaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.cargar_nueva_licencia)
 
+        listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasDocente") ?: arrayListOf()
-        empleado = intent.getParcelableExtra("empleado")
+        empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()
         // Asignar los elementos de la interfaz de usuario a las variables correspondientes
         calendarView = findViewById(R.id.licence_calendarView)
         cargarButton = findViewById(R.id.boton_create)
@@ -61,8 +73,6 @@ class CargarLicenciaActivity : AppCompatActivity() {
                 // Verificar que fechaDesde no sea posterior a fechaHasta
                 var validationResult = esFechaValida(fechaDesde!!, fechaHasta!!)
                 if (validationResult.resultado) {
-                    val licencia = Licencia("",fechaDesde!!, fechaHasta!!, empleado?.userId!!)
-                    licenciasEmpleado.add(licencia)
                     guardarLicencia()
                 } else {
                     Toast.makeText(this, validationResult.mensaje, Toast.LENGTH_SHORT).show()
@@ -111,51 +121,42 @@ class CargarLicenciaActivity : AppCompatActivity() {
 
     // Función para guardar la licencia
     private fun guardarLicencia() {
-        // Construir la URL para la solicitud HTTP
-        val url = BuildConfig.BASE_URL + "/api/licencias/"
-        val client = OkHttpClient()
+        val licenciaRequest = LicenciaRequest(
+            userId = empleadoBuscado[0].userId,
+            fechaDesde = fechaDesde!!,
+            fechaHasta = fechaHasta!!
+        )
 
-        val multipartBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
-            .addFormDataPart("user_id", empleado?.userId!!)
-            .addFormDataPart("fechaDesde", fechaDesde!!)
-            .addFormDataPart("fechaHasta", fechaHasta!!)
-
-        // Construir la solicitud HTTP POST
-        val requestBody = multipartBodyBuilder.build()
-        val request = Request.Builder()
-            .url(url)
-            .post(requestBody)
-            .header("Content-Type", "multipart/form-data")
-            .build()
-
-        // Realizar la solicitud HTTP asíncronamente
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                // Manejar el caso en que la solicitud falle
-                runOnUiThread {
-                    Toast.makeText(this@CargarLicenciaActivity, "Error al guardar la licencia: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                // Manejar la respuesta recibida del servidor
+        apiService.createLicencia(licenciaRequest).enqueue(object : Callback<LicenciaResponse> {
+            override fun onResponse(call: retrofit2.Call<LicenciaResponse>, response: Response<LicenciaResponse>) {
                 if (response.isSuccessful) {
+                    val licenciaId = response.body()?.licenciaId
                     runOnUiThread {
-                        Toast.makeText(this@CargarLicenciaActivity, "Licencia guardada exitosamente", Toast.LENGTH_SHORT).show()
-
+                        Toast.makeText(this@CargarLicenciaActivity, "Licencia guardada exitosamente: $licenciaId", Toast.LENGTH_SHORT).show()
+                        val licencia = Licencia(licenciaId!!, fechaDesde!!, fechaHasta!!, empleadoBuscado[0].userId!!)
+                        licenciasEmpleado.add(licencia)
                     }
                 } else {
                     runOnUiThread {
-                        Toast.makeText(this@CargarLicenciaActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@CargarLicenciaActivity, "Error al guardar la licencia", Toast.LENGTH_SHORT).show()
                     }
+                }
+            }
+
+            override fun onFailure(call: Call<LicenciaResponse>, t: Throwable) {
+                runOnUiThread {
+                    Toast.makeText(this@CargarLicenciaActivity, "Error al guardar la licencia: ${t.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         })
     }
 
-    fun goToLicenciasEmpleados() {
-        val intent = Intent(applicationContext, LicenciasEmpleadoActivity::class.java)
+
+    fun goToLicenciasEmpleados(view: View) {
+        val intent = Intent(this, LicenciasEmpleadoActivity::class.java)
         intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))
+        intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
+        empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()
         startActivity(intent)
     }
 }

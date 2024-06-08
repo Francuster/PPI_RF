@@ -2,16 +2,13 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="ConfiguracionRRHHActivity">
-        <State />
-      </entry>
       <entry key="ModificacionUsuarioActivity">
         <State />
       </entry>
-      <entry key="RegistroUsuarioActivity">
+      <entry key="PerfilUsuarioActivity">
         <State />
       </entry>
-      <entry key="ReportesSeguridadActivity">
+      <entry key="RegistroUsuarioActivity">
         <State />
       </entry>
       <entry key="app">

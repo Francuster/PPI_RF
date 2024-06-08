@@ -91,12 +91,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cuenta_nav"
-            android:layout_width="80dp"
-            android:layout_height="47dp"
+            android:layout_width="60dp"
+            android:layout_height="45dp"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.99"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5">
@@ -127,19 +127,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/menu" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/logs_nav"
-            android:layout_width="70dp"
-            android:layout_height="47dp"
+            android:layout_width="57dp"
+            android:layout_height="46dp"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/cuenta_nav"
-            app:layout_constraintHorizontal_bias="0.75"
+            app:layout_constraintHorizontal_bias="0.703"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5">
+            app:layout_constraintVertical_bias="0.428">
 
             <TextView
                 android:id="@id/cuenta"
@@ -166,6 +167,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/cuenta"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/hand_held__tablet_kindle_device_electronics_ipad_computer" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -250,6 +252,49 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/licencia_nav"
+            android:layout_width="63dp"
+            android:layout_height="53dp"
+
+            app:layout_constraintEnd_toEndOf="@+id/cuenta_nav"
+            app:layout_constraintHorizontal_bias="0.88"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/empleados_nav">
+
+            <TextView
+                android:id="@id/licencia_nav"
+                android:layout_width="55dp"
+                android:layout_height="23dp"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="Licencias"
+                android:textAlignment="center"
+                android:textSize="7sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.98"
+                tools:ignore="MissingConstraints" />
+
+            <ImageView
+                android:id="@+id/imagen_licencia_nav"
+                android:layout_width="23dp"
+                android:layout_height="32dp"
+
+
+                android:onClick="goToLicences"
+                app:layout_constraintBottom_toTopOf="@+id/licencia_nav"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.487"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/icon_licencia" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -342,4 +387,3 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

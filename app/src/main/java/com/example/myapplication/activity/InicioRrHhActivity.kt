@@ -9,16 +9,15 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
+import com.example.myapplication.model.Empleado
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import org.json.JSONArray
-import org.json.JSONObject
 import java.io.IOException
 
 
@@ -26,6 +25,7 @@ class InicioRrHhActivity: AppCompatActivity() {
     private val client = OkHttpClient()
     private var jsonArray = JSONArray()
     private val handler = Handler()
+    val listaEmpleados = mutableListOf<Empleado>()
     private lateinit var runnable: Runnable
 
     private var nombre: String? = null
@@ -82,7 +82,8 @@ class InicioRrHhActivity: AppCompatActivity() {
 
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
                 textViewEmpleado.text = fullName
-
+                var empleado = Empleado(fullName,userId)
+                listaEmpleados.add(empleado)
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
@@ -152,7 +153,12 @@ class InicioRrHhActivity: AppCompatActivity() {
         startActivity(intent)
 
     }
-    
+    fun goToLicences(view: View){
+        val intent = Intent(applicationContext, EmpleadosLicenciasActivity::class.java)
+        intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
+        startActivity(intent)
+
+    }
 
 }
 

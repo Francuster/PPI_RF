@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.pdf.PdfDocument
 import android.os.Bundle
 import android.os.Environment
 import android.print.PrintAttributes
@@ -13,15 +14,18 @@ import android.widget.Button
 import android.widget.CalendarView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONArray
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.util.*
-import android.graphics.pdf.PdfDocument
-import com.example.myapplication.BuildConfig
+import java.util.Calendar
 
 class ReportesSeguridadActivity : AppCompatActivity() {
     private lateinit var calendarView: CalendarView
@@ -75,7 +79,7 @@ class ReportesSeguridadActivity : AppCompatActivity() {
     // Función para descargar los logs en base a la fecha seleccionada
     private fun downloadLogs(date: String) {
         // Construir la URL para la solicitud HTTP
-        val url = BuildConfig.BASE_URL + "/api/day/logs?fecha=$date"
+        val url = BuildConfig.BASE_URL + "/api/logs/day?fecha=$date"
         val client = OkHttpClient()
 
         // Construir la solicitud HTTP GET

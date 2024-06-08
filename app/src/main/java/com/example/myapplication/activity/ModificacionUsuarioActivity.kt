@@ -80,7 +80,8 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             "NO DOCENTE",
             "SEGURIDAD",
             "RECURSOS HUMANOS",
-            "PERSONAL JERÁRQUICO"
+            "PERSONAL JERÁRQUICO",
+            "ESTUDIANTE",
         )
 
         val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, elementos)

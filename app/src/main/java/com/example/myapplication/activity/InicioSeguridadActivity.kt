@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
@@ -15,6 +16,7 @@ class InicioSeguridadActivity: AppCompatActivity() {
 
         private var nombre: String? = null
         private var apellido: String? = null
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.inicio_seguridad)

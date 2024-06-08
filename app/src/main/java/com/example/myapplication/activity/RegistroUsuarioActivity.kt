@@ -60,6 +60,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         elementos.add("ADMINISTRADOR")
         elementos.add("DOCENTE")
         elementos.add("NO DOCENTE")
+        elementos.add("ESTUDIANTE")
         elementos.add("SEGURIDAD")
         elementos.add("RECURSOS HUMANOS")
         elementos.add("PERSONAL JERÁRQUICO")

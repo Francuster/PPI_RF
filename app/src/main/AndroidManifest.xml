@@ -58,6 +58,7 @@
         <activity android:name=".activity.CameraxOfllineActivity" android:label="CameraxOfllineActivity" />
         <activity android:name=".activity.CameraxLoginActivity" android:label="CameraxLoginActivity" />
         <activity android:name=".activity.CameraxAuthenticationActivity" android:label="CameraxAuthenticationActivity" />
+        <activity android:name=".activity.PerfilUsuarioActivity" android:label="PerfilUsuarioActivity" />
 
         <activity android:name=".activity.InicioRrHhActivity" android:label="InicioRrHhActivity" />
         <!--Reportes-->

@@ -89,8 +89,17 @@ class InicioRrHhActivity: AppCompatActivity() {
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
                     goToModificacionUsuario(userId,userName,userSurname)
                 }
+                itemView.findViewById<View>(R.id.empleado).setOnClickListener {
+                    goToVerPerfil(userId)
+                }
             }
         }
+    }
+
+    private fun goToVerPerfil(userId: String) {
+        val intent = Intent(applicationContext, PerfilUsuarioActivity::class.java)
+        intent.putExtra("user_id", userId)
+        startActivity(intent)
     }
 
     private fun fetchUsers() {
@@ -127,6 +136,7 @@ class InicioRrHhActivity: AppCompatActivity() {
         startActivity(intent)
 //        handler.removeCallbacks(runnable)
     }
+
 
 
     fun goToRegistroRrHhPrimeraSala(view: View) {

@@ -5,10 +5,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import android.widget.Toast
-import com.example.myapplication.model.Registro
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 const val DATABASE_NAME = "log3r"
 const val DATABASE_VERSION = 2
@@ -44,15 +40,16 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
         rol INTEGER NOT NULL -- 1=seguridad, 2=entrantes(profes, alumnos, etc.)
       );""".trimIndent()
 
-
-    val CREATE_TABLE_INGRESOS=""" 
+    val CREATE_TABLE_INGRESOS="""
     CREATE TABLE ingresos (
-      horario TEXT,
-      nombre TEXT,
-      apellido TEXT,
-      dni TEXT,
-      estado TEXT,
-      tipo TEXT
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id_usuario INTEGER,
+      fecha_hora_entrada TEXT NOT NULL, -- YYYY-MM-DD HH:MM:SS.SSS
+      fecha_hora_salida TEXT DEFAULT NULL, -- YYYY-MM-DD HH:MM:SS.SSS
+      entrada_online INTEGER NOT NULL, -- 0=offline 1=online
+      salida_online INTEGER DEFAULT NULL, -- 0=offline 1=online
+
+      FOREIGN KEY(id_usuario) REFERENCES usuarios(id)
     );
     """.trimIndent()
 
@@ -115,7 +112,7 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
         "'12345678', 'imagenOToken', 1)")
 
     Log.i(TAG,"DB esta creada")
-    //Toast.makeText(ctx, "DB creada onCreate", Toast.LENGTH_LONG).show()
+    Toast.makeText(ctx, "DB creada onCreate", Toast.LENGTH_LONG).show()
   }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {

@@ -31,6 +31,7 @@
         android:textAlignment="center"
         android:textSize="20dp"
         android:textStyle="bold"
+        android:onClick="goToPerfilUsuario"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.061"

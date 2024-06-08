@@ -1,38 +1,20 @@
 package com.example.myapplication.activity
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
-import com.example.myapplication.model.ImagenModel
-import com.example.myapplication.service.ImagenesApiService
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+import java.io.IOException
 
 class PerfilUsuarioActivity : AppCompatActivity() {
-/*
-    private val imagenesApiService: ImagenesApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ImagenesApiService::class.java)
-    }
 
     private lateinit var userId: String
     private lateinit var userName: String
@@ -44,29 +26,60 @@ class PerfilUsuarioActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.perfilUsuario)
+        setContentView(R.layout.perfil_usuario) // Nombre corregido
 
         userId = intent.getStringExtra("user_id") ?: ""
-        userName = intent.getStringExtra("user_name") ?: ""
-        userSurname = intent.getStringExtra("user_surname") ?: ""
-        horaEntrada = intent.getStringExtra("hora_entrada") ?: ""
-        horaSalida = intent.getStringExtra("hora_salida") ?: ""
-        rol = intent.getStringExtra("rol") ?: ""
 
         val textoNombreUsuario = findViewById<TextView>(R.id.nombre_texto)
-        val horaEntradaTextView = findViewById<TextView>(R.id.apellido_texto)
+        val horaEntradaTextView = findViewById<TextView>(R.id.hora_entrada)
         val horaSalidaTextView = findViewById<TextView>(R.id.hora_salida)
-        val rolTextView = findViewById<TextView>(R.id.hora_entrada)
+        val rolTextView = findViewById<TextView>(R.id.rol_texto)
         imagenUsuarioImageView = findViewById(R.id.imagenPerfil)
 
-        textoNombreUsuario.text = "$userName $userSurname"
-        horaEntradaTextView.text = "Hora de entrada: $horaEntrada"
-        horaSalidaTextView.text = "Hora de salida: $horaSalida"
-        rolTextView.text = "Rol: $rol"
-
-        obtenerImagenUsuario(userId)
+        obtenerDatosUsuario(userId, textoNombreUsuario, horaEntradaTextView, horaSalidaTextView, rolTextView)
     }
 
+    private fun obtenerDatosUsuario(userId: String, textoNombreUsuario: TextView, horaEntradaTextView: TextView, horaSalidaTextView: TextView, rolTextView: TextView) {
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url("${BuildConfig.BASE_URL}/api/user/$userId")
+            .build()
+
+        client.newCall(request).enqueue(object : okhttp3.Callback {
+            override fun onFailure(call: okhttp3.Call, e: IOException) {
+                runOnUiThread {
+                    Toast.makeText(this@PerfilUsuarioActivity, "Error al cargar los datos: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                if (!response.isSuccessful) {
+                    runOnUiThread {
+                        Toast.makeText(this@PerfilUsuarioActivity, "Error al cargar los datos: ${response.code}", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val responseData = response.body?.string()
+                    if (responseData != null) {
+                        val jsonObject = JSONObject(responseData)
+                        userName = jsonObject.getString("userName")
+                        userSurname = jsonObject.getString("userSurname")
+                        horaEntrada = jsonObject.getString("horaEntrada")
+                        horaSalida = jsonObject.getString("horaSalida")
+                        rol = jsonObject.getString("rol")
+
+                        runOnUiThread {
+                            textoNombreUsuario.text = "$userName $userSurname"
+                            horaEntradaTextView.text = "Hora de entrada: $horaEntrada"
+                            horaSalidaTextView.text = "Hora de salida: $horaSalida"
+                            rolTextView.text = "Rol: $rol"
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    /*
     private fun obtenerImagenUsuario(userId: String) {
         imagenesApiService.getImagenes(userId).enqueue(object : Callback<List<ImagenModel>> {
             override fun onResponse(call: Call<List<ImagenModel>>, response: Response<List<ImagenModel>>) {
@@ -107,5 +120,16 @@ class PerfilUsuarioActivity : AppCompatActivity() {
                 e.printStackTrace()
             }
         }
-    }*/
+    }
+    */
+
+    fun goToAtrasIniRRHH(view: View) {
+        val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun goToPerfilUsuario(view: View) {
+        val intent = Intent(applicationContext, PerfilUsuarioActivity::class.java)
+        startActivity(intent)
+    }
 }

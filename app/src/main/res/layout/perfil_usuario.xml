@@ -243,10 +243,12 @@
             app:layout_constraintWidth_percent="0.90">
 
             <!-- Texto del Rol -->
+
+            <!-- Imagen del Rol -->
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/rol_texto"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="0dp"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/inter_extrabold"
                 android:hint="ROL"
@@ -257,14 +259,12 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.55"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/imagen_rol"
+                app:layout_constraintHorizontal_bias="0.854"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.533"
                 app:layout_constraintWidth_percent="0.68" />
 
-            <!-- Imagen del Rol -->
             <ImageView
                 android:id="@+id/imagen_rol"
                 android:layout_width="62dp"
@@ -283,6 +283,7 @@
             android:id="@+id/imagen_volver"
             android:layout_width="62dp"
             android:layout_height="40dp"
+            android:onClick="goToAtrasIniRRHH"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.028"

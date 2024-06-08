@@ -3,6 +3,8 @@ package com.example.myapplication.activity
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.hardware.Camera
 import android.graphics.Canvas
 import android.graphics.Color
@@ -15,6 +17,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -299,71 +302,79 @@ class CamaraParaRegistroRrHhActivity : AppCompatActivity(), Camera.PreviewCallba
 
     // Método principal de detección de rostros en la vista previa de la cámara
     override fun onPreviewFrame(data: ByteArray, camera: Camera?) {
-        // Verificar si el escaneo está activo
         if (!isScanning) return
 
-        // Obtener el tiempo actual
         val currentTimeMillis = System.currentTimeMillis()
 
-        // Verificar si ha pasado el intervalo entre solicitudes
         if (currentTimeMillis - lastRequestTimeMillis < requestIntervalMillis) {
-            // Si el intervalo entre solicitudes no ha pasado aún, salir sin enviar otra solicitud
             return
         }
 
-        // Iniciar un hilo para procesar el fotograma de vista previa
         Thread {
-            // Obtener los parámetros de la cámara
             val parameters = camera?.parameters
             val width = parameters?.previewSize?.width ?: 0
             val height = parameters?.previewSize?.height ?: 0
 
-            // Crear una matriz para la vista previa YUV
             val yuvMat = Mat(height + height / 2, width, CvType.CV_8UC1)
             yuvMat.put(0, 0, data)
 
-            // Convertir la matriz YUV a una matriz RGBA
             val rgbaMat = Mat()
             Imgproc.cvtColor(yuvMat, rgbaMat, Imgproc.COLOR_YUV2RGBA_NV21, 4)
 
-            // Detectar rostros en la matriz RGBA
             val faces = MatOfRect()
             cascadeClassifier.detectMultiScale(rgbaMat, faces, 1.1, 2, 2, Size(150.0, 150.0), Size())
 
-            // Verificar si se detectaron rostros o si ya se ha detectado un rostro
             if (faces.toArray().isNotEmpty() || detecto) {
-                // Cancelar el temporizador
                 timer?.cancel()
-
-                // Marcar que se ha detectado un rostro
                 detecto = true
-
-                // Liberar la matriz YUV
                 yuvMat.release()
 
-                // Ejecutar en el subproceso de interfaz de usuario principal
                 runOnUiThread {
-                    // Detener el temporizador
                     stopTimer()
-
-                    // Verificar si se detectó al menos un rostro
                     if (faces.toArray().isNotEmpty()) {
-                        // Convertir la matriz RGBA a un formato de imagen compatible con HTTP (ej. JPEG)
-                        val faceMat = Mat(rgbaMat, faces.toArray()[0])
-                        enviarImagen(faceMat)
-
-                        // Actualizar el tiempo de la última solicitud
+                        enviarImagenCompleta(rgbaMat)
                         lastRequestTimeMillis = currentTimeMillis
                     }
                 }
-
-                // Salir del hilo
                 return@Thread
             }
-
-            // Liberar la matriz YUV
             yuvMat.release()
-        }.start() // Iniciar el hilo
+        }.start()
+    }
+
+    private fun enviarImagenCompleta(rgbaMat: Mat) {
+        Core.rotate(rgbaMat, rgbaMat, Core.ROTATE_90_COUNTERCLOCKWISE)
+
+        if (rgbaMat.type() != CvType.CV_8UC3) {
+            Imgproc.cvtColor(rgbaMat, rgbaMat, Imgproc.COLOR_BGR2RGB)
+        }
+
+        val byteStream = ByteArrayOutputStream()
+        val imageMat = MatOfByte()
+        Imgcodecs.imencode(".jpg", rgbaMat, imageMat)
+        byteStream.write(imageMat.toArray())
+
+        val byteArray = byteStream.toByteArray()
+
+        val bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+        //showToastWithImage(bitmap)//MOSTRAR LA IMAGEN EN UN TOAST PARA VERIFICAR LO QUE SE ENVIA
+
+        val resultIntent = Intent().apply {
+            putExtra("image", byteArray)
+        }
+        setResult(RESULT_OK, resultIntent)
+        finish()
+    }
+
+    private fun showToastWithImage(bitmap: Bitmap) {
+        val imageView = ImageView(this)
+        imageView.setImageBitmap(bitmap)
+
+        val toast = Toast(this)
+        toast.duration = Toast.LENGTH_LONG
+        toast.view = imageView
+        toast.setGravity(Gravity.CENTER, 0, 0)
+        toast.show()
     }
 
     // Método que carga el clasificador en cascada para detección de rostros
@@ -394,33 +405,8 @@ class CamaraParaRegistroRrHhActivity : AppCompatActivity(), Camera.PreviewCallba
         }
     }
 
-    // Método para enviar la imagen del rostro detectado al intent de registro
-    private fun enviarImagen(faceMat: Mat) {
-        // Rotar la imagen 90 grados en sentido antihorario
-        Core.rotate(faceMat, faceMat, Core.ROTATE_90_COUNTERCLOCKWISE)
 
-        // Verificar el tipo de la matriz de OpenCV
-        if (faceMat.type() != CvType.CV_8UC3) {
-            // Si la matriz no es de 3 canales (RGB), convertirla a RGB
-            Imgproc.cvtColor(faceMat, faceMat, Imgproc.COLOR_BGR2RGB)
-        }
 
-        // Convertir la matriz de OpenCV a un formato de imagen compatible con HTTP (ej. JPEG)
-        val byteStream = ByteArrayOutputStream()
-        val imageMat = MatOfByte()
-        Imgcodecs.imencode(".png", faceMat, imageMat)
-        byteStream.write(imageMat.toArray())
-
-        // Obtener el array de bytes de la imagen
-        val byteArray = byteStream.toByteArray()
-
-        // Crear un intent para pasar la imagen a la actividad anterior
-        val resultIntent = Intent().apply {
-            putExtra("image", byteArray)
-        }
-        setResult(RESULT_OK, resultIntent)
-        finish()
-    }
 
 }
 

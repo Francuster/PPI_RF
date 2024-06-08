@@ -6,7 +6,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.IBinder
 import android.widget.Toast
-
+import com.example.myapplication.service.SendDataToBackend
 
 
 class NetworkChangeService : Service() {
@@ -20,7 +20,15 @@ class NetworkChangeService : Service() {
                     // El dispositivo volvió a tener conexión a Internet
                     if (fallos_conexion >0){
                         Toast.makeText(this, "El dispositivo volvió a tener conexión a Internet", Toast.LENGTH_SHORT).show()
-                        //Toast.makeText(this, "Aguarde unos segundos, estamos Sincronizando los datos.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Aguarde unos segundos, estamos sincronizando los datos.", Toast.LENGTH_LONG).show()
+                        val regRequest = SendDataToBackend(applicationContext)
+                        if(regRequest.sendLocalRegs()){
+                            Toast.makeText(this, "Sincronización exitosa", Toast.LENGTH_SHORT).show()
+                        }
+                        else{
+                            Toast.makeText(this, "No existen nuevos registros para sincronizar.", Toast.LENGTH_SHORT).show()
+                        }
+
                     }
 
                 } else {

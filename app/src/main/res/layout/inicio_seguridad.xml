@@ -383,27 +383,6 @@
             app:layout_constraintWidth_percent="0.23"
             tools:ignore="MissingConstraints" />
 
-        <Button
-            android:id="@+id/botonIngresar"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="@drawable/boton"
-            android:fontFamily="@font/inter_extrabold"
-            android:onClick="reconectar"
-            android:text="RECONECTAR"
-            android:textColor="#7D7A73"
-
-            android:textSize="11sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-
-            app:layout_constraintEnd_toStartOf="@+id/usuario"
-            app:layout_constraintHeight_percent="0.49"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/loger"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5"
-            app:layout_constraintWidth_percent="0.33" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

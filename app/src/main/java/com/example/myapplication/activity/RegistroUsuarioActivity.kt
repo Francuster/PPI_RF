@@ -19,20 +19,24 @@ import com.google.android.material.textfield.TextInputEditText
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.util.Calendar
 
 
 class RegistroUsuarioActivity:AppCompatActivity() {
     private val client = OkHttpClient()
-    private var imagenBase64: String? = null
+    //private var imagenBase64: String? = null
     private val CAMERA_REQUEST_CODE = 100
-
+    private var imageByteArray: ByteArray? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(!isServiceRunning(applicationContext, NetworkChangeService ::class.java)){
@@ -47,7 +51,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         elementos.add("ESTUDIANTE")
         elementos.add("PROFESOR")
         elementos.add("SEGURIDAD")
-        elementos.add("RRHH")
+        elementos.add("RECURSOS HUMANOS")
         val adaptador=ArrayAdapter(this,R.layout.desplegable_tipo_cuenta,elementos)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter=adaptador
@@ -84,7 +88,9 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
     }
 
-
+    fun registrarUsuario(){
+        enviarDatosRegistro()
+    }
 
     fun goToCamaraParaRegistro(view: View) {
         val intent = Intent(this, CamaraParaRegistroRrHhActivity::class.java)
@@ -96,8 +102,9 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
             val byteArray = data?.getByteArrayExtra("image")
             if (byteArray != null) {
-                imagenBase64 = Base64.encodeToString(byteArray, Base64.DEFAULT)
-                enviarDatosRegistro()
+                imageByteArray = byteArray
+                //imagenBase64 = Base64.encodeToString(byteArray, Base64.DEFAULT)
+                //enviarDatosRegistro()
             }
         }
     }
@@ -119,30 +126,56 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         val horaSalida = horaSalidaEditText.text.toString()
         val email = emailEditText.text.toString()
 
-        val json = JSONObject().apply {
-            put("nombre", nombre)
-            put("apellido", apellido)
-            put("dni", documento)
-            put("rol", tipoCuenta)
-            put("horariosEntrada", horaEntrada)
-            put("horariosSalida", horaSalida)
-            put("email", email)
-            imagenBase64?.let { put("imagen", it) }
+        val multipartBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("nombre", nombre)
+            .addFormDataPart("apellido", apellido)
+            .addFormDataPart("dni", documento)
+            .addFormDataPart("rol", tipoCuenta)
+            .addFormDataPart("horariosEntrada", horaEntrada)
+            .addFormDataPart("horariosSalida", horaSalida)
+            .addFormDataPart("email", email)
+
+        imageByteArray?.let {
+            val tempFile = File.createTempFile("image", ".jpg", cacheDir)
+            FileOutputStream(tempFile).use { fos ->
+                fos.write(it)
+            }
+            multipartBodyBuilder.addFormDataPart("image", tempFile.name, tempFile.asRequestBody("image/jpeg".toMediaTypeOrNull()))
         }
 
-        val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        val requestBody = multipartBodyBuilder.build()
         val request = Request.Builder()
             .url(BuildConfig.BASE_URL +"/api/users")//IP LOCAL U ONLINE
             .post(requestBody)
+            .header("Content-Type", "multipart/form-data")
             .build()
 
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    runOnUiThread {
-                        Toast.makeText(this@RegistroUsuarioActivity, "EXITO EN LA SOLICITUD USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
+                runOnUiThread {
+                    when (response.code) {
+                        200 -> {
+                            Toast.makeText(this@RegistroUsuarioActivity, "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
+                            goToRegistroExitoso()
+                        }
+                        201 -> {
+                            Toast.makeText(this@RegistroUsuarioActivity, "USUARIO REGISTRADO, PERO CON ERROR 201", Toast.LENGTH_SHORT).show()
+                            goToRegistroExitoso()
+                        }
+                        400 ->{
+                            Toast.makeText(this@RegistroUsuarioActivity, "ERROR: Debe llenar todos los campos y luego tomar la foto", Toast.LENGTH_SHORT).show()
+
+                            goToRegistroDenegado()
+                        }
+                        500 -> {
+                            goToRegistroDenegado()
+                            Toast.makeText(this@RegistroUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
+                        }
+                        else -> {
+                            goToRegistroDenegado()
+                            Toast.makeText(this@RegistroUsuarioActivity, "Error busque en consola del servidor: ${response.message}", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    goToRegistroExitoso()
                 }
             }
 

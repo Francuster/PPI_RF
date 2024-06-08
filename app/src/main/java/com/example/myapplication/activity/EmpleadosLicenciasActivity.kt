@@ -36,6 +36,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         setContentView(R.layout.empleados)
         fetch("Licencias","/api/licencias","FetchLicencias")
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
+        empleadoBuscado = ArrayList()
         scheduleUserUpdate()
         mostrarTodosLosEmpleados()
     }
@@ -65,7 +66,6 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
 
                 val userId = empleado.userId
                 val fullName = empleado.fullName
-                empleadoBuscado.add(empleado)
 
                 val inflater: LayoutInflater = LayoutInflater.from(this)
                 val itemView: View = inflater.inflate(R.layout.item_usuario, container, false)
@@ -76,6 +76,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
+                    empleadoBuscado.add(empleado)
                     cargarLicenciasDelEmpleado(userId)
                     goToMostrarLicenciasDelEmpleado(empleado)
                 }

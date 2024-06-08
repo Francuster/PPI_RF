@@ -44,7 +44,7 @@ class CargarLicenciaActivity : AppCompatActivity() {
         setContentView(R.layout.cargar_nueva_licencia)
 
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
-        licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasDocente") ?: arrayListOf()
+        licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasEmpleado") ?: arrayListOf()
         empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()
         // Asignar los elementos de la interfaz de usuario a las variables correspondientes
         calendarView = findViewById(R.id.licence_calendarView)
@@ -156,7 +156,7 @@ class CargarLicenciaActivity : AppCompatActivity() {
         val intent = Intent(this, LicenciasEmpleadoActivity::class.java)
         intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))
         intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
-        empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()
+        intent.putParcelableArrayListExtra("empleadoBuscado", ArrayList(empleadoBuscado))
         startActivity(intent)
     }
 }

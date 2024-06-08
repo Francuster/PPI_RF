@@ -243,9 +243,7 @@
             app:layout_constraintWidth_percent="0.90">
 
             <!-- Texto del Rol -->
-
-            <!-- Imagen del Rol -->
-            <com.google.android.material.textfield.TextInputEditText
+            <TextView
                 android:id="@+id/rol_texto"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -265,6 +263,7 @@
                 app:layout_constraintVertical_bias="0.533"
                 app:layout_constraintWidth_percent="0.68" />
 
+            <!-- Imagen del Rol -->
             <ImageView
                 android:id="@+id/imagen_rol"
                 android:layout_width="62dp"
@@ -278,8 +277,7 @@
                 app:layout_constraintVertical_bias="0.5"
                 app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout> <!-- Botón Volver -->
-        <ImageView
+        </androidx.constraintlayout.widget.ConstraintLayout> <!-- Botón Volver --><ImageView
             android:id="@+id/imagen_volver"
             android:layout_width="62dp"
             android:layout_height="40dp"

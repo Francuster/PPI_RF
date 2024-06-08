@@ -265,11 +265,13 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
     private fun toggleScanning() {
         isScanning = !isScanning
         updateButtonState()
+        detecto = false // Reiniciar el estado de detección al iniciar un nuevo escaneo
         if (isScanning) {
             timeUpToastShown = false // Restablecer la bandera cuando se reinicia el escaneo
             startTimer() // Reiniciar el temporizador al iniciar el escaneo
             showToastOnUiThread("Escaneando 30 segundos...")
         } else {
+            activeCall?.cancel()
             stopTimer() // Detener el temporizador al detener el escaneo manualmente
             showToastOnUiThread("Escaneo detenido manualmente")
         }
@@ -284,6 +286,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
     private fun handleScanTimeout() {
         isScanning = false
         updateButtonState()
+        stopCamera() // Detener la cámara cuando se agote el tiempo
         if (!detecto && !timeUpToastShown) {
             showToastOnUiThread("Tiempo de escaneo agotado")
             timeUpToastShown = true
@@ -292,11 +295,12 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
     }
 
 
+
     private fun startTimer() {
         timer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val secondsRemaining = millisUntilFinished / 1000
-                if (!detecto && (secondsRemaining <= 3&& secondsRemaining >2 ||secondsRemaining <= 15&& secondsRemaining >14 )) { //manejar tiempo que se muestra en toast
+                if (!detecto && (secondsRemaining <= 3 && secondsRemaining > 2 || secondsRemaining <= 10 && secondsRemaining > 9|| secondsRemaining <= 20 && secondsRemaining > 19)) { // Manejar tiempo que se muestra en toast
                     showToastOnUiThread("Tiempo restante: $secondsRemaining segundos")
                 }
             }
@@ -476,7 +480,7 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
                             registro_exitoso_antesala(nombre, apellido, dni, primerRol, lugares)
                         } else if (response.code == 401) {
                             // Si la solicitud fue no autorizada, mostrar pantalla error
-                            //mostrarPantallaErrorIngreso()
+                            mostrarPantallaErrorIngreso()
                             showToastOnUiThread("Rostro detectado no registrado en la base de datos\nPor favor regístrese y vuelva a intentarlo\nError en la solicitud HTTP")
 
                         }

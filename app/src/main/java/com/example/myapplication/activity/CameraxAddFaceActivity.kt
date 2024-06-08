@@ -2,6 +2,7 @@ package com.example.myapplication.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -18,12 +19,17 @@ import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.media.Image
 import android.os.Bundle
-import android.os.CountDownTimer
+import android.text.InputType
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.CameraSelector
@@ -35,8 +41,8 @@ import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.myapplication.R
-import com.example.myapplication.model.EmbeddingsRequest
 import com.example.myapplication.model.EmbeddingsResponse
+import com.example.myapplication.model.ImagenModel
 import com.example.myapplication.service.FaceRecognition
 import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.GraphicOverlay
@@ -54,7 +60,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import kotlin.experimental.inv
 
-class CameraxLoginActivity : AppCompatActivity() {
+class CameraxAddFaceActivity : AppCompatActivity() {
     private var previewView: PreviewView? = null
     private var cameraSelector: CameraSelector? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -62,32 +68,30 @@ class CameraxLoginActivity : AppCompatActivity() {
     private var previewUseCase: Preview? = null
     private var analysisUseCase: ImageAnalysis? = null
     private var graphicOverlay: GraphicOverlay? = null
+    private var previewImg: ImageView? = null
     private var detectionTextView: TextView? = null
 
     private var flipX = false
+    private var start = true
+    private var embeddings: FloatArray? = null
 
     private var faceRecognition: FaceRecognition? = null
 
-    private var responseSuccess = false
-
-    private var countDownTimer: CountDownTimer? = null
+    private var loading = false
+    private var userId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //contador
-        startScanTimer()
-        setContentView(R.layout.camerax)
+
+        setContentView(R.layout.camerax_add_face)
         previewView = findViewById(R.id.previewView)
+        previewView?.scaleType = PreviewView.ScaleType.FIT_CENTER
         graphicOverlay = findViewById(R.id.graphic_overlay)
+        previewImg = findViewById(R.id.preview_img)
         detectionTextView = findViewById(R.id.detection_text)
 
-        //        loadModel();
-        faceRecognition = FaceRecognition()
-        val switchCameraButton: ImageButton = findViewById(R.id.switch_camera)
-        switchCameraButton.setOnClickListener {
-            switchCamer(it)
-        }
-        val ovalOverlay: View = findViewById(R.id.oval_overlay)
+        //ovalo
+        val ovalOverlay: View = findViewById(R.id.graphic_overlay)
 
         // Crear un ShapeDrawable con un OvalShape
         val shapeDrawable = ShapeDrawable(OvalShape()).apply {
@@ -100,7 +104,58 @@ class CameraxLoginActivity : AppCompatActivity() {
 
         // Asignar el ShapeDrawable como fondo del View
         ovalOverlay.background = shapeDrawable
+
+
+//        val addBtn = findViewById<ImageButton>(R.id.add_btn)
+//        addBtn.setOnClickListener((View.OnClickListener { v: View? -> addFace() }))
+        val switchCamBtn = findViewById<ImageButton>(R.id.switch_camera)
+        switchCamBtn.setOnClickListener((View.OnClickListener { view: View? -> switchCamera() }))
+
+        userId = intent.getStringExtra("userId").toString()
+        //        loadModel();
+        faceRecognition = FaceRecognition()
     }
+
+    fun onAddButtonClick(view: View) {
+        if (embeddings != null) {
+            val imgModel = ImagenModel("", embeddings!!, userId)
+            val call: Call<ImagenModel> = RetrofitClient.imagenApiService.postImagenes(imgModel)
+//                if (intent.getStringExtra("fromActivity") == "RegistroUsuarioActivity") {
+//                    RetrofitClient.imagenApiService.postImagenes(imgModel)
+//                } else {
+//                    val userId = intent.getStringExtra("userId").toString()
+//                    RetrofitClient.imagenApiService.putImagenes(userId, imgModel)
+//                }
+
+            call.enqueue(object : Callback<ImagenModel> {
+                override fun onResponse(call: Call<ImagenModel>, response: Response<ImagenModel>) {
+                    if (response.isSuccessful) {
+                        println("Embeddings sent successfully")
+                        Toast.makeText(
+                            this@CameraxAddFaceActivity,
+                            "Se registró la imagen exitosamente.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        // Termina la actividad y vuelve al intent anterior
+                        finish()
+                    } else {
+                        println("Failed to send Embeddings: ${response.code()}")
+                        Toast.makeText(
+                            this@CameraxAddFaceActivity,
+                            "No se pudo registrar la imagen.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        finish()
+                    }
+                }
+
+                override fun onFailure(call: Call<ImagenModel>, t: Throwable) {
+                    println("Error sending Embeddings: ${t.message}")
+                }
+            })
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -228,18 +283,17 @@ class CameraxLoginActivity : AppCompatActivity() {
     protected val rotation: Int
         get() = previewView!!.display.rotation
 
-    private fun switchCamer(view: View) {
+    private fun switchCamera() {
+        if (lensFacing == CameraSelector.LENS_FACING_BACK) {
+            lensFacing = CameraSelector.LENS_FACING_FRONT
+            flipX = true
+        } else {
+            lensFacing = CameraSelector.LENS_FACING_BACK
+            flipX = false
+        }
 
-            if (lensFacing == CameraSelector.LENS_FACING_BACK) {
-                lensFacing = CameraSelector.LENS_FACING_FRONT
-                flipX = true
-            } else {
-                lensFacing = CameraSelector.LENS_FACING_BACK
-                flipX = false
-            }
-            if (cameraProvider != null) cameraProvider!!.unbindAll()
-            startCamera()
-
+        if (cameraProvider != null) cameraProvider!!.unbindAll()
+        startCamera()
     }
 
     /** Face detection processor  */
@@ -260,95 +314,106 @@ class CameraxLoginActivity : AppCompatActivity() {
             .addOnFailureListener { e: Exception? -> Log.e(TAG, "Barcode process failure", e) }
             .addOnCompleteListener { task: Task<List<Face?>?>? -> image.close() }
     }
-    private var currentCall: Call<EmbeddingsResponse>? = null
 
     private fun onSuccessListener(faces: List<Face>, inputImage: InputImage) {
         var boundingBox: Rect? = null
+        var name: String? = null
         val scaleX = previewView!!.width.toFloat() / inputImage.height.toFloat()
         val scaleY = previewView!!.height.toFloat() / inputImage.width.toFloat()
 
-        if (faces.isNotEmpty() && !responseSuccess) {
+        if (faces.size > 0) {
             detectionTextView!!.setText(R.string.face_detected)
+            // get first face detected
             val face = faces[0]
+
+            // get bounding box of face;
             boundingBox = face.boundingBox
 
-            val bitmap = mediaImgToBmp(inputImage.mediaImage, inputImage.rotationDegrees, boundingBox)
-            val embeddings = faceRecognition?.getFaceEmbeddings(bitmap, this)
+            // convert img to bitmap & crop img
+            val bitmap = mediaImgToBmp(
+                inputImage.mediaImage,
+                inputImage.rotationDegrees,
+                boundingBox
+            )
 
-            if (embeddings != null && embeddings.isNotEmpty()) {
-                currentCall?.cancel() // Cancelar cualquier llamada anterior
+            // Rotate the image in -90 degrees and send it to the previous activity
+//            sendRotatedImageToPreviousActivity(bitmap)
 
-                val embeddingsRequest = EmbeddingsRequest(embeddings)
-                currentCall = RetrofitClient.apiService.loginWithEmbeddings(embeddingsRequest)
+            //            if(start) name = recognizeImage(bitmap);
+            embeddings = faceRecognition!!.getFaceEmbeddings(bitmap, this)
 
-                currentCall?.enqueue(object : Callback<EmbeddingsResponse> {
-                    override fun onResponse(call: Call<EmbeddingsResponse>, response: Response<EmbeddingsResponse>) {
-                        if (response.isSuccessful) {
-                            println("Embeddings sent successfully")
-                            stopScanTimer()
-                            val embeddingsResponse = response.body()
-                            if (embeddingsResponse != null) {
-                                loginExitoso(embeddingsResponse)
-                            }
-                            responseSuccess = true
-                        } else {
-                            println("Failed to send Embeddings: ${response.code()}")
-                        }
-                        currentCall = null
-                    }
-
-                    override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
-                        println("Error sending Embeddings: ${t.message}")
-                        currentCall = null
-                    }
-                })
-            }
-            detectionTextView!!.text = "Processing"
+            detectionTextView!!.text = embeddings.toString()
         } else {
             detectionTextView!!.setText(R.string.no_face_detected)
         }
+
+//        graphicOverlay!!.draw(boundingBox, scaleX, scaleY, name)
     }
 
-    private fun loginExitoso(embeddingsResponse: EmbeddingsResponse) {
+    private fun sendRotatedImageToPreviousActivity(bitmap: Bitmap) {
+        val rotatedBitmap = rotateBitmap(bitmap, 360f)
+        showImageInToast(rotatedBitmap)
 
-        // Crear el Intent y pasar los datos
-        if(embeddingsResponse.data.rol.equals("recursos humanos")||embeddingsResponse.data.rol.equals("RECURSOS HUMANOS")){
-            val intent = Intent(this, InicioRrHhActivity::class.java)
+        val outputStream = ByteArrayOutputStream()
+        rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        val byteArray = outputStream.toByteArray()
 
-            intent.putExtra("nombre", embeddingsResponse.data.nombre)
-            intent.putExtra("apellido", embeddingsResponse.data.apellido)
-            startActivity(intent)
-        } else if(embeddingsResponse.data.rol.equals("seguridad")||embeddingsResponse.data.rol.equals("SEGURIDAD")){
-            val intent = Intent(this, InicioSeguridadActivity::class.java)
-
-            intent.putExtra("nombre", embeddingsResponse.data.nombre)
-            intent.putExtra("apellido", embeddingsResponse.data.apellido)
-            startActivity(intent)
-        } else {
-            // Crear el Intent y pasar los datos solo si el rol no es "recursos humanos" ni "seguridad"
-            val intent = Intent(this, IngresoDenegadoActivity::class.java)
-            intent.putExtra("nombre", embeddingsResponse.data.nombre)
-            intent.putExtra("apellido", embeddingsResponse.data.apellido)
-            intent.putExtra("dni", embeddingsResponse.data.dni)
-            intent.putExtra("roles", embeddingsResponse.data.rol.toString())
-            startActivity(intent)
+        val intent = Intent().apply {
+        putExtra("rotatedImage", byteArray)
         }
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+    private fun showImageInToast(image: Bitmap) {
+        val toast = Toast.makeText(this, "", Toast.LENGTH_LONG)
+        toast.setGravity(Gravity.CENTER, 0, 0)
+
+        val toastLayout = LinearLayout(this)
+        toastLayout.orientation = LinearLayout.HORIZONTAL
+        toastLayout.setBackgroundColor(Color.TRANSPARENT)
+
+        val imageView = ImageView(this)
+        imageView.setImageBitmap(image)
+        imageView.adjustViewBounds = true
+        imageView.maxWidth = 200
+        imageView.maxHeight = 200
+
+        toastLayout.addView(imageView)
+        toast.view = toastLayout
+        toast.show()
+    }
+    private fun rotateBitmap(source: Bitmap, angle: Float): Bitmap {
+        val matrix = Matrix()
+        matrix.postRotate(angle)
+        return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
-    private fun translateRect(
-        faceBoundingBox: Rect,
-        previewView: PreviewView
-    ): Rect {
+    /** Recognize Processor  */
+    private fun addFace() {
+        start = false
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Enter Name")
 
-        val left = previewView.width /2 - faceBoundingBox.right - 60 //offset to center image
-        val top = faceBoundingBox.top
-        val right = previewView.width / 2 - faceBoundingBox.left - 60
-        val bottom = faceBoundingBox.bottom
+        // Set up the input
+        val input = EditText(this)
 
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        input.maxWidth = 200
+        builder.setView(input)
 
-        return Rect(left, top, right, bottom)
+        // Set up the buttons
+        builder.setPositiveButton("ADD") { dialog: DialogInterface?, which: Int ->
+
+            faceRecognition!!.addEmbedding(embeddings!!, input.text.toString())
+            start = true
+        }
+        builder.setNegativeButton("Cancel") { dialog: DialogInterface, which: Int ->
+            start = true
+            dialog.cancel()
+        }
+
+        builder.show()
     }
-
 
 
     /** Bitmap Converter  */
@@ -405,10 +470,16 @@ class CameraxLoginActivity : AppCompatActivity() {
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
 
+
     companion object {
-        private const val TAG = "CameraxRecognitionActivity"
+        private const val TAG = "MainActivity"
         private const val PERMISSION_CODE = 1001
         private const val CAMERA_PERMISSION = Manifest.permission.CAMERA
+        private const val IMAGE_MEAN = 128.0f
+        private const val IMAGE_STD = 128.0f
+        private const val INPUT_SIZE = 112
+        private const val OUTPUT_SIZE = 192
+
         private fun getCropBitmapByCPU(source: Bitmap?, cropRectF: RectF): Bitmap {
             val resultBitmap = Bitmap.createBitmap(
                 cropRectF.width().toInt(),
@@ -525,44 +596,4 @@ class CameraxLoginActivity : AppCompatActivity() {
             return nv21
         }
     }
-    private fun showToast(message: String) {
-        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-    }
-    private fun startScanTimer() {
-        // Iniciar un temporizador de 30 segundos
-        countDownTimer = object : CountDownTimer(31000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val secondsRemaining = millisUntilFinished / 1000
-                // Mostrar un mensaje Toast cuando falten 20, 10 y 3 segundos
-                if (secondsRemaining == 30L) {
-                    showToast("Escaneando... 30 segundos restantes")
-                } else if (secondsRemaining == 20L) {
-                    showToast("Escaneando... 20 segundos restantes")
-                }else if (secondsRemaining == 10L) {
-                    showToast("Escaneando... 10 segundos restantes")
-                } else if (secondsRemaining == 3L) {
-                    showToast("Escaneando... 3 segundos restantes")
-                }
-            }
-
-            override fun onFinish() {
-                // Cuando el temporizador finaliza, puedes ir al siguiente intent
-                mostrarPantallaErrorIngreso()
-            }
-        }
-        countDownTimer?.start()
-    }
-    private fun stopScanTimer() {
-        countDownTimer?.cancel()
-    }
-    override fun onDestroy() {
-        super.onDestroy()
-        // Detener el temporizador para evitar pérdida de memoria
-        countDownTimer?.cancel()
-    }
-    private fun mostrarPantallaErrorIngreso() {
-        val intent = Intent(applicationContext, IngresoDenegadoActivity::class.java)
-        startActivity(intent)
-    }
-
 }

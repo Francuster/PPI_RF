@@ -12,13 +12,13 @@
         android:id="@+id/layout_hijo"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@drawable/rectangulo_celeste"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintWidth_percent="0.93"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
-        android:background="@drawable/rectangulo_celeste">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.93">
 
 
         <TextView
@@ -27,19 +27,17 @@
             android:layout_height="75dp"
             android:fontFamily="@font/inter_extrabold"
             android:text="REGISTRAR INGRESO/EGRESO"
+            android:textAlignment="center"
             android:textSize="23dp"
             android:textStyle="bold"
-            android:textAlignment="center"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.509"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.107"
             tools:ignore="MissingConstraints" />
-
-
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -50,7 +48,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
 
-            app:layout_constraintHorizontal_bias="0.605"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.301"
@@ -62,14 +60,13 @@
                 android:layout_height="86dp"
                 android:fontFamily="@font/inter_extrabold"
                 android:text="ACTIVA LA CAMARA PARA TOMAR LOS DATOS BIOMETRICOS"
+                android:textAlignment="center"
                 android:textSize="20dp"
                 android:textStyle="bold"
-                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:ignore="MissingConstraints"
                 tools:layout_editor_absoluteY="5dp" />
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -88,7 +85,7 @@
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.525"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.919"
@@ -104,7 +101,7 @@
             app:layout_constraintBottom_toTopOf="@+id/boton_siguiente"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.20"
-            app:layout_constraintHorizontal_bias="0.521"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/alerta"
             app:layout_constraintVertical_bias="0.895"
@@ -112,7 +109,6 @@
 
 
         </View>
-
 
 
         <ImageView

@@ -122,7 +122,7 @@ dependencies {
     // json
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-
+    implementation ("com.google.mlkit:barcode-scanning:17.0.3")
 
     //ML KIT Google
 //    implementation ("com.google.android.gms:play-services-mlkit:17.0.0")

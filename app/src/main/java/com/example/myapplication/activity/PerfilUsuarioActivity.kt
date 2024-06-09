@@ -37,18 +37,18 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         val textoApellidoUsuario = findViewById<TextView>(R.id.apellido_texto)
         val textoMailUsuario =findViewById<TextView>(R.id.email_texto)
         val textoDocumentoUsuario =findViewById<TextView>(R.id.documento_texto)
-        val horaEntradaTextView = findViewById<TextView>(R.id.hora_entrada)
-        val horaSalidaTextView = findViewById<TextView>(R.id.hora_salida)
+        //val horaEntradaTextView = findViewById<TextView>(R.id.hora_entrada)
+        //val horaSalidaTextView = findViewById<TextView>(R.id.hora_salida)
         val rolTextView = findViewById<TextView>(R.id.rol_texto)
         imagenUsuarioImageView = findViewById(R.id.imagenPerfil)
 
-        obtenerDatosUsuario(userId, textoNombreUsuario, textoApellidoUsuario,horaEntradaTextView, horaSalidaTextView, textoDocumentoUsuario,textoMailUsuario,rolTextView)
+        obtenerDatosUsuario(userId, textoNombreUsuario, textoApellidoUsuario, textoDocumentoUsuario,textoMailUsuario,rolTextView)
     }
 
-    private fun obtenerDatosUsuario(userId: String, textoNombreUsuario: TextView, textoApellidoUsuario: TextView, horaEntradaTextView: TextView, horaSalidaTextView: TextView, documentoTextView: TextView, mailTextView: TextView, rolTextView: TextView) {
+    private fun obtenerDatosUsuario(userId: String, textoNombreUsuario: TextView, textoApellidoUsuario: TextView, documentoTextView: TextView, mailTextView: TextView, rolTextView: TextView) {
         val client = OkHttpClient()
         val request = Request.Builder()
-            .url("${BuildConfig.BASE_URL}/api/user/$userId")
+            .url("${BuildConfig.BASE_URL}/api/users/$userId")
             .build()
 
         client.newCall(request).enqueue(object : okhttp3.Callback {
@@ -69,16 +69,16 @@ class PerfilUsuarioActivity : AppCompatActivity() {
                         val jsonObject = JSONObject(responseData)
                         userName = jsonObject.getString("nombre")
                         userApellido = jsonObject.getString("apellido")
-                        horaEntrada = jsonObject.getString("horaEntrada")
-                        horaSalida = jsonObject.getString("horaSalida")
+                        //horaEntrada = jsonObject.getString("horaEntrada")
+                        //horaSalida = jsonObject.getString("horaSalida")
                         rol = jsonObject.getString("rol")
-                        documento = jsonObject.getString("documento")
-                        mail = jsonObject.getString("mail")
+                        documento = jsonObject.getString("dni")
+                        mail = jsonObject.getString("email")
                         runOnUiThread {
                             textoNombreUsuario.text = "$userName "
                             textoApellidoUsuario.text = "$userApellido"
-                            horaEntradaTextView.text = "$horaEntrada"
-                            horaSalidaTextView.text = "$horaSalida"
+                            //horaEntradaTextView.text = "$horaEntrada"
+                            //horaSalidaTextView.text = "$horaSalida"
                             rolTextView.text = "$rol"
                             documentoTextView.text= "$documento"
                             mailTextView.text="$mail"

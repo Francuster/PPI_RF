@@ -71,8 +71,7 @@ class InicioRrHhActivity: AppCompatActivity() {
 
             for (i in 0 until jsonArray.length()) {
                 val lastUserJsonObject = jsonArray.getJSONObject(i)
-                val userIdObject = lastUserJsonObject.getJSONObject("_id")
-                val userId = userIdObject.getString("\$oid")
+                val userId = lastUserJsonObject.getString("_id")
                 val userName = lastUserJsonObject.getString("nombre")
                 val userSurname = lastUserJsonObject.getString("apellido")
                 val fullName = "$userName $userSurname"

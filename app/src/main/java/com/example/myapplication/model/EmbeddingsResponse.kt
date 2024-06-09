@@ -9,7 +9,7 @@ class EmbeddingsResponse (
 ) : Serializable
 
 data class Data(
-    val _id: Id,
+    val _id: String,
     val apellido: String,
     val dni: Int,
     val image: List<Float>,
@@ -17,8 +17,4 @@ data class Data(
     val lugares: List<String>,
     val nombre: String,
     val rol: String
-) : Serializable
-
-data class Id(
-    val `$oid`: String
 ) : Serializable

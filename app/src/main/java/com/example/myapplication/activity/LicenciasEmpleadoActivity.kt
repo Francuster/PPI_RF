@@ -64,7 +64,7 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
                     textViewLicenciaVigente.text = diasDeLicencia
                     container.addView(itemView)
                     itemView.findViewById<View>(R.id.imagen_delete).setOnClickListener {
-                        eliminarLicencia(licencia.licenciaId)
+                        eliminarLicencia(licencia._id)
 
                     }
                 }
@@ -120,7 +120,9 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
                     runOnUiThread {
                         Toast.makeText(this@LicenciasEmpleadoActivity, "Licencia eliminada exitosamente", Toast.LENGTH_SHORT).show()
                         // Iterar sobre la lista y eliminar la licencia con el ID deseado
-                        licenciasEmpleado.removeAll { it.licenciaId == licenciaId }
+                        licenciasEmpleado.removeAll { it._id == licenciaId }
+                        EmpleadosLicenciasActivity.GlobalData.licencias.removeAll { it._id == licenciaId }
+
                         mostrarTodasLasLicencias()
                     }
                 } else {

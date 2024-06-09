@@ -135,6 +135,7 @@ class CargarLicenciaActivity : AppCompatActivity() {
                         Toast.makeText(this@CargarLicenciaActivity, "Licencia guardada exitosamente: $licenciaId", Toast.LENGTH_SHORT).show()
                         val licencia = Licencia(licenciaId!!, fechaDesde!!, fechaHasta!!, empleadoBuscado[0].userId!!)
                         licenciasEmpleado.add(licencia)
+                        EmpleadosLicenciasActivity.GlobalData.licencias.add(licencia)
                     }
                 } else {
                     runOnUiThread {

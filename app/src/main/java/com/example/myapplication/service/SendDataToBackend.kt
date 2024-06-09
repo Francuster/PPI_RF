@@ -1,14 +1,12 @@
 package com.example.myapplication.service
 
 import android.content.Context
-import android.database.Cursor
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.database.Connection
 import com.example.myapplication.model.Log
 import com.example.myapplication.model.Registro
+import com.example.myapplication.model.CorteInternet
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -29,7 +27,7 @@ class SendDataToBackend (private val context: Context) {
 
         // URL
 
-        val url = BuildConfig.BASE_URL + "/api/authentication/logs"
+        val url = BuildConfig.BASE_URL + "/api/logs/authentication"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)
@@ -92,7 +90,7 @@ class SendDataToBackend (private val context: Context) {
         })
     }
 
-    fun sendLocalRegs(): Boolean {
+    fun getLocalRegs(): Int {
             var count:Int=0
             val connection = Connection(context)
             val db = connection.writableDatabase
@@ -111,7 +109,7 @@ class SendDataToBackend (private val context: Context) {
                         puntero.getString(puntero.getColumnIndexOrThrow("tipo")),
                     )
                     // Envía el registro
-                    if (sendRegistro(reg)) {
+                    if (sendRegistroLocal(reg)) {
                         count+=
                         // Borra el registro si se envió correctamente
                         db.delete(
@@ -138,19 +136,20 @@ class SendDataToBackend (private val context: Context) {
 
             puntero.close()
             db.close()
-            return true
+
         } else {
             puntero.close()
             db.close()
-            return false
+
         }
+        return count
     }
 
-    fun sendRegistro(reg: Registro): Boolean {
+    fun sendRegistroLocal(reg: Registro): Boolean {
         // URL
         var sended:Boolean=true
 
-        val url = BuildConfig.BASE_URL + "/api/authentication/logs"
+        val url = BuildConfig.BASE_URL + "/api/logs/authenticationOffline"
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)
@@ -187,24 +186,13 @@ class SendDataToBackend (private val context: Context) {
                 try {
                     // La solicitud fue exitosa //
                     if (response.isSuccessful) {
-                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                        sended=true
                     } else {
-                        Toast.makeText(
-                            context,
-                            "HTTP request unsuccessful with status code ${response.code}",
-                            Toast.LENGTH_SHORT
-                        ).show()
                         sended=false
 
                     }
 
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Toast.makeText(
-                        context,
-                        "Error en la respuesta: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                } catch (e: Exception) {e.printStackTrace()
                     sended=false
                 } finally {
                     response.body?.close()
@@ -214,8 +202,68 @@ class SendDataToBackend (private val context: Context) {
 
             override fun onFailure(call: Call, e: IOException) {
                 // Maneja el fallo de la solicitud
-                e.printStackTrace()
-                Toast.makeText(context,"No se ha podido hacer la sincronizacion",Toast.LENGTH_SHORT).show()
+                activeCall = null
+                sended=false
+
+            }
+        })
+        return sended
+    }
+
+
+    fun sendDisconnectReports(corte : CorteInternet): Boolean{
+
+        var sended:Boolean=true
+
+        val url = BuildConfig.BASE_URL + "/api/authentication/cortes"
+
+        // CREAR CONEXION
+        val client = OkHttpClient().newBuilder()
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(20, TimeUnit.SECONDS)
+            .build()
+
+        // Crear el cuerpo de la solicitud HTTP
+        val requestBody = FormBody.Builder()
+            .add("horarioDesconexion", corte.horarioDesconexion)
+            .add("horarioReconexion", corte.horarioReconexion)
+            .add("cantRegSincronizados", corte.cantRegistros.toString())
+            .add("periodoDeCorte",corte.periodoDeCorte)
+            .build()
+
+        // Crea la solicitud POST
+        val request = Request.Builder()
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        activeCall?.cancel()
+
+        activeCall = client.newCall(request)
+
+        activeCall?.enqueue(object : Callback {
+
+            override fun onResponse(call: Call, response: Response) {
+                try {
+                    // La solicitud fue exitosa //
+                    if (response.isSuccessful) {
+                        sended=true
+                    } else {
+                        sended=false
+
+                    }
+
+                } catch (e: Exception) {e.printStackTrace()
+                    sended=false
+                } finally {
+                    response.body?.close()
+                    activeCall = null
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                // Maneja el fallo de la solicitud
                 activeCall = null
                 sended=false
 

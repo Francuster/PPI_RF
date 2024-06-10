@@ -19,7 +19,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class LicenciasEmpleadoActivity: AppCompatActivity() {
     private lateinit var licenciasEmpleado: ArrayList<Licencia>
@@ -46,11 +48,16 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
         val container: LinearLayout = findViewById(R.id.container)
         runOnUiThread {
             container.removeAllViews() // Elimina vistas antiguas antes de agregar las nuevas
-            val fechaHoy = Calendar.getInstance().toString()
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val fechaHoy = sdf.format(Calendar.getInstance().time)
+
             for (licencia in licenciasEmpleado) {
 
+                val dateHoy = sdf.parse(fechaHoy)
+                val dateDesde = sdf.parse(licencia.fechaDesde)
                 val diasDeLicencia = "Del ${licencia.fechaDesde}  al ${licencia.fechaHasta}"
-                if (licencia.fechaDesde >= fechaHoy){
+
+                if (dateDesde != null && dateDesde <= dateHoy){
                     val inflater: LayoutInflater = LayoutInflater.from(this)
                     val itemView: View = inflater.inflate(R.layout.licencia, container, false)
                     val textViewLicencia: TextView = itemView.findViewById(R.id.licencia)

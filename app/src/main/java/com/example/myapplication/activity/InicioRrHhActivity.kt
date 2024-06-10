@@ -9,24 +9,19 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
-import com.example.myapplication.model.EmbeddingsResponse
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
-
-import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.IOException
 
 
 class InicioRrHhActivity: AppCompatActivity() {
     private var userModelList = arrayListOf<UserModel>()
     private val handler = Handler()
-    val listaEmpleados = mutableListOf<Empleado>()
+    private var listaEmpleados = arrayListOf<Empleado>()
     private lateinit var runnable: Runnable
 
     private var nombre: String? = null
@@ -96,6 +91,7 @@ class InicioRrHhActivity: AppCompatActivity() {
                 val itemView: View = inflater.inflate(R.layout.item_usuario, container, false)
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
                 textViewEmpleado.text = user.getFullName()
+                listaEmpleados.add(Empleado(user.getFullName(),user._id))
                 container.addView(itemView)
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
                     goToModificacionUsuario(user)

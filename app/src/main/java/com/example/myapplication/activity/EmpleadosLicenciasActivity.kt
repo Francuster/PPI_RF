@@ -2,7 +2,6 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,8 +29,6 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     object GlobalData {
         var licencias  = ArrayList<Licencia>()
     }
-    private val handler = Handler()
-    private lateinit var runnable: Runnable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,24 +41,9 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         }
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         empleadoBuscado = ArrayList()
-        scheduleUserUpdate()
         mostrarTodosLosEmpleados()
     }
-    override fun onDestroy() {
-        super.onDestroy()
-        // Detén la actualización periódica cuando la actividad se destruye
-        handler.removeCallbacks(runnable)
-    }
 
-    private fun scheduleUserUpdate() {
-/*        runnable = Runnable {
-            fetch("Licencias","/api/licencias","FetchLicencias")
-            // Vuelve a programar la actualización después de 10 segundos
-            handler.postDelayed(runnable, 10000)
-        }
-        // Programa la primera ejecución después de 10 segundos
-        handler.postDelayed(runnable, 10000)*/
-    }
 
     private fun mostrarTodosLosEmpleados() {
         val container: LinearLayout = findViewById(R.id.container_empleado_licencias)

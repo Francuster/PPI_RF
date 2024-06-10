@@ -29,5 +29,8 @@ data class Empleado(
         override fun newArray(size: Int): Array<Empleado?> {
             return arrayOfNulls(size)
         }
+
+
+
     }
 }

@@ -124,6 +124,9 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.google.mlkit:barcode-scanning:17.0.3")
 
+    //gson
+    implementation ("com.google.code.gson:gson:2.11.0")
+
     //ML KIT Google
 //    implementation ("com.google.android.gms:play-services-mlkit:17.0.0")
 

@@ -43,7 +43,6 @@ import java.util.Locale
 
 class RegistroUsuarioActivity:AppCompatActivity() {
     private val client = OkHttpClient()
-    //private var imagenBase64: String? = null
     private val CAMERA_REQUEST_CODE = 100
     private var imageByteArray: ByteArray? = null
     override fun onCreate(savedInstanceState: Bundle?) {

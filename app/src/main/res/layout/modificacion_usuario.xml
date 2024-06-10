@@ -306,25 +306,6 @@
             app:layout_constraintWidth_percent="0.48" />
 
         <Button
-            android:id="@+id/boton_cambiar_hora"
-            android:layout_width="160dp"
-            android:layout_height="48dp"
-            android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:background="@drawable/boton"
-            android:fontFamily="@font/inter_extrabold"
-            android:onClick="goToModificacionHora"
-            android:text="CAMBIAR HORA"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.08"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.856"
-            app:layout_constraintWidth_percent="0.48" />
-
-        <Button
             android:id="@+id/boton_registrar_ingreso"
             android:layout_width="168dp"
             android:layout_height="48dp"

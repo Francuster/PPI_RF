@@ -31,15 +31,11 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         val textoApellidoUsuario = findViewById<TextView>(R.id.apellido_texto)
         val textoMailUsuario =findViewById<TextView>(R.id.email_texto)
         val textoDocumentoUsuario =findViewById<TextView>(R.id.documento_texto)
-        val horaEntradaTextView = findViewById<TextView>(R.id.hora_entrada)
-        val horaSalidaTextView = findViewById<TextView>(R.id.hora_salida)
         val rolTextView = findViewById<TextView>(R.id.rol_texto)
 
         runOnUiThread {
             textoNombreUsuario.text = userModel.nombre
             textoApellidoUsuario.text = userModel.apellido
-            horaEntradaTextView.text = ""
-            horaSalidaTextView.text = ""
             rolTextView.text = userModel.rol
             textoDocumentoUsuario.text = userModel.dni.toString()
             textoMailUsuario.text= userModel.email

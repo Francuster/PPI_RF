@@ -291,50 +291,8 @@
             app:srcCompat="@drawable/arrow_left" />
 
         <!-- Hora de Entrada -->
-        <TextView
-            android:id="@+id/hora_entrada"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rectangulo_alerta"
-            android:focusable="false"
-            android:fontFamily="@font/inter_extrabold"
-            android:gravity="center"
-            android:hint="Hora Entrada"
-            android:inputType="none"
-            android:textAlignment="center"
-            android:textColor="#36565B"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/hora_salida"
-            app:layout_constraintHeight_percent="0.05"
-            app:layout_constraintHorizontal_bias="0.087"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.974"
-            app:layout_constraintWidth_percent="0.40" />
 
         <!-- Hora de Salida -->
-        <TextView
-            android:id="@+id/hora_salida"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rectangulo_alerta"
-            android:focusable="false"
-            android:fontFamily="@font/inter_extrabold"
-            android:gravity="center"
-            android:hint="Hora Salida"
-            android:inputType="none"
-            android:textAlignment="center"
-            android:textColor="#36565B"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.05"
-            app:layout_constraintHorizontal_bias="0.921"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.974"
-            app:layout_constraintWidth_percent="0.40" />
 
         <!-- Imagen de Avatar -->
         <ImageView

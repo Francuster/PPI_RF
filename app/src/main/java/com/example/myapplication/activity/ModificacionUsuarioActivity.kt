@@ -288,7 +288,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         val rol = rolSpinner.selectedItem.toString().toLowerCase(Locale.ENGLISH)
         val email = mailEditText.text.toString()
 
-        val updatedUser =  UserModel(userModel._id, nombre, apellido, documento.toInt(), rol, listOf<String>(), email )
+        val updatedUser =  UserModel(userModel._id, nombre, apellido, documento.toInt(), rol, userModel.horarios, email )
 
         RetrofitClient.userApiService.put(userModel._id, updatedUser).enqueue(object :Callback<Void>{
             override fun onResponse(call: Call<Void>, response: Response<Void>) {

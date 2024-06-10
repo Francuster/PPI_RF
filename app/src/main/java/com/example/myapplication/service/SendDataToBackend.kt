@@ -1,12 +1,14 @@
 package com.example.myapplication.service
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.database.Connection
+import com.example.myapplication.model.CorteInternet
 import com.example.myapplication.model.Log
 import com.example.myapplication.model.Registro
-import com.example.myapplication.model.CorteInternet
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
@@ -62,18 +64,20 @@ class SendDataToBackend (private val context: Context) {
 
             override fun onResponse(call: Call, response: Response) {
                 try {
-                    // La solicitud fue exitosa //
+                    // La solicitud fue exitosa
                     if (response.isSuccessful) {
-                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    }
-                    else{
-                        Toast.makeText(context, "HTTP request unsuccessful with status code ${response.code}", Toast.LENGTH_SHORT).show()
-                    }
 
+                    } else {
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "HTTP request unsuccessful with status code ${response.code}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(context, "Error en la respuesta: ${e.message}", Toast.LENGTH_SHORT).show()
-                }finally {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Error en la respuesta: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                } finally {
                     response.body?.close()
                     activeCall = null
                 }
@@ -82,13 +86,14 @@ class SendDataToBackend (private val context: Context) {
             override fun onFailure(call: Call, e: IOException) {
                 // Maneja el fallo de la solicitud
                 e.printStackTrace()
-                Toast.makeText(context, "No se ha podido hacer la sincronizacion", Toast.LENGTH_SHORT)
-                    .show()
-                activeCall=null
-
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(context, "No se ha podido hacer la sincronizacion", Toast.LENGTH_SHORT).show()
+                }
+                activeCall = null
             }
         })
     }
+
 
     fun getLocalRegs(): Int {
             var count:Int=0
@@ -122,10 +127,11 @@ class SendDataToBackend (private val context: Context) {
                         throw Exception("Error al eliminar el registro")
                     }
                 } while (puntero.moveToNext())
-
-                Toast.makeText(context, "Cantidad de registros sincronizados: " + count, Toast.LENGTH_SHORT)
-                    .show()
-
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(
+                        context,
+                        "Cantidad de registros sincronizados: " + count,Toast.LENGTH_SHORT).show()
+                }
                 db.setTransactionSuccessful()
             } catch (e: Exception) {
                 // Manejo del error, si se desea loggear o realizar alguna acción

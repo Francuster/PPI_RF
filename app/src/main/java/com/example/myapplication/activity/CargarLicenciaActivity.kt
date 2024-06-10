@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
@@ -43,6 +44,8 @@ class CargarLicenciaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.cargar_nueva_licencia)
 
+        val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
+        textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasEmpleado") ?: arrayListOf()
         empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()
@@ -131,11 +134,17 @@ class CargarLicenciaActivity : AppCompatActivity() {
             override fun onResponse(call: retrofit2.Call<LicenciaResponse>, response: Response<LicenciaResponse>) {
                 if (response.isSuccessful) {
                     val licenciaId = response.body()?.licenciaId
+                    val fechaDesde = response.body()?.fechaDesde
+                    val fechaHasta = response.body()?.fechaHasta
+                    val userId = response.body()?.userId
+
                     runOnUiThread {
                         Toast.makeText(this@CargarLicenciaActivity, "Licencia guardada exitosamente: $licenciaId", Toast.LENGTH_SHORT).show()
-                        val licencia = Licencia(licenciaId!!, fechaDesde!!, fechaHasta!!, empleadoBuscado[0].userId!!)
+                        val licencia = Licencia(licenciaId!!, fechaDesde!!, fechaHasta!!, userId!!)
                         licenciasEmpleado.add(licencia)
                         EmpleadosLicenciasActivity.GlobalData.licencias.add(licencia)
+
+                        goToLicenciasEmpleados()
                     }
                 } else {
                     runOnUiThread {
@@ -154,6 +163,15 @@ class CargarLicenciaActivity : AppCompatActivity() {
 
 
     fun goToLicenciasEmpleados(view: View) {
+        val intent = Intent(this, LicenciasEmpleadoActivity::class.java)
+        intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))
+        intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
+        intent.putParcelableArrayListExtra("empleadoBuscado", ArrayList(empleadoBuscado))
+        startActivity(intent)
+    }
+
+
+    private fun goToLicenciasEmpleados() {
         val intent = Intent(this, LicenciasEmpleadoActivity::class.java)
         intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))
         intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))

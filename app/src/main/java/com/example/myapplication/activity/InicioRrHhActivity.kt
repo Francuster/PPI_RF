@@ -23,7 +23,9 @@ class InicioRrHhActivity: AppCompatActivity() {
     private val handler = Handler()
     private var listaEmpleados = arrayListOf<Empleado>()
     private lateinit var runnable: Runnable
-
+    object GlobalData {
+        var empleado: Empleado? = null
+    }
     private var nombre: String? = null
     private var apellido: String? = null
 
@@ -31,12 +33,13 @@ class InicioRrHhActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inico_rrhh)
         fetchUsers()
-        nombre = intent.getStringExtra("nombre")
-        apellido=intent.getStringExtra("apellido")//nombre para mostrar
-
+        if (GlobalData.empleado == null) {
+            nombre = intent.getStringExtra("nombre")
+            apellido = intent.getStringExtra("apellido")//nombre para mostrar
+            GlobalData.empleado = Empleado(fullName = "$nombre $apellido", userId = "124124")
+        }
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
-        textoNombreUsuario.text = "$nombre $apellido"
-
+        textoNombreUsuario.text = GlobalData.empleado!!.fullName
         // Programa la actualización de usuarios cada 10 segundos
         scheduleUserUpdate()
     }

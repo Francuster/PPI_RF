@@ -31,6 +31,9 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.licencias_empleado)
+        val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
+        textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
+
         licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasEmpleado") ?: arrayListOf()
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()

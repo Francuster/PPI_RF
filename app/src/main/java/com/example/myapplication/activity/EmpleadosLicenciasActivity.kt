@@ -36,6 +36,8 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.empleados)
+        val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
+        textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
         if(GlobalData.licencias.isEmpty()){
             fetch("Licencias","/api/licencias","FetchLicencias")
 

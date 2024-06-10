@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/fondo_blanco"
     android:rotationX="360"
-    tools:context=".Escanea">
+    tools:context=".activity.InicioSeguridadActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
@@ -233,7 +233,7 @@
             app:layout_constraintVertical_bias="0.5">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/ingreso_egreso_nav"
+                android:id="@+id/ingreso_egreso_form"
                 android:layout_width="66dp"
                 android:layout_height="45dp"
 
@@ -416,14 +416,14 @@
             tools:ignore="MissingConstraints" />
 
         <TextView
-            android:id="@+id/usuario"
+            android:id="@+id/seguridad"
             android:layout_width="0dp"
             android:layout_height="27dp"
             android:background="#00ECE6D9"
             android:backgroundTint="#ECE6D9"
             android:fontFamily="@font/lalezar"
             android:text="USUARIO"
-            android:textAlignment="textEnd"
+            android:textAlignment="center"
             android:textColor="#ECE6D9"
             android:textColorLink="#ECE6D9"
             android:textSize="16sp"
@@ -434,7 +434,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5"
-            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintWidth_percent="0.33"
             tools:ignore="MissingConstraints" />
 
 

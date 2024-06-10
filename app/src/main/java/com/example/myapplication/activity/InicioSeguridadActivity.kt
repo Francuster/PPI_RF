@@ -1,20 +1,22 @@
 package com.example.myapplication.activity
 
-import com.example.myapplication.activity.QRScannerActivity
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
+import com.example.myapplication.activity.QRScannerActivity
+import com.example.myapplication.model.Empleado
 import com.example.myapplication.utils.deviceIsConnected
 
 
 class InicioSeguridadActivity: AppCompatActivity() {
 
+        object GlobalData {
+            var seguridad: Empleado? = null
+        }
         private var nombre: String? = null
         private var apellido: String? = null
 
@@ -22,16 +24,22 @@ class InicioSeguridadActivity: AppCompatActivity() {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.inicio_seguridad)
 
-            nombre = intent.getStringExtra("nombre")
-            apellido=intent.getStringExtra("apellido")//nombre para mostrar
+            if (GlobalData.seguridad == null) {
+                nombre = intent.getStringExtra("nombre")
+                apellido = intent.getStringExtra("apellido")//nombre para mostrar
+                GlobalData.seguridad = Empleado(fullName = "$nombre $apellido", userId = "124124")
 
-            val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
-            textoNombreUsuario.text = "$nombre $apellido"
+            }
+
+            val textoNombreUsuario = findViewById<TextView>(R.id.seguridad)
+            textoNombreUsuario.text = GlobalData.seguridad!!.fullName
 
         }
         override fun onResume() {
             super.onResume()
             setContentView(R.layout.inicio_seguridad)
+            val textoNombreUsuario = findViewById<TextView>(R.id.seguridad)
+            textoNombreUsuario.text = GlobalData.seguridad!!.fullName
         }
 
     fun goToAnteEscanea(view: View) {

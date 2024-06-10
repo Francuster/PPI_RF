@@ -157,12 +157,10 @@ class SendDataToBackend (private val context: Context) {
             .readTimeout(20, TimeUnit.SECONDS)
             .build()
 
-        val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
-        val horario = formato.format(Date())
 
         // Crear el cuerpo de la solicitud HTTP
         val requestBody = FormBody.Builder()
-            .add("horario", horario.toString())
+            .add("horario", reg.horario)
             .add("nombre", reg.nombre)
             .add("apellido", reg.apellido)
             .add("dni", reg.dni)

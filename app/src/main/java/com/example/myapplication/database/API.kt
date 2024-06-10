@@ -27,12 +27,14 @@ object API {
 fun registrarLogs(context: Context, nombre: String, apellido: String, dni: Int, estado: String, tipo: String) {
     val databaseConnection = Connection(context)
     val db = databaseConnection.writableDatabase
-    val fechaActual = obtenerFechaActualISO()
+
+    val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
+    val horario = formato.format(Date())
     try {
         // Registrar el visitante en la tabla de Logs
         val queryLogs = "INSERT INTO logs (horario, nombre, apellido, dni, estado, tipo) VALUES (?, ?, ?, ?, ?, ?)"
-        db.execSQL(queryLogs, arrayOf(fechaActual, nombre, apellido, dni, estado, tipo))
-        Log.i("TAG", "Entrada de usuario insertada correctamente en la tabla LOGS con horario: $fechaActual, nombre: $nombre, apellido: $apellido, dni: $dni, estado: $estado, tipo: $tipo")
+        db.execSQL(queryLogs, arrayOf(horario, nombre, apellido, dni, estado, tipo))
+        Log.i("TAG", "Entrada de usuario insertada correctamente en la tabla LOGS con horario: $horario, nombre: $nombre, apellido: $apellido, dni: $dni, estado: $estado, tipo: $tipo")
     } catch (e: Exception) {
         // Manejar cualquier excepción
         Log.e(TAG, "Error al registrar Log", e)

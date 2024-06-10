@@ -9,27 +9,22 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.utils.NetworkChangeService
 import com.example.myapplication.utils.isServiceRunning
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.Response
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
+
+
 import java.util.Locale
 import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextWatcher
 import android.util.Patterns
+import com.example.myapplication.model.UserModel
+import com.example.myapplication.service.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ModificacionUsuarioActivity : AppCompatActivity() {
 
@@ -37,28 +32,24 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private val TEXT_REQUEST_CODE = 101
     private val ROLE_REQUEST_CODE = 102
     private val HOURS_REQUEST_CODE = 103
-    private var userId: String? = null
-    private var userName: String? = null
-    private var userSurname: String? = null
-    private var nombre: String? = null
-    private var apellido: String? = null
-    private var mail: String? = null
-    private var documento: String? = null
-    private var rol: String? = null
-    private var horaEntrada: String? = null
-    private var horaSalida: String? = null
-    private var imageByteArray: ByteArray? = null
-    private val client = OkHttpClient()
+
     private lateinit var nombreEditText: EditText
     private lateinit var apellidoEditText: EditText
     private lateinit var mailEditText: EditText
     private lateinit var documentoEditText: EditText
     private lateinit var rolSpinner: Spinner
+    private lateinit var userModel: UserModel
+
+    private var rolArrayList = arrayListOf<String>(
+        "ADMINISTRADOR",
+        "DOCENTE",
+        "NO DOCENTE",
+        "SEGURIDAD",
+        "RECURSOS HUMANOS",
+        "PERSONAL JERÁRQUICO",
+        "ESTUDIANTE")
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-
-
 
         super.onCreate(savedInstanceState)
         if (!isServiceRunning(applicationContext, NetworkChangeService::class.java)) {
@@ -67,24 +58,15 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.modificacion_usuario)
-        userId = intent.getStringExtra("user_id")
-        userName = intent.getStringExtra("user_name") // nombre para mostrar
-        userSurname = intent.getStringExtra("user_apellido") // apellido para mostrar
+
+        userModel = intent.getSerializableExtra("userModel") as UserModel
+
         val textoNombreUsuario = findViewById<TextView>(R.id.modificacion_titulo)
-        textoNombreUsuario.text = "Modificando usuario:\n$userName $userSurname "
+        textoNombreUsuario.text = "Modificando usuario:\n${userModel.getFullName()} "
 
         val spinner: Spinner = findViewById(R.id.tipo_cuenta)
-        val elementos = arrayListOf(
-            "ADMINISTRADOR",
-            "DOCENTE",
-            "NO DOCENTE",
-            "SEGURIDAD",
-            "RECURSOS HUMANOS",
-            "PERSONAL JERÁRQUICO",
-            "ESTUDIANTE",
-        )
 
-        val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, elementos)
+        val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, rolArrayList)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter = adaptador
 
@@ -93,12 +75,26 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         apellidoEditText = findViewById(R.id.apellido_texto)
         mailEditText = findViewById(R.id.email_texto)
         documentoEditText = findViewById(R.id.documento_texto)
-        rolSpinner = findViewById(R.id.tipo_cuenta)
+        rolSpinner = spinner
+
+        cargarDatos(userModel)
 
         // Agregar filtros y validaciones
         agregarFiltros()
         agregarValidaciones()
 
+    }
+
+    private fun cargarDatos(userModel: UserModel){
+
+        runOnUiThread {
+            nombreEditText.setText(userModel.nombre, TextView.BufferType.EDITABLE)
+            apellidoEditText.setText(userModel.apellido, TextView.BufferType.EDITABLE)
+            mailEditText.setText(userModel.email, TextView.BufferType.EDITABLE)
+            documentoEditText.setText(userModel.dni.toString(), TextView.BufferType.EDITABLE)
+            rolSpinner.setSelection(rolArrayList.indexOf(userModel.rol.toUpperCase(Locale.ENGLISH)))
+
+        }
     }
 
     fun goToModificacionRol(view: View) {
@@ -128,7 +124,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     fun goToCameraParaRegistro(view: View) {
         val intent = Intent(this, CameraxAddFaceActivity::class.java)
         intent.putExtra("fromActivity", "ModificacionUsuarioActivity")
-        intent.putExtra("userId", userId)
+        intent.putExtra("userId", userModel._id)
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
 
@@ -265,83 +261,60 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                HOURS_REQUEST_CODE -> {
-                    horaEntrada = data?.getStringExtra("hora_entrada")
-                    horaSalida = data?.getStringExtra("hora_salida")
-                    // Agrega un log para asegurarte de que los valores se están recibiendo correctamente
-                    println("Hora de entrada: $horaEntrada, Hora de salida: $horaSalida")
-                }
-                CAMERA_REQUEST_CODE -> {
-                    imageByteArray = data?.getByteArrayExtra("image")
-                }
-            }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (resultCode == RESULT_OK) {
+//            when (requestCode) {
+//                HOURS_REQUEST_CODE -> {
+//                    horaEntrada = data?.getStringExtra("hora_entrada")
+//                    horaSalida = data?.getStringExtra("hora_salida")
+//                    // Agrega un log para asegurarte de que los valores se están recibiendo correctamente
+//                    println("Hora de entrada: $horaEntrada, Hora de salida: $horaSalida")
+//                }
+//                CAMERA_REQUEST_CODE -> {
+//                    imageByteArray = data?.getByteArrayExtra("image")
+//                }
+//            }
+//        }
+//    }
 
     fun enviarDatosModificacion() {
-        userId?.let { id ->
 
-            val nombre = nombreEditText.text.toString()
-            val apellido = apellidoEditText.text.toString()
-            val documento = documentoEditText.text.toString()
-            val tipoCuenta = rolSpinner.selectedItem.toString()
-            val email = mailEditText.text.toString()
 
-            val multipartBodyBuilder = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("nombre", nombre)
-                .addFormDataPart("apellido", apellido)
-                .addFormDataPart("dni", documento)
-                .addFormDataPart("rol", tipoCuenta.lowercase(Locale.ENGLISH))
-                .addFormDataPart("horariosEntrada", horaEntrada ?: "")
-                .addFormDataPart("horariosSalida", horaSalida ?: "")
-                .addFormDataPart("email", email)
 
-            imageByteArray?.let {
-                val tempFile = File.createTempFile("image", ".jpg", cacheDir)
-                FileOutputStream(tempFile).use { fos ->
-                    fos.write(it)
+        val nombre = nombreEditText.text.toString()
+        val apellido = apellidoEditText.text.toString()
+        val documento = documentoEditText.text.toString()
+        val rol = rolSpinner.selectedItem.toString().toLowerCase(Locale.ENGLISH)
+        val email = mailEditText.text.toString()
+
+        val updatedUser =  UserModel(userModel._id, nombre, apellido, documento.toInt(), rol, listOf<String>(), email )
+
+        RetrofitClient.userApiService.put(userModel._id, updatedUser).enqueue(object :Callback<Void>{
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                when (response.code()) {
+                    200 -> {
+                        Toast.makeText(this@ModificacionUsuarioActivity, "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
+                        goToModificacionExitosa()
+                    }
+                    500 -> {
+                        goToModificacionError()
+                        Toast.makeText(this@ModificacionUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        goToModificacionError()
+                        Toast.makeText(this@ModificacionUsuarioActivity, "Error: durante la actualizacion", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                multipartBodyBuilder.addFormDataPart("image", tempFile.name, tempFile.asRequestBody("image/jpeg".toMediaTypeOrNull()))
             }
 
-            val requestBody = multipartBodyBuilder.build()
-            val request = Request.Builder()
-                .url("${BuildConfig.BASE_URL}/api/users/$id")
-                .put(requestBody)
-                .header("Content-Type", "multipart/form-data")
-                .build()
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(this@ModificacionUsuarioActivity, "Fallo en la solicitud: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
 
-            client.newCall(request).enqueue(object : Callback {
-                override fun onResponse(call: Call, response: Response) {
-                    runOnUiThread {
-                        when (response.code) {
-                            200 -> {
-                                Toast.makeText(this@ModificacionUsuarioActivity, "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
-                                goToModificacionExitosa()
-                            }
-                            500 -> {
-                                goToModificacionError()
-                                Toast.makeText(this@ModificacionUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
-                            }
-                            else -> {
-                                goToModificacionError()
-                                Toast.makeText(this@ModificacionUsuarioActivity, "Error: ${response.message}", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-                }
 
-                override fun onFailure(call: Call, e: IOException) {
-                    runOnUiThread {
-                        Toast.makeText(this@ModificacionUsuarioActivity, "Fallo en la solicitud: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            })
-        }
     }
 
     fun goToModificacionExitosa() {

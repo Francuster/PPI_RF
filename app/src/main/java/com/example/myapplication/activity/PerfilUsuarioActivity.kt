@@ -36,8 +36,6 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         runOnUiThread {
             textoNombreUsuario.text = userModel.nombre
             textoApellidoUsuario.text = userModel.apellido
-            horaEntradaTextView.text = ""
-            horaSalidaTextView.text = ""
             rolTextView.text = userModel.rol
             textoDocumentoUsuario.text = userModel.dni.toString()
             textoMailUsuario.text= userModel.email

@@ -21,7 +21,7 @@ interface UsersApiService {
     fun get(): Call<List<UserModel>>
 
     @GET("/api/users/{id}")
-    fun getById(@Path("id") userId: String): Call<List<UserModel>>
+    fun getById(@Path("id") userId: String): Call<UserModel>
     @DELETE("/api/users/{id}")
     fun delete(@Path("id") userId: String): Call<Void>
 }

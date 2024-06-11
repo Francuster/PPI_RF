@@ -25,6 +25,7 @@
         <!-- Apellido -->
 
         <!-- Documento -->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/apellido"
             android:layout_width="0dp"
@@ -33,8 +34,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.305"
             app:layout_constraintWidth_percent="0.90">
 
             <TextView
@@ -73,6 +76,9 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <!-- Nombre -->
+
+        <!-- Email -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/documento"
             android:layout_width="0dp"
@@ -81,10 +87,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.763"
+            app:layout_constraintVertical_bias="0.577"
             app:layout_constraintWidth_percent="0.90">
 
             <TextView
@@ -123,7 +129,6 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Nombre -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/nombre"
             android:layout_width="0dp"
@@ -132,10 +137,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.373"
+            app:layout_constraintVertical_bias="0.18"
             app:layout_constraintWidth_percent="0.90">
 
             <TextView
@@ -174,7 +179,9 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Email -->
+        <!-- Tipo de Cuenta -->
+        <!-- Rol -->
+        <!-- Rol -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/email"
             android:layout_width="0dp"
@@ -183,10 +190,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.631"
+            app:layout_constraintVertical_bias="0.439"
             app:layout_constraintWidth_percent="0.90">
 
             <TextView
@@ -225,9 +232,8 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- Tipo de Cuenta -->
-        <!-- Rol -->
-        <!-- Rol -->
+        <!-- Botón Volver -->
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rol"
             android:layout_width="0dp"
@@ -236,10 +242,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.421"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.888"
+            app:layout_constraintVertical_bias="0.716"
             app:layout_constraintWidth_percent="0.90">
 
             <!-- Texto del Rol -->
@@ -249,7 +255,7 @@
                 android:layout_height="0dp"
                 android:background="@android:color/transparent"
                 android:fontFamily="@font/inter_extrabold"
-                android:hint="ROL"
+                android:hint="Rol"
                 android:textAlignment="center"
                 android:textColor="#36565B"
                 android:textSize="15sp"
@@ -277,7 +283,60 @@
                 app:layout_constraintVertical_bias="0.5"
                 app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout> <!-- Botón Volver --><ImageView
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/horario"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_alerta"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.421"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.859"
+            app:layout_constraintWidth_percent="0.90">
+
+            <!-- Texto del Rol -->
+            <TextView
+                android:id="@+id/horario_texto"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@android:color/transparent"
+                android:fontFamily="@font/inter_extrabold"
+                android:hint="Horario"
+                android:textAlignment="center"
+                android:textColor="#36565B"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.55"
+                app:layout_constraintHorizontal_bias="0.854"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.533"
+                app:layout_constraintWidth_percent="0.68" />
+
+            <!-- Imagen del Rol -->
+            <ImageView
+                android:id="@+id/horario_rol"
+                android:layout_width="62dp"
+                android:layout_height="48dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/horario_texto"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5"
+                app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageView
             android:id="@+id/imagen_volver"
             android:layout_width="62dp"
             android:layout_height="40dp"
@@ -295,17 +354,6 @@
         <!-- Hora de Salida -->
 
         <!-- Imagen de Avatar -->
-        <ImageView
-            android:id="@+id/imagenPerfil"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.357"
-            app:layout_constraintStart_toEndOf="@+id/imagen_volver"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.084"
-            tools:srcCompat="@tools:sample/avatars" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

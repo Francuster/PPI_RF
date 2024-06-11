@@ -53,10 +53,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.611"
+            app:layout_constraintVertical_bias="0.532"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -110,10 +109,10 @@
             app:layout_constraintEnd_toEndOf="parent"
 
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.526"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.22"
+            app:layout_constraintVertical_bias="0.163"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -166,10 +165,9 @@
             app:layout_constraintEnd_toEndOf="parent"
 
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.351"
+            app:layout_constraintVertical_bias="0.287"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -222,10 +220,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.478"
+            app:layout_constraintVertical_bias="0.405"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -299,10 +296,10 @@
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.919"
+            app:layout_constraintHorizontal_bias="0.927"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.856"
+            app:layout_constraintVertical_bias="0.895"
             app:layout_constraintWidth_percent="0.48" />
 
         <Button
@@ -322,7 +319,7 @@
             app:layout_constraintStart_toStartOf="parent"
 
             app:layout_constraintTop_toBottomOf="@+id/boton_siguiente"
-            app:layout_constraintVertical_bias="0.382"
+            app:layout_constraintVertical_bias="0.659"
             app:layout_constraintWidth_percent="0.38" />
 
         <Spinner
@@ -336,10 +333,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.526"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.741"
+            app:layout_constraintVertical_bias="0.65"
             app:layout_constraintWidth_percent="0.90" />
 
         <ImageView
@@ -351,12 +348,27 @@
             android:layout_marginTop="29dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.109"
+            app:layout_constraintHorizontal_bias="0.07"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.716"
+            app:layout_constraintVertical_bias="0.627"
             app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
 
+        <Spinner
+            android:id="@+id/horario_edit"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_alerta"
+            android:hint="HORARIO"
+            android:popupBackground="@drawable/rectangulo_alerta"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.78"
+            app:layout_constraintWidth_percent="0.90" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

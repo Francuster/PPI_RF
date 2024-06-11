@@ -15,6 +15,7 @@ import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.internal.wait
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -115,7 +116,7 @@ class SendDataToBackend (private val context: Context) {
                     )
                     // Envía el registro
                     if (sendRegistroLocal(reg)) {
-                        count+=
+                        count++
                         // Borra el registro si se envió correctamente
                         db.delete(
                             "LOGS",
@@ -174,13 +175,14 @@ class SendDataToBackend (private val context: Context) {
             .add("tipo", reg.tipo)
             .build()
 
+
+
         // Crea la solicitud POST
         val request = Request.Builder()
             .url(url)
             .post(requestBody)
             .build()
 
-        activeCall?.cancel()
 
         activeCall = client.newCall(request)
 
@@ -208,6 +210,7 @@ class SendDataToBackend (private val context: Context) {
                 // Maneja el fallo de la solicitud
                 activeCall = null
                 sended=false
+                android.util.Log.e("SendDataToBackend", e.stackTraceToString())
 
             }
         })
@@ -242,7 +245,6 @@ class SendDataToBackend (private val context: Context) {
             .post(requestBody)
             .build()
 
-        activeCall?.cancel()
 
         activeCall = client.newCall(request)
 

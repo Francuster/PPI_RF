@@ -19,7 +19,9 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
+import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
 import retrofit2.Call
@@ -38,6 +40,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private lateinit var mailEditText: EditText
     private lateinit var documentoEditText: EditText
     private lateinit var rolSpinner: Spinner
+    private lateinit var horarioSpinner: Spinner
     private lateinit var userModel: UserModel
 
     private var rolArrayList = arrayListOf<String>(
@@ -48,6 +51,8 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         "RECURSOS HUMANOS",
         "PERSONAL JERÁRQUICO",
         "ESTUDIANTE")
+
+    private var horariosList = listOf<HorarioModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -70,6 +75,8 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter = adaptador
 
+
+
         // Obtén las referencias a los campos de texto y spinner
         nombreEditText = findViewById(R.id.nombre_texto)
         apellidoEditText = findViewById(R.id.apellido_texto)
@@ -82,6 +89,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         // Agregar filtros y validaciones
         agregarFiltros()
         agregarValidaciones()
+        getHorarios()
 
     }
 
@@ -92,9 +100,55 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             apellidoEditText.setText(userModel.apellido, TextView.BufferType.EDITABLE)
             mailEditText.setText(userModel.email, TextView.BufferType.EDITABLE)
             documentoEditText.setText(userModel.dni.toString(), TextView.BufferType.EDITABLE)
-            rolSpinner.setSelection(rolArrayList.indexOf(userModel.rol.toUpperCase(Locale.ENGLISH)))
+            rolSpinner.setSelection(rolArrayList.indexOf(userModel.rol.uppercase(Locale.ENGLISH)))
 
         }
+    }
+
+    fun getHorarios(){
+        RetrofitClient.horariosApiService.get().enqueue(object: Callback<List<HorarioModel>>{
+            override fun onResponse(
+                call: Call<List<HorarioModel>>,
+                response: Response<List<HorarioModel>>
+            ) {
+
+                if(response.code() == 200){
+                    if(response.body() != null){
+                        Log.i("PerfilUsuario", response.body().toString())
+
+                        horariosList = response.body()!!
+                        cargarHorariosSpinner()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<HorarioModel>>, t: Throwable) {
+                Log.e("PerfilUsuario", "getHorarios onFailure")
+            }
+        })
+    }
+
+    fun cargarHorariosSpinner(){
+        val spinner: Spinner = findViewById(R.id.horario_edit)
+
+        val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, horariosList)
+        adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
+        spinner.adapter = adaptador
+        horarioSpinner = spinner
+
+        selectHorario()
+    }
+
+    fun selectHorario(){
+
+        val index = horariosList.indexOfFirst {
+            it._id == userModel.horarios[0]
+        }
+        if (index != -1){
+            horarioSpinner.setSelection(index)
+
+        }
+
     }
 
     fun goToModificacionRol(view: View) {
@@ -287,8 +341,9 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         val documento = documentoEditText.text.toString()
         val rol = rolSpinner.selectedItem.toString().toLowerCase(Locale.ENGLISH)
         val email = mailEditText.text.toString()
+        val horarioModel = horarioSpinner.selectedItem as HorarioModel
 
-        val updatedUser =  UserModel(userModel._id, nombre, apellido, documento.toInt(), rol, userModel.horarios, email )
+        val updatedUser =  UserModel(userModel._id, nombre, apellido, documento.toInt(), rol, listOf(horarioModel._id), email )
 
         RetrofitClient.userApiService.put(userModel._id, updatedUser).enqueue(object :Callback<Void>{
             override fun onResponse(call: Call<Void>, response: Response<Void>) {

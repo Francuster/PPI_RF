@@ -301,6 +301,23 @@
             app:layout_constraintVertical_bias="0.716"
             app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
 
+        <Spinner
+            android:id="@+id/horario_create"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_alerta"
+            android:hint="TIPO CUENTA"
+            android:popupBackground="@drawable/rectangulo_alerta"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.578"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.871"
+            app:layout_constraintWidth_percent="0.90" />
+
         <ImageView
             android:id="@+id/imagen_volver"
             android:layout_width="62dp"

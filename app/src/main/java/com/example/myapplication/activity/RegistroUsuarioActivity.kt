@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.AdapterView
@@ -20,6 +21,7 @@ import com.example.myapplication.utils.isServiceRunning
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.ImagenModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
@@ -33,6 +35,10 @@ import java.util.Calendar
 class RegistroUsuarioActivity:AppCompatActivity() {
     private val CAMERA_REQUEST_CODE = 100
     private var imageByteArray: ByteArray? = null
+    private var horariosList = listOf<HorarioModel>()
+    private lateinit var horarioSpinner: Spinner
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(!isServiceRunning(applicationContext, NetworkChangeService ::class.java)){
@@ -57,6 +63,8 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         spinner.adapter=adaptador
 
         agregarFiltrosValidaciones()
+        getHorarios()
+
 
     }
 
@@ -194,6 +202,39 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         })
     }
 
+    fun getHorarios(){
+        RetrofitClient.horariosApiService.get().enqueue(object: Callback<List<HorarioModel>>{
+            override fun onResponse(
+                call: Call<List<HorarioModel>>,
+                response: Response<List<HorarioModel>>
+            ) {
+
+                if(response.code() == 200){
+                    if(response.body() != null){
+                        Log.i("PerfilUsuario", response.body().toString())
+
+                        horariosList = response.body()!!
+                        cargarHorariosSpinner()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<HorarioModel>>, t: Throwable) {
+                Log.e("PerfilUsuario", "getHorarios onFailure")
+            }
+        })
+    }
+
+    fun cargarHorariosSpinner(){
+        val spinner: Spinner = findViewById(R.id.horario_create)
+
+        val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, horariosList)
+        adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
+        spinner.adapter = adaptador
+        horarioSpinner = spinner
+
+    }
+
 
 
     private fun validarCampos(): Boolean {
@@ -208,9 +249,11 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         val documento = documentoEditText.text.toString()
         val email = emailEditText.text.toString()
         val tipoCuenta = tipoCuentaSpinner.selectedItem.toString()
+        val horarioModel = horarioSpinner.selectedItem as HorarioModel
+
 
         // Validar que ningún campo esté vacío
-        if (nombre.isEmpty() || apellido.isEmpty() || documento.isEmpty() || email.isEmpty() || tipoCuenta.isEmpty()) {
+        if (nombre.isEmpty() || apellido.isEmpty() || documento.isEmpty() || email.isEmpty() || tipoCuenta.isEmpty() || horarioModel._id.isEmpty()) {
             return false
         }
 
@@ -249,8 +292,10 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         val documento = documentoEditText.text.toString()
         val tipoCuenta = tipoCuentaSpinner.selectedItem.toString()
         val email = emailEditText.text.toString()
+        val horarioModel = horarioSpinner.selectedItem as HorarioModel
 
-        val userModel = UserModel("", nombre, apellido, documento.toInt(), tipoCuenta, listOf<String>("6660438958520fde3c68510e"), email)
+
+        val userModel = UserModel("", nombre, apellido, documento.toInt(), tipoCuenta, listOf(horarioModel._id), email)
         RetrofitClient.userApiService.post(userModel).enqueue(object: Callback<ImagenModel>{
             override fun onResponse(call: Call<ImagenModel>, response: Response<ImagenModel>) {
                 when (response.code()) {

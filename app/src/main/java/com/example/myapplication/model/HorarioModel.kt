@@ -10,4 +10,8 @@ class HorarioModel(
     fun getFullName(): String {
         return "${horarioEntrada}-${horarioSalida} ${tipo}"
     }
+
+    override fun toString(): String {
+        return getFullName()
+    }
 }

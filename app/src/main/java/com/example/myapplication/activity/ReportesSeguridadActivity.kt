@@ -131,9 +131,9 @@ class ReportesSeguridadActivity : AppCompatActivity() {
                 .build()
 
             val document = PrintedPdfDocument(this, printAttributes)
-            val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
-            val page = document.startPage(pageInfo)
-            val canvas = page.canvas
+            var pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()
+            var page = document.startPage(pageInfo)
+            var canvas = page.canvas
             val paint = Paint()
 
             canvas.drawColor(Color.WHITE)
@@ -157,8 +157,20 @@ class ReportesSeguridadActivity : AppCompatActivity() {
                 Tipo: ${log.getString("tipo")}
             """.trimIndent()
 
+                val maxPageHeight = 842f // Altura máxima de la página (ISO A4)
+                var currentPage = 1
                 val lines = logText.split("\n")
                 for (line in lines) {
+                    if (yPos + lineHeight > maxPageHeight) {
+                        // La línea actual supera el límite de la página actual
+                        document.finishPage(page)
+                        currentPage++
+                        pageInfo = PdfDocument.PageInfo.Builder(595, 842, currentPage).create()
+                        page = document.startPage(pageInfo)
+                        canvas = page.canvas
+                        yPos = 20f // Reiniciar yPos para la nueva página
+                    }
+
                     canvas.drawText(line, xPos, yPos, paint)
                     yPos += lineHeight
                 }

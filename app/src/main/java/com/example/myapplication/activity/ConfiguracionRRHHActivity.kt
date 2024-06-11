@@ -4,18 +4,22 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.SeekBar
+import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
-import okhttp3.*
+import com.example.myapplication.model.ConfiguracionModel
+import com.example.myapplication.service.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.IOException
 
 class ConfiguracionRRHHActivity : AppCompatActivity() {
 
         private lateinit var seekBar: SeekBar
-        private lateinit var client: OkHttpClient
         private lateinit var textCerteza: TextView
         private var certeza: Double = 0.0
 
@@ -24,9 +28,9 @@ class ConfiguracionRRHHActivity : AppCompatActivity() {
                 setContentView(R.layout.configuracion_rrhh)
 
                 seekBar = findViewById(R.id.seekBar)
-                client = OkHttpClient()
                 textCerteza = findViewById(R.id.certeza_configuracion) // Inicializar textCerteza después de setContentView()
 
+                onChangeSeekBar()
                 obtenerCerteza() // Llamar a obtenerCerteza() después de inicializar textCerteza
         }
 
@@ -35,55 +39,68 @@ class ConfiguracionRRHHActivity : AppCompatActivity() {
                 startActivity(intent)
         }
 
-        private fun obtenerCerteza() {
-                val request = Request.Builder()
-                        .url("${BuildConfig.BASE_URL}/api/certeza")
-                        .build()
-
-                client.newCall(request).enqueue(object : Callback {
-                        override fun onResponse(call: Call, response: Response) {
-                                val body = response.body?.string()
-                                body?.let {
-                                        try {
-                                                val certezaValor: Double = it.toDouble()
-                                                val progress = (certezaValor * 100).toInt()
-
-                                                runOnUiThread {
-                                                        seekBar.progress = progress
-
-                                                        // Actualizar el TextView con el valor de la certeza
-                                                        textCerteza.text = certezaValor.toString()
-
-                                                        // Mostrar Toast con la certeza actual
-                                                        val certezaActual = "Su certeza actual es de: $certezaValor"
-                                                        mostrarToast(certezaActual)
-                                                }
-                                        } catch (e: NumberFormatException) {
-                                                e.printStackTrace()
-                                        }
-                                }
+        private fun onChangeSeekBar(){
+                seekBar.setOnSeekBarChangeListener( object : SeekBar.OnSeekBarChangeListener{
+                        override fun onProgressChanged(
+                                seekBar: SeekBar?,
+                                progress: Int,
+                                fromUser: Boolean
+                        ) {
+                                val certezaDouble = progress.toDouble() / 100
+                                textCerteza.text =  certezaDouble.toString()
                         }
 
-                        override fun onFailure(call: Call, e: IOException) {
-                                e.printStackTrace()
+                        override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+                        }
+
+                        override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                                
                         }
                 })
+        }
+
+
+        private fun obtenerCerteza() {
+
+                RetrofitClient.configuracionesApiService.getByName("certeza").enqueue(object: Callback<ConfiguracionModel>{
+                        override fun onResponse(
+                                call: Call<ConfiguracionModel>,
+                                response: Response<ConfiguracionModel>
+                        ) {
+                                if (response.isSuccessful){
+
+                                        val configuracionModel = response.body() as ConfiguracionModel
+                                        val progress = (configuracionModel.valor * 100).toInt()
+
+                                        runOnUiThread {
+                                                seekBar.progress = progress
+
+                                                // Actualizar el TextView con el valor de la certeza
+                                                textCerteza.text = configuracionModel.valor.toString()
+
+                                                // Mostrar Toast con la certeza actual
+                                                val certezaActual = "Su certeza actual es de: $configuracionModel.valor"
+                                                mostrarToast(certezaActual)
+                                        }
+                                }
+
+                        }
+
+                        override fun onFailure(call: Call<ConfiguracionModel>, t: Throwable) {
+                                t.printStackTrace()
+                        }
+                })
+
         }
 
         fun configurarCerteza(view: View) {
                 val nuevoValor = seekBar.progress.toDouble() / 100
 
-                val requestBody = FormBody.Builder()
-                        .add("valor", nuevoValor.toString())
-                        .build()
+                val configuracionModel = ConfiguracionModel("", "certeza", nuevoValor)
 
-                val request = Request.Builder()
-                        .url("${BuildConfig.BASE_URL}/api/certeza")
-                        .put(requestBody)
-                        .build()
-
-                client.newCall(request).enqueue(object : Callback {
-                        override fun onResponse(call: Call, response: Response) {
+                RetrofitClient.configuracionesApiService.put(configuracionModel).enqueue(object : Callback<Void>{
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
                                 if (response.isSuccessful) {
                                         obtenerCerteza()
                                         mostrarToast("Certeza configurada, su certeza ahora es de: $nuevoValor")
@@ -93,11 +110,12 @@ class ConfiguracionRRHHActivity : AppCompatActivity() {
                                 }
                         }
 
-                        override fun onFailure(call: Call, e: IOException) {
-                                e.printStackTrace()
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                                t.printStackTrace()
                                 mostrarToast("El valor de certeza no se cambió debido a un error")
                         }
                 })
+
         }
 
         private fun mostrarToast(mensaje: String) {

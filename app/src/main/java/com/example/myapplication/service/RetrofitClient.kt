@@ -17,4 +17,5 @@ object RetrofitClient {
     val imagenApiService: ImagenesApiService = retrofit.create(ImagenesApiService::class.java)
     val userApiService: UsersApiService = retrofit.create(UsersApiService::class.java)
     val horariosApiService: HorariosApiService = retrofit.create(HorariosApiService::class.java)
+    val configuracionesApiService: ConfiguracionesApiService = retrofit.create((ConfiguracionesApiService::class.java))
 }

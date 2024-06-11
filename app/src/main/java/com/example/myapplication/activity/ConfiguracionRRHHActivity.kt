@@ -80,7 +80,7 @@ class ConfiguracionRRHHActivity : AppCompatActivity() {
                                                 textCerteza.text = configuracionModel.valor.toString()
 
                                                 // Mostrar Toast con la certeza actual
-                                                val certezaActual = "Su certeza actual es de: $configuracionModel.valor"
+                                                val certezaActual = "Su certeza actual es de: ${configuracionModel.valor}"
                                                 mostrarToast(certezaActual)
                                         }
                                 }

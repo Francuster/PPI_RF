@@ -19,7 +19,9 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class LicenciasEmpleadoActivity: AppCompatActivity() {
     private lateinit var licenciasEmpleado: ArrayList<Licencia>
@@ -29,6 +31,9 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.licencias_empleado)
+        val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
+        textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
+
         licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasEmpleado") ?: arrayListOf()
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()
@@ -46,11 +51,16 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
         val container: LinearLayout = findViewById(R.id.container)
         runOnUiThread {
             container.removeAllViews() // Elimina vistas antiguas antes de agregar las nuevas
-            val fechaHoy = Calendar.getInstance().toString()
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val fechaHoy = sdf.format(Calendar.getInstance().time)
+
             for (licencia in licenciasEmpleado) {
 
+                val dateHoy = sdf.parse(fechaHoy)
+                val dateDesde = sdf.parse(licencia.fechaDesde)
                 val diasDeLicencia = "Del ${licencia.fechaDesde}  al ${licencia.fechaHasta}"
-                if (licencia.fechaDesde >= fechaHoy){
+
+                if (dateDesde != null && dateDesde <= dateHoy){
                     val inflater: LayoutInflater = LayoutInflater.from(this)
                     val itemView: View = inflater.inflate(R.layout.licencia, container, false)
                     val textViewLicencia: TextView = itemView.findViewById(R.id.licencia)
@@ -64,7 +74,7 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
                     textViewLicenciaVigente.text = diasDeLicencia
                     container.addView(itemView)
                     itemView.findViewById<View>(R.id.imagen_delete).setOnClickListener {
-                        eliminarLicencia(licencia.licenciaId)
+                        eliminarLicencia(licencia._id)
 
                     }
                 }
@@ -120,7 +130,9 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
                     runOnUiThread {
                         Toast.makeText(this@LicenciasEmpleadoActivity, "Licencia eliminada exitosamente", Toast.LENGTH_SHORT).show()
                         // Iterar sobre la lista y eliminar la licencia con el ID deseado
-                        licenciasEmpleado.removeAll { it.licenciaId == licenciaId }
+                        licenciasEmpleado.removeAll { it._id == licenciaId }
+                        EmpleadosLicenciasActivity.GlobalData.licencias.removeAll { it._id == licenciaId }
+
                         mostrarTodasLasLicencias()
                     }
                 } else {

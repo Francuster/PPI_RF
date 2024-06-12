@@ -5,6 +5,8 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+    <uses-feature android:name="android.hardware.camera.any"/>
+    <uses-feature android:name="android.hardware.camera.autofocus"/>
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -58,6 +60,7 @@
         <activity android:name=".activity.CameraxOfllineActivity" android:label="CameraxOfllineActivity" />
         <activity android:name=".activity.CameraxLoginActivity" android:label="CameraxLoginActivity" />
         <activity android:name=".activity.CameraxAuthenticationActivity" android:label="CameraxAuthenticationActivity" />
+        <activity android:name=".activity.PerfilUsuarioActivity" android:label="PerfilUsuarioActivity" />
 
         <activity android:name=".activity.InicioRrHhActivity" android:label="InicioRrHhActivity" />
         <!--Reportes-->
@@ -122,6 +125,9 @@
         <activity
             android:name=".activity.CameraxActivity"
             android:label="CameraX" /> <!-- Declara tu servicio dentro de la sección <application> -->
+
+        <activity android:name=".activity.QRScannerActivity" android:label="QRScanner"/>
+
         <service
             android:name=".utils.NetworkChangeService"
             android:enabled="true"

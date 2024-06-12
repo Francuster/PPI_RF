@@ -22,9 +22,14 @@ android {
 
     buildTypes {
         debug{
-            //buildConfigField("String", "BASE_URL", "\"https://log3r-dev.up.railway.app\"");
+
+            //main
             //buildConfigField("String", "BASE_URL", "\"https://log3r.up.railway.app\"");
-            buildConfigField("String", "BASE_URL", "\"http://192.168.0.107:5000\"");
+            //dev
+            buildConfigField("String", "BASE_URL", "\"https://log3r-dev.up.railway.app\"");
+            //local
+            //buildConfigField("String", "BASE_URL", "\"http://192.168.1.44:5000\"");
+
 
         }
         release {
@@ -117,7 +122,10 @@ dependencies {
     // json
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.google.mlkit:barcode-scanning:17.0.3")
 
+    //gson
+    implementation ("com.google.code.gson:gson:2.11.0")
 
     //ML KIT Google
 //    implementation ("com.google.android.gms:play-services-mlkit:17.0.0")

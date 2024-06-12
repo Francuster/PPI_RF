@@ -123,7 +123,7 @@
             android:backgroundTint="#ECE6D9"
             android:fontFamily="@font/lalezar"
             android:text="USUARIO"
-            android:textAlignment="textEnd"
+            android:textAlignment="center"
             android:textColor="#ECE6D9"
             android:textColorLink="#ECE6D9"
             android:textSize="16sp"
@@ -133,7 +133,7 @@
             app:layout_constraintHorizontal_bias="0.914"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintWidth_percent="0.33"
             tools:ignore="MissingConstraints" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

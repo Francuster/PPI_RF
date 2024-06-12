@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class Licencia(
-    var licenciaId: String,
+    var _id: String,
     var fechaDesde: String,
     var fechaHasta: String,
     var userId: String
@@ -17,7 +17,7 @@ data class Licencia(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(licenciaId)
+        parcel.writeString(_id)
         parcel.writeString(fechaDesde)
         parcel.writeString(fechaHasta)
         parcel.writeString(userId)

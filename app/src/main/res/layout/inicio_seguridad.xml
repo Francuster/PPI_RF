@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/fondo_blanco"
     android:rotationX="360"
-    tools:context=".Escanea">
+    tools:context=".activity.InicioSeguridadActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
@@ -222,23 +222,77 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ingreso_egreso_nav"
-            android:layout_width="132dp"
-            android:layout_height="47dp"
+            android:layout_width="66dp"
+            android:layout_height="45dp"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.059"
+            app:layout_constraintHorizontal_bias="0.046"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/ingreso_egreso_form"
+                android:layout_width="66dp"
+                android:layout_height="45dp"
+
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0">
+
+                <TextView
+                    android:id="@id/nav_ingresoegreso"
+                    android:layout_width="52dp"
+                    android:layout_height="23dp"
+                    android:fontFamily="@font/inter_extrabold"
+                    android:onClick="goToFormulario"
+                    android:text="Ingreso/Egreso"
+                    android:textAlignment="center"
+                    android:textSize="7sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    tools:ignore="MissingConstraints" />
+
+                <ImageView
+                    android:id="@+id/imagen_nav_ingresoegreso"
+                    android:layout_width="28dp"
+                    android:layout_height="25dp"
+
+
+                    app:layout_constraintBottom_toTopOf="@+id/nav_ingresoegreso"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/sort_arrow" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/ingreso_especial_nav"
+            android:layout_width="66dp"
+            android:layout_height="45dp"
+
+            android:layout_marginEnd="240dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
             <TextView
                 android:id="@id/nav_ingresoegreso"
-                android:layout_width="107dp"
-                android:layout_height="20dp"
+                android:layout_width="52dp"
+                android:layout_height="23dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:onClick="goToFormulario"
-                android:text="Ingreso/Egreso"
+                android:onClick="goToQREspecial"
+                android:text="Log especial"
                 android:textAlignment="center"
                 android:textSize="7sp"
                 android:textStyle="bold"
@@ -250,7 +304,7 @@
                 tools:ignore="MissingConstraints" />
 
             <ImageView
-                android:id="@+id/imagen_nav_ingresoegreso"
+                android:id="@+id/imagen_nav_ingresoegresoespecial"
                 android:layout_width="28dp"
                 android:layout_height="25dp"
 
@@ -362,14 +416,14 @@
             tools:ignore="MissingConstraints" />
 
         <TextView
-            android:id="@+id/usuario"
+            android:id="@+id/seguridad"
             android:layout_width="0dp"
             android:layout_height="27dp"
             android:background="#00ECE6D9"
             android:backgroundTint="#ECE6D9"
             android:fontFamily="@font/lalezar"
             android:text="USUARIO"
-            android:textAlignment="textEnd"
+            android:textAlignment="center"
             android:textColor="#ECE6D9"
             android:textColorLink="#ECE6D9"
             android:textSize="16sp"
@@ -380,12 +434,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5"
-            app:layout_constraintWidth_percent="0.23"
+            app:layout_constraintWidth_percent="0.33"
             tools:ignore="MissingConstraints" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-

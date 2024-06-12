@@ -2,7 +2,6 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,48 +12,38 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.Licencia
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
-import org.json.JSONArray
 import java.io.IOException
 
 class EmpleadosLicenciasActivity: AppCompatActivity() {
-    private val licenciasEmpleado = mutableListOf<Licencia>()
+    private  var licenciasEmpleado = ArrayList<Licencia>()
     private lateinit var listaEmpleados: ArrayList<Empleado>
     private lateinit var empleadoBuscado: ArrayList<Empleado>
     private val client = OkHttpClient()
-    private var licenciasJSONArray = JSONArray()
-    private var jsonArray = JSONArray()
-    private val handler = Handler()
-    private lateinit var runnable: Runnable
+    object GlobalData {
+        var licencias  = ArrayList<Licencia>()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.empleados)
-        fetch("Licencias","/api/licencias","FetchLicencias")
+        val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
+        textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
+        if(GlobalData.licencias.isEmpty()){
+            fetch("Licencias","/api/licencias","FetchLicencias")
+
+        }
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         empleadoBuscado = ArrayList()
-        scheduleUserUpdate()
         mostrarTodosLosEmpleados()
     }
-    override fun onDestroy() {
-        super.onDestroy()
-        // Detén la actualización periódica cuando la actividad se destruye
-        handler.removeCallbacks(runnable)
-    }
 
-    private fun scheduleUserUpdate() {
-        runnable = Runnable {
-            fetch("Licencias","/api/licencias","FetchLicencias")
-            // Vuelve a programar la actualización después de 10 segundos
-            handler.postDelayed(runnable, 10000)
-        }
-        // Programa la primera ejecución después de 10 segundos
-        handler.postDelayed(runnable, 10000)
-    }
 
     private fun mostrarTodosLosEmpleados() {
         val container: LinearLayout = findViewById(R.id.container_empleado_licencias)
@@ -109,32 +98,46 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                     val responseData = response.body?.string()
                     responseData?.let {
                         Log.d(tag, "Response data: $it")
-                        jsonArray = JSONArray(it)
-                        if(search == "Licencias"){
-                            licenciasJSONArray = jsonArray
+                        if (search == "Licencias") {
+                            try {
+                                // Convertir la respuesta JSON a ArrayList<Licencia> usando Gson
+                                val gson = Gson()
+                                val type = object : TypeToken<ArrayList<Licencia>>() {}.type
+                                GlobalData.licencias = gson.fromJson(it, type)
+                                // Mostrar lista convertida en los logs
+                                for (licencia in GlobalData.licencias) {
+                                    Log.d(tag, "Licencia: $licencia")
+                                }
+                            } catch (e: Exception) {
+                                Log.e(tag, "Error parsing JSON response", e)
+                            } finally {
+                                response.body?.close() // Cerrar el cuerpo de la respuesta
+                            }
                         }
                     }
                 } else {
                     Log.e(tag, "Unsuccessful response")
+                    response.body?.close() // Cerrar el cuerpo de la respuesta en caso de respuesta no exitosa
                 }
             }
+
         })
     }
 
     private fun cargarLicenciasDelEmpleado(userId: String) {
         runOnUiThread {
-            for (i in 0 until licenciasJSONArray.length()) {
-                val lastUserJsonObject = licenciasJSONArray.getJSONObject(i)
-                val licenciaId = lastUserJsonObject.getString("_id")
-                val userIdCheck = lastUserJsonObject.getString("userId")
+            for (licencia  in GlobalData.licencias){
+
+                val licenciaId = licencia._id
+                val userIdCheck = licencia.userId
 
                 if (userId == userIdCheck) {
-                    val fechaDesde = lastUserJsonObject.getString("fechaDesde")
-                    val fechaHasta = lastUserJsonObject.getString("fechaHasta")
+                    val fechaDesde = licencia.fechaDesde
+                    val fechaHasta = licencia.fechaHasta
 
                     // Crear una nueva instancia de Licencia y añadirla a la lista
-                    val licencia = Licencia(licenciaId,fechaDesde, fechaHasta, userId)
-                    licenciasEmpleado.add(licencia)
+                    val nuevaLicencia = Licencia(licenciaId,fechaDesde, fechaHasta, userId)
+                    licenciasEmpleado.add(nuevaLicencia)
 
                 }
             }

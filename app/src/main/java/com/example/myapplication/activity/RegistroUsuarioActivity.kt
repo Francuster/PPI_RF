@@ -1,7 +1,6 @@
 package com.example.myapplication.activity
 
 
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -14,22 +13,20 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.R
-import com.example.myapplication.utils.NetworkChangeService
-import com.example.myapplication.utils.isServiceRunning
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.example.myapplication.R
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.ImagenModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
-import com.google.android.material.textfield.TextInputEditText
+import com.example.myapplication.utils.NetworkChangeService
+import com.example.myapplication.utils.isServiceRunning
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.Calendar
 
 
 class RegistroUsuarioActivity:AppCompatActivity() {
@@ -351,6 +348,10 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         val intent = Intent(applicationContext, Denegado::class.java)
         startActivity(intent)
 
+    }
+    fun goInicioRRHH(view : View){
+        val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
+        startActivity(intent)
     }
 
 }

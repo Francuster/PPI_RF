@@ -9,25 +9,23 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import org.json.JSONArray
-import java.io.IOException
+import com.example.myapplication.model.UserModel
+import com.example.myapplication.service.RetrofitClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class InicioRrHhActivity: AppCompatActivity() {
-    private val client = OkHttpClient()
-    private var jsonArray = JSONArray()
+    private var userModelList = arrayListOf<UserModel>()
     private val handler = Handler()
-    val listaEmpleados = mutableListOf<Empleado>()
+    private var listaEmpleados = arrayListOf<Empleado>()
     private lateinit var runnable: Runnable
-
+    object GlobalData {
+        var empleado: Empleado? = null
+    }
     private var nombre: String? = null
     private var apellido: String? = null
 
@@ -35,12 +33,13 @@ class InicioRrHhActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inico_rrhh)
         fetchUsers()
-        nombre = intent.getStringExtra("nombre")
-        apellido=intent.getStringExtra("apellido")//nombre para mostrar
-
+        if (GlobalData.empleado == null) {
+            nombre = intent.getStringExtra("nombre")
+            apellido = intent.getStringExtra("apellido")//nombre para mostrar
+            GlobalData.empleado = Empleado(fullName = "$nombre $apellido", userId = "124124")
+        }
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
-        textoNombreUsuario.text = "$nombre $apellido"
-
+        textoNombreUsuario.text = GlobalData.empleado!!.fullName
         // Programa la actualización de usuarios cada 10 segundos
         scheduleUserUpdate()
     }
@@ -49,6 +48,27 @@ class InicioRrHhActivity: AppCompatActivity() {
         super.onDestroy()
         // Detén la actualización periódica cuando la actividad se destruye
         handler.removeCallbacks(runnable)
+    }
+
+    private fun fetchUsers() {
+        RetrofitClient.userApiService.get().enqueue(object: Callback<List<UserModel>>{
+            override fun onResponse(
+                call: Call<List<UserModel>>,
+                response: Response<List<UserModel>>
+            ) {
+                if(response.code() == 200){
+                    userModelList = response.body() as ArrayList<UserModel>
+                    mostrarTodosLosEmpleados()
+                } else{
+                    Log.e("fetchUsers", "error code: " + response.code())
+                }
+            }
+
+            override fun onFailure(call: Call<List<UserModel>>, t: Throwable) {
+                Log.e("fetchUsers", "Error al traer usuarios")
+            }
+        })
+
     }
 
     //TODO: sigue corriendo incluso despues de ir a otro activity
@@ -69,64 +89,42 @@ class InicioRrHhActivity: AppCompatActivity() {
         runOnUiThread {
             container.removeAllViews() // Elimina vistas antiguas antes de agregar las nuevas
 
-            for (i in 0 until jsonArray.length()) {
-                val lastUserJsonObject = jsonArray.getJSONObject(i)
-                val userIdObject = lastUserJsonObject.getJSONObject("_id")
-                val userId = userIdObject.getString("\$oid")
-                val userName = lastUserJsonObject.getString("nombre")
-                val userSurname = lastUserJsonObject.getString("apellido")
-                val fullName = "$userName $userSurname"
-
+            for (user in userModelList){
                 val inflater: LayoutInflater = LayoutInflater.from(this)
                 val itemView: View = inflater.inflate(R.layout.item_usuario, container, false)
-
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
-                textViewEmpleado.text = fullName
-                var empleado = Empleado(fullName,userId)
-                listaEmpleados.add(empleado)
-                container.addView(itemView)
-
+                textViewEmpleado.text = user.getFullName()
+                if (user.rol .uppercase() != "ESTUDIANTE" ) {
+                    listaEmpleados.add(Empleado(user.getFullName(),user._id))
+                    container.addView(itemView)
+                }
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
-                    goToModificacionUsuario(userId,userName,userSurname)
+                    goToModificacionUsuario(user)
+                }
+                itemView.findViewById<View>(R.id.empleado).setOnClickListener {
+                    goToVerPerfil(user)
                 }
             }
+
         }
     }
 
-    private fun fetchUsers() {
-        val request = Request.Builder()
-            .url(BuildConfig.BASE_URL + "/api/users") // Cambia esto por la URL de tu API
-            .build()
 
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                Log.e("FetchUsers", "Failed to fetch users", e)
-            }
 
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val responseData = response.body?.string()
-                    responseData?.let {
-                        Log.d("FetchUsers", "Response data: $it")
-                        jsonArray = JSONArray(it)
-                        mostrarTodosLosEmpleados()
-                    }
-                } else {
-                    Log.e("FetchUsers", "Unsuccessful response")
-                }
-            }
-        })
-    }
-
-    private fun goToModificacionUsuario(userId: String, userName: String, userSurname: String) {
-        val intent = Intent(applicationContext, ModificacionUsuarioActivity::class.java)
-        intent.putExtra("user_id", userId)
-        intent.putExtra("user_name", userName)
-        intent.putExtra("user_apellido", userSurname)
+    private fun goToVerPerfil(userModel: UserModel) {
+        val intent = Intent(applicationContext, PerfilUsuarioActivity::class.java)
+        intent.putExtra("userModel", userModel)
         startActivity(intent)
-//        handler.removeCallbacks(runnable)
     }
+
+
+
+    private fun goToModificacionUsuario(userModel: UserModel) {
+        val intent = Intent(applicationContext, ModificacionUsuarioActivity::class.java)
+        intent.putExtra("userModel", userModel)
+        startActivity(intent)
+    }
+
 
 
     fun goToRegistroRrHhPrimeraSala(view: View) {

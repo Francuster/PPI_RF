@@ -301,12 +301,29 @@
             app:layout_constraintVertical_bias="0.716"
             app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
 
+        <Spinner
+            android:id="@+id/horario_create"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_alerta"
+            android:hint="TIPO CUENTA"
+            android:popupBackground="@drawable/rectangulo_alerta"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.578"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.871"
+            app:layout_constraintWidth_percent="0.90" />
+
         <ImageView
             android:id="@+id/imagen_volver"
             android:layout_width="62dp"
             android:layout_height="40dp"
 
-
+            android:onClick="goInicioRRHH"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.028"
@@ -334,48 +351,6 @@
             app:layout_constraintHorizontal_bias="0.507"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintWidth_percent="0.38" />
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/hora_entrada"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rectangulo_alerta"
-            android:focusable="false"
-            android:fontFamily="@font/inter_extrabold"
-            android:hint="HORA ENTRADA"
-            android:inputType="none"
-            android:textAlignment="center"
-            android:textColor="#36565B"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.05"
-            app:layout_constraintHorizontal_bias="0.091"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.825"
-            app:layout_constraintWidth_percent="0.40" />
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/hora_salida"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rectangulo_alerta"
-            android:focusable="false"
-            android:fontFamily="@font/inter_extrabold"
-            android:hint="HORA SALIDA"
-            android:inputType="none"
-            android:textAlignment="center"
-            android:textColor="#36565B"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.05"
-            app:layout_constraintHorizontal_bias="0.925"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.825"
-            app:layout_constraintWidth_percent="0.40" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

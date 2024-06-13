@@ -14,7 +14,7 @@ class RegistroExitosoActivity: AppCompatActivity() {
 
     fun Siguiente(view : View){
 
-        val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
+        val intent = Intent(this, InicioSeguridadActivity::class.java)
         startActivity(intent)
 
         }

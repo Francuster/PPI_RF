@@ -1,18 +1,21 @@
 package com.example.myapplication.service
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.database.Connection
+import com.example.myapplication.model.CorteInternet
 import com.example.myapplication.model.Log
 import com.example.myapplication.model.Registro
-import com.example.myapplication.model.CorteInternet
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.internal.wait
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -62,18 +65,20 @@ class SendDataToBackend (private val context: Context) {
 
             override fun onResponse(call: Call, response: Response) {
                 try {
-                    // La solicitud fue exitosa //
+                    // La solicitud fue exitosa
                     if (response.isSuccessful) {
-                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    }
-                    else{
-                        Toast.makeText(context, "HTTP request unsuccessful with status code ${response.code}", Toast.LENGTH_SHORT).show()
-                    }
 
+                    } else {
+                        Handler(Looper.getMainLooper()).post {
+                            Toast.makeText(context, "HTTP request unsuccessful with status code ${response.code}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    Toast.makeText(context, "Error en la respuesta: ${e.message}", Toast.LENGTH_SHORT).show()
-                }finally {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "Error en la respuesta: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                } finally {
                     response.body?.close()
                     activeCall = null
                 }
@@ -82,13 +87,14 @@ class SendDataToBackend (private val context: Context) {
             override fun onFailure(call: Call, e: IOException) {
                 // Maneja el fallo de la solicitud
                 e.printStackTrace()
-                Toast.makeText(context, "No se ha podido hacer la sincronizacion", Toast.LENGTH_SHORT)
-                    .show()
-                activeCall=null
-
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(context, "No se ha podido hacer la sincronizacion", Toast.LENGTH_SHORT).show()
+                }
+                activeCall = null
             }
         })
     }
+
 
     fun getLocalRegs(): Int {
             var count:Int=0
@@ -110,7 +116,7 @@ class SendDataToBackend (private val context: Context) {
                     )
                     // Envía el registro
                     if (sendRegistroLocal(reg)) {
-                        count+=
+                        count++
                         // Borra el registro si se envió correctamente
                         db.delete(
                             "LOGS",
@@ -122,10 +128,11 @@ class SendDataToBackend (private val context: Context) {
                         throw Exception("Error al eliminar el registro")
                     }
                 } while (puntero.moveToNext())
-
-                Toast.makeText(context, "Cantidad de registros sincronizados: " + count, Toast.LENGTH_SHORT)
-                    .show()
-
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(
+                        context,
+                        "Cantidad de registros sincronizados: " + count,Toast.LENGTH_SHORT).show()
+                }
                 db.setTransactionSuccessful()
             } catch (e: Exception) {
                 // Manejo del error, si se desea loggear o realizar alguna acción
@@ -157,12 +164,10 @@ class SendDataToBackend (private val context: Context) {
             .readTimeout(20, TimeUnit.SECONDS)
             .build()
 
-        val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
-        val horario = formato.format(Date())
 
         // Crear el cuerpo de la solicitud HTTP
         val requestBody = FormBody.Builder()
-            .add("horario", horario.toString())
+            .add("horario", reg.horario)
             .add("nombre", reg.nombre)
             .add("apellido", reg.apellido)
             .add("dni", reg.dni)
@@ -170,13 +175,14 @@ class SendDataToBackend (private val context: Context) {
             .add("tipo", reg.tipo)
             .build()
 
+
+
         // Crea la solicitud POST
         val request = Request.Builder()
             .url(url)
             .post(requestBody)
             .build()
 
-        activeCall?.cancel()
 
         activeCall = client.newCall(request)
 
@@ -204,6 +210,7 @@ class SendDataToBackend (private val context: Context) {
                 // Maneja el fallo de la solicitud
                 activeCall = null
                 sended=false
+                android.util.Log.e("SendDataToBackend", e.stackTraceToString())
 
             }
         })
@@ -238,7 +245,6 @@ class SendDataToBackend (private val context: Context) {
             .post(requestBody)
             .build()
 
-        activeCall?.cancel()
 
         activeCall = client.newCall(request)
 

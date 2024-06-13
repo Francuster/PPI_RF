@@ -10,10 +10,10 @@ import retrofit2.http.POST
 
 interface ApiService {
 
-    @POST("/api/login2")
+    @POST("/api/login")
     fun loginWithEmbeddings(@Body request: EmbeddingsRequest): Call<EmbeddingsResponse>
 
-    @POST("/api/authentication2")
+    @POST("/api/authentication")
     fun authenticationWithEmbeddings(@Body request: EmbeddingsRequest): Call<EmbeddingsResponse>
 
     @POST("/api/licencias")

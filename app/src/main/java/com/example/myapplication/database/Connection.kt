@@ -91,24 +91,8 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
     db.execSQL(CREATE_TABLE_ADMINS)
     db.execSQL(CREATE_TABLE_LOGS)
 
-    //Prueba de insert en ingresos
 
-      val horario = "2024-05-17 12:00:00"
-      val nombre = "prueba"
-      val apellido = "update logs local"
-      val dni = "12345678"
-      val estado = "Activo"
-      val tipo = "Entrada"
-
-      val insertQuery = """
-    INSERT INTO ingresos (horario, nombre, apellido, dni, estado, tipo)
-    VALUES ('$horario', '$nombre', '$apellido', '$dni', '$estado', '$tipo');
-""".trimIndent()
-
-      db.execSQL(insertQuery)
-
-
-      db.execSQL("INSERT INTO usuarios VALUES (null, 'nombreGuardia1', 'apellidoGuardia1', 'guardia@gmail.com', 'legajo1234'," +
+    db.execSQL("INSERT INTO usuarios VALUES (null, 'nombreGuardia1', 'apellidoGuardia1', 'guardia@gmail.com', 'legajo1234'," +
         "'12345678', 'imagenOToken', 1)")
 
     Log.i(TAG,"DB esta creada")
@@ -133,7 +117,7 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
   override fun onOpen(db: SQLiteDatabase?) {
     super.onOpen(db)
 //    Toast.makeText(ctx, "DB abierta onOpen", Toast.LENGTH_LONG).show()
-      Log.e(TAG,"DB abierta onOpen")
+      Log.i(TAG,"DB abierta onOpen")
 
   }
 }

@@ -222,7 +222,7 @@ class SendDataToBackend (private val context: Context) {
 
         var sended:Boolean=true
 
-        val url = BuildConfig.BASE_URL + "/api/authentication/cortes"
+        val url = BuildConfig.BASE_URL + "/api/reportes/cortes"
 
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()

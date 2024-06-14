@@ -22,6 +22,7 @@ import okhttp3.Response
 import java.io.IOException
 
 class EmpleadosLicenciasActivity: AppCompatActivity() {
+    private lateinit var loadingOverlay: View
     private  var licenciasEmpleado = ArrayList<Licencia>()
     private lateinit var listaEmpleados: ArrayList<Empleado>
     private lateinit var empleadoBuscado: ArrayList<Empleado>
@@ -33,15 +34,32 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.empleados)
-        val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
-        textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
-        if(GlobalData.licencias.isEmpty()){
-            fetch("Licencias","/api/licencias","FetchLicencias")
-
-        }
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         empleadoBuscado = ArrayList()
+        val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
+        textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
+        loadingOverlay = findViewById(R.id.loading_overlay)
+        if(GlobalData.licencias.isEmpty() || listaEmpleados.size != InicioRrHhActivity.GlobalData.cantEmpleados){
+            fetch("Licencias","/api/licencias","FetchLicencias")
+            InicioRrHhActivity.GlobalData.cantEmpleados = listaEmpleados.size
+        }
+        // Observar cambios en data
+        else{
         mostrarTodosLosEmpleados()
+        }
+
+    }
+
+    private fun showLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlay.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlay.visibility = View.GONE
+        }
     }
 
 
@@ -83,6 +101,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     }
 
     private fun fetch(search: String, endpoint: String, tag: String) {
+      showLoadingOverlay()
         val request = Request.Builder()
             .url(BuildConfig.BASE_URL + endpoint) // Cambia esto por la URL de tu API
             .build()
@@ -97,6 +116,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 if (response.isSuccessful) {
                     val responseData = response.body?.string()
                     responseData?.let {
+                        hideLoadingOverlay()
                         Log.d(tag, "Response data: $it")
                         if (search == "Licencias") {
                             try {
@@ -104,6 +124,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                                 val gson = Gson()
                                 val type = object : TypeToken<ArrayList<Licencia>>() {}.type
                                 GlobalData.licencias = gson.fromJson(it, type)
+                                mostrarTodosLosEmpleados()
                                 // Mostrar lista convertida en los logs
                                 for (licencia in GlobalData.licencias) {
                                     Log.d(tag, "Licencia: $licencia")
@@ -116,6 +137,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                         }
                     }
                 } else {
+                    hideLoadingOverlay()
                     Log.e(tag, "Unsuccessful response")
                     response.body?.close() // Cerrar el cuerpo de la respuesta en caso de respuesta no exitosa
                 }

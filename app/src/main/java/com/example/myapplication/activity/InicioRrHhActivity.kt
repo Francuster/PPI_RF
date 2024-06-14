@@ -25,6 +25,7 @@ class InicioRrHhActivity: AppCompatActivity() {
     private lateinit var runnable: Runnable
     object GlobalData {
         var empleado: Empleado? = null
+        var cantEmpleados : Int = 0
     }
     private var nombre: String? = null
     private var apellido: String? = null

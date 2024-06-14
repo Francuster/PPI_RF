@@ -28,7 +28,7 @@ android {
             //dev
             //buildConfigField("String", "BASE_URL", "\"https://log3r-dev.up.railway.app\"");
             //local
-            buildConfigField("String", "BASE_URL", "\"http://192.168.1.42:5000\"");
+            buildConfigField("String", "BASE_URL", "\"http://192.168.1.44:5000\"");
 
 
         }

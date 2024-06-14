@@ -68,12 +68,10 @@ class InicioSeguridadActivity: AppCompatActivity() {
     }
 
     fun goToQREspecial(view: View) {
-        if(!deviceIsConnected(applicationContext)){
-            Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
+        if(deviceIsConnected(applicationContext)){
+            Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
             val intent = Intent(applicationContext, QRScannerActivity::class.java)
             startActivity(intent)
-        }else {
-            Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
         }
     }
 

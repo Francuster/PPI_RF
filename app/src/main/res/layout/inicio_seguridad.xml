@@ -291,6 +291,7 @@
                 android:layout_width="52dp"
                 android:layout_height="23dp"
                 android:fontFamily="@font/inter_extrabold"
+                android:onClick="goToQREspecial"
                 android:text="Log especial"
                 android:textAlignment="center"
                 android:textSize="7sp"
@@ -306,7 +307,7 @@
                 android:id="@+id/imagen_nav_ingresoegresoespecial"
                 android:layout_width="28dp"
                 android:layout_height="25dp"
-                android:onClick="goToQREspecial"
+
 
                 app:layout_constraintBottom_toTopOf="@+id/nav_ingresoegreso"
                 app:layout_constraintEnd_toEndOf="parent"

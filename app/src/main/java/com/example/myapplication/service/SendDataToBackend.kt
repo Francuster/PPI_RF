@@ -12,10 +12,14 @@ import com.example.myapplication.model.Registro
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.internal.wait
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -97,12 +101,13 @@ class SendDataToBackend (private val context: Context) {
 
 
     fun getLocalRegs(): Int {
-            var count:Int=0
-            val connection = Connection(context)
-            val db = connection.writableDatabase
-            val puntero = db.rawQuery("SELECT * FROM LOGS", null)
+        var count: Int = 0
+        val connection = Connection(context)
+        val db = connection.writableDatabase
+        val puntero = db.rawQuery("SELECT * FROM LOGS", null)
 
         if (puntero.moveToFirst()) {
+            val registros = mutableListOf<Registro>()
             db.beginTransaction()
             try {
                 do {
@@ -114,28 +119,21 @@ class SendDataToBackend (private val context: Context) {
                         puntero.getString(puntero.getColumnIndexOrThrow("estado")),
                         puntero.getString(puntero.getColumnIndexOrThrow("tipo")),
                     )
-                    // Envía el registro
-                    if (sendRegistroLocal(reg)) {
-                        count++
-                        // Borra el registro si se envió correctamente
-                        db.delete(
-                            "LOGS",
-                            "horario = ? AND nombre = ? AND apellido = ? AND dni = ? AND estado = ? AND tipo = ?",
-                            arrayOf(reg.horario, reg.nombre, reg.apellido, reg.dni, reg.estado, reg.tipo)
-                        )
-                    } else {
-                        // Si falla el envío, se puede decidir si continuar o revertir la transacción
-                        throw Exception("Error al eliminar el registro")
-                    }
+                    registros.add(reg)
                 } while (puntero.moveToNext())
-                Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(
-                        context,
-                        "Cantidad de registros sincronizados: " + count,Toast.LENGTH_SHORT).show()
+
+                // Envía los registros en lote
+                if (sendLocalRegs(registros)) {
+                    count = registros.size
+                    // Borra los registros si se enviaron correctamente
+                    db.delete("LOGS", null, null)
+                } else {
+                    throw Exception("Error al enviar los registros")
                 }
+
+                Toast.makeText(context, "Cantidad de registros sincronizados: " + count, Toast.LENGTH_SHORT).show()
                 db.setTransactionSuccessful()
             } catch (e: Exception) {
-                // Manejo del error, si se desea loggear o realizar alguna acción
                 e.printStackTrace()
             } finally {
                 db.endTransaction()
@@ -152,32 +150,31 @@ class SendDataToBackend (private val context: Context) {
         return count
     }
 
-    fun sendRegistroLocal(reg: Registro): Boolean {
-        // URL
-        var sended:Boolean=true
-
+    fun sendLocalRegs(registros: List<Registro>): Boolean {
+        var sended = true
         val url = BuildConfig.BASE_URL + "/api/logs/authenticationOffline"
-        // CREAR CONEXION
+
         val client = OkHttpClient().newBuilder()
             .connectTimeout(5, TimeUnit.SECONDS)
             .writeTimeout(5, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
             .build()
 
-
         // Crear el cuerpo de la solicitud HTTP
-        val requestBody = FormBody.Builder()
-            .add("horario", reg.horario)
-            .add("nombre", reg.nombre)
-            .add("apellido", reg.apellido)
-            .add("dni", reg.dni)
-            .add("estado", reg.estado)
-            .add("tipo", reg.tipo)
-            .build()
+        val registrosJson = JSONArray()
+        for (reg in registros) {
+            val jsonObject = JSONObject()
+            jsonObject.put("horario", reg.horario)
+            jsonObject.put("nombre", reg.nombre)
+            jsonObject.put("apellido", reg.apellido)
+            jsonObject.put("dni", reg.dni)
+            jsonObject.put("estado", reg.estado)
+            jsonObject.put("tipo", reg.tipo)
+            registrosJson.put(jsonObject)
+        }
 
+        val requestBody = registrosJson.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
-
-        // Crea la solicitud POST
         val request = Request.Builder()
             .url(url)
             .post(requestBody)
@@ -190,16 +187,16 @@ class SendDataToBackend (private val context: Context) {
 
             override fun onResponse(call: Call, response: Response) {
                 try {
-                    // La solicitud fue exitosa //
                     if (response.isSuccessful) {
-                        sended=true
+                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
                     } else {
-                        sended=false
-
+                        Toast.makeText(context, "HTTP request unsuccessful with status code ${response.code}", Toast.LENGTH_SHORT).show()
+                        sended = false
                     }
-
-                } catch (e: Exception) {e.printStackTrace()
-                    sended=false
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(context, "Error en la respuesta: ${e.message}", Toast.LENGTH_SHORT).show()
+                    sended = false
                 } finally {
                     response.body?.close()
                     activeCall = null
@@ -207,13 +204,13 @@ class SendDataToBackend (private val context: Context) {
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                // Maneja el fallo de la solicitud
+                e.printStackTrace()
+                Toast.makeText(context, "No se ha podido hacer la sincronización", Toast.LENGTH_SHORT).show()
                 activeCall = null
-                sended=false
-                android.util.Log.e("SendDataToBackend", e.stackTraceToString())
-
+                sended = false
             }
         })
+
         return sended
     }
 

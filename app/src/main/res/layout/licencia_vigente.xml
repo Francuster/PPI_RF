@@ -15,7 +15,6 @@
         android:background="@drawable/rectangulo_celeste_ingreso"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.10"
         app:layout_constraintHorizontal_bias="0.421"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -24,11 +23,11 @@
 
         <TextView
             android:id="@+id/licencia_vigente"
-            android:layout_width="248dp"
-            android:layout_height="55dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/inter_extrabold"
             android:text="Licencia"
-            android:textSize="18dp"
+            android:textSize="20dp"
             android:textStyle="bold"
             android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +35,8 @@
             app:layout_constraintHorizontal_bias="0.061"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
+            tools:ignore="MissingConstraints"
+            app:layout_constraintWidth_percent="0.85"/>
 
         <ImageView
             android:id="@+id/imagen_delete"
@@ -45,7 +45,7 @@
             android:onClick="eliminarLicencia"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.90"
+            app:layout_constraintHeight_percent="0.80"
             app:layout_constraintHorizontal_bias="0.553"
             app:layout_constraintStart_toEndOf="@+id/licencia_vigente"
             app:layout_constraintTop_toTopOf="parent"

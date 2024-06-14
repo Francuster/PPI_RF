@@ -15,7 +15,6 @@
     android:background="@drawable/rectangulo_celeste_ingreso"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHeight_percent="0.10"
     app:layout_constraintHorizontal_bias="0.421"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
@@ -24,8 +23,8 @@
 
     <TextView
         android:id="@+id/empleado"
-        android:layout_width="248dp"
-        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/inter_extrabold"
         android:text="Nombre Empleado"
         android:textAlignment="center"
@@ -37,7 +36,8 @@
         app:layout_constraintHorizontal_bias="0.061"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints"
+        app:layout_constraintWidth_percent="0.85"/>
 
     <ImageView
         android:id="@+id/imagen_flecha"

@@ -22,24 +22,33 @@
         app:layout_constraintVertical_bias="0.431"
         app:layout_constraintWidth_percent="0.93">
 
-
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_titulo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_celeste"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHeight_percent="0.17"
+            app:layout_constraintWidth_percent="1.0">
         <TextView
             android:id="@+id/empleado_licencias_titulo"
             android:layout_width="252dp"
-            android:layout_height="50dp"
+            android:layout_height="38dp"
             android:layout_marginEnd="48dp"
             android:fontFamily="@font/inter_extrabold"
             android:text="LICENCIAS "
             android:textAlignment="center"
-            android:textSize="20sp"
-
+            android:textSize="17sp"
             android:textStyle="bold"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/imagen_volver"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.05"
+            app:layout_constraintVertical_bias="0.5"
             app:layout_constraintWidth_percent="0.5"
             tools:ignore="MissingConstraints" />
 
@@ -55,16 +64,18 @@
             app:layout_constraintHorizontal_bias="0.028"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.05"
+            app:layout_constraintVertical_bias="0.5"
             app:srcCompat="@drawable/arrow_left" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <ScrollView
-            android:layout_width="361dp"
-            android:layout_height="499dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/constraint_titulo"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.965">
 
             <LinearLayout

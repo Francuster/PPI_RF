@@ -75,9 +75,9 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 val fullName = empleado.fullName
 
                 val inflater: LayoutInflater = LayoutInflater.from(this)
-                val itemView: View = inflater.inflate(R.layout.item_usuario, container, false)
+                val itemView: View = inflater.inflate(R.layout.item_empleado, container, false)
 
-                val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
+                val textViewEmpleado: TextView = itemView.findViewById(R.id.textview_empleado)
                 textViewEmpleado.text = fullName
 
                 container.addView(itemView)

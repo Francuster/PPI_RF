@@ -39,7 +39,7 @@
             android:fontFamily="@font/inter_extrabold"
             android:text="EMPLEADOS"
             android:textAlignment="center"
-            android:textSize="17sp"
+            android:textSize="20sp"
             android:textStyle="bold"
 
             app:layout_constraintBottom_toBottomOf="parent"

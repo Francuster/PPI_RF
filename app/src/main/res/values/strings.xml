@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Loger</string>
     <string name="title_activity_offline_face_recognition">OfflineFaceRecognitionActivity</string>
     <string name="preview_photo">Preview Photo</string>
     <string name="register_face">register face</string>

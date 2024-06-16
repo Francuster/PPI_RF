@@ -349,28 +349,6 @@
             app:layout_constraintVertical_bias="0.05"
             app:srcCompat="@drawable/arrow_left" />
 
-        <Button
-            android:id="@+id/boton_rechazar"
-            android:layout_width="174dp"
-            android:layout_height="46dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="1"
-            android:background="@drawable/boton_rojo"
-
-            android:fontFamily="@font/inter_extrabold"
-            android:onClick="eliminarUsuario"
-
-            android:text="ELIMINAR USUARIO"
-            android:textColor="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.07"
-            app:layout_constraintStart_toStartOf="parent"
-
-            app:layout_constraintTop_toBottomOf="@+id/alerta"
-            app:layout_constraintVertical_bias="0.912"
-            app:layout_constraintWidth_percent="0.38" />
-
         <!-- Hora de Entrada -->
 
         <!-- Hora de Salida -->

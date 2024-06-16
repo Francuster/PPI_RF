@@ -49,6 +49,7 @@ class RegistroExitosoAntesalaActivity: AppCompatActivity() {
     fun ingresoClick(view: View) {
         // Iniciar la actividad RegistroExitosoActivity
         val intent = Intent(this, RegistroExitosoActivity::class.java)
+        intent.putExtra("action", "Ingreso")
         val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
         val horario = formato.format(Date())
         val log = Log( horario,nombre,apellido,dni,"Ingresando","online")
@@ -60,6 +61,7 @@ class RegistroExitosoAntesalaActivity: AppCompatActivity() {
     fun egresoClick(view: View){
         // Iniciar la actividad RegistroExitosoActivity
         val intent = Intent(this, RegistroExitosoActivity::class.java)
+        intent.putExtra("action", "Egreso")
         val formato = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH)
         val horario = formato.format(Date())
         val log = Log( horario,nombre,apellido,dni,"Saliendo","online")

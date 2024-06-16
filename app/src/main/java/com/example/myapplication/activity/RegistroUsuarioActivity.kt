@@ -291,51 +291,49 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         val email = emailEditText.text.toString()
         val horarioModel = horarioSpinner.selectedItem as HorarioModel
 
-
         val userModel = UserModel("", nombre, apellido, documento.toInt(), tipoCuenta, listOf(horarioModel._id), email)
-        RetrofitClient.userApiService.post(userModel).enqueue(object: Callback<ImagenModel>{
+        RetrofitClient.userApiService.post(userModel).enqueue(object : Callback<ImagenModel> {
             override fun onResponse(call: Call<ImagenModel>, response: Response<ImagenModel>) {
                 when (response.code()) {
                     200 -> {
+                        val userModelResponse = response.body()
+
                         Toast.makeText(this@RegistroUsuarioActivity, "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
-                        goToRegistroExitoso()
+
+                        userModelResponse?._id?.let { userId ->
+                            goToRegistroExitoso(userId)
+                        }
                     }
                     201 -> {
                         Toast.makeText(this@RegistroUsuarioActivity, "USUARIO REGISTRADO, PERO CON ERROR 201", Toast.LENGTH_SHORT).show()
-                        goToRegistroExitoso()
+                        goToRegistroDenegado()
                     }
-                    400 ->{
+                    400 -> {
                         Toast.makeText(this@RegistroUsuarioActivity, "ERROR: Debe llenar todos los campos y luego tomar la foto", Toast.LENGTH_SHORT).show()
-
                         goToRegistroDenegado()
                     }
                     500 -> {
-                        goToRegistroDenegado()
                         Toast.makeText(this@RegistroUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
+                        goToRegistroDenegado()
                     }
                     else -> {
+                        Toast.makeText(this@RegistroUsuarioActivity, "Error desconocido, revise el servidor", Toast.LENGTH_SHORT).show()
                         goToRegistroDenegado()
-                        Toast.makeText(this@RegistroUsuarioActivity, "Error busque en consola del servidor", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
 
             override fun onFailure(call: Call<ImagenModel>, t: Throwable) {
-                runOnUiThread {
-                    Toast.makeText(this@RegistroUsuarioActivity, "Fallo en la solicitud de registro de usuario: ${t.message}", Toast.LENGTH_SHORT).show()
-                }
+                Toast.makeText(this@RegistroUsuarioActivity, "Fallo en la solicitud de registro de usuario: ${t.message}", Toast.LENGTH_SHORT).show()
                 goToRegistroDenegado()
             }
         })
-
     }
 
-
-
-
-    fun goToRegistroExitoso() {
-
-        val intent = Intent(applicationContext, RegistroExitoso2Activity::class.java)
+    private fun goToRegistroExitoso(userId: String) {
+        val intent = Intent(this, RegistroExitoso2Activity::class.java)
+        intent.putExtra("origen", "RegistroUsuarioActivity")
+        intent.putExtra("userId", userId)
         startActivity(intent)
     }
     fun goToRegistroDenegado() {

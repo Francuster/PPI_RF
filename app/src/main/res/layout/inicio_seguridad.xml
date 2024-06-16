@@ -29,7 +29,7 @@
             android:layout_width="300dp"
             android:layout_height="38dp"
             android:fontFamily="@font/inter_extrabold"
-            android:text="INGRESOS/EGRESOS"
+            android:text="INGRESOS/EGRESOS DEL DÍA"
             android:textAlignment="center"
             android:textSize="17sp"
             android:textStyle="bold"
@@ -56,6 +56,30 @@
             app:layout_constraintVertical_bias="0.026"
             app:srcCompat="@drawable/sort_arrow" />
 
+        <LinearLayout
+            android:layout_width="379dp"
+            android:layout_height="499dp"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ingreso_exitoso">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="499dp"
+                android:layout_weight="1"
+                android:paddingTop="16dp">
+
+                <LinearLayout
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -177,6 +201,7 @@
             android:id="@+id/ingreso_especial_nav"
             android:layout_width="66dp"
             android:layout_height="45dp"
+            android:onClick="goToQREspecial"
 
             android:layout_marginEnd="240dp"
             app:layout_constraintBottom_toBottomOf="parent"

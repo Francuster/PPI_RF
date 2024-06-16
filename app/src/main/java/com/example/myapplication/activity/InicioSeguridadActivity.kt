@@ -2,11 +2,13 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
@@ -85,24 +87,29 @@ class InicioSeguridadActivity : AppCompatActivity() {
             for (i in 0 until logsArray.length()) {
                 val log = logsArray.getJSONObject(i)
                 val logText = """
-                    ID: ${log.getString("_id")}
-                    Horario: ${log.getString("horario")}
-                    Nombre: ${log.getString("nombre")}
-                    Apellido: ${log.getString("apellido")}
-                    DNI: ${log.getInt("dni")}
-                    Estado: ${log.getString("estado")}
-                    Tipo: ${log.getString("tipo")}
+                ┌────────────────────┐
+                │ Nombre: ${log.getString("nombre").padEnd(18)} 
+                │ Apellido: ${log.getString("apellido").padEnd(16)} 
+                │ DNI: ${log.getInt("dni").toString().padEnd(21)} 
+                │ Estado: ${log.getString("estado").padEnd(16)} 
+                │ Horario: ${log.getString("horario").padEnd(15)} 
+                │ Tipo: ${log.getString("tipo").padEnd(18)} 
+                └────────────────────┘
                 """.trimIndent()
 
                 val textView = TextView(this)
                 textView.text = logText
-                textView.setPadding(16, 16, 16, 16)
+                textView.setPadding(24, 16, 24, 16)
+                textView.setTextColor(ContextCompat.getColor(this, R.color.black))
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
                 logContainer.addView(textView)
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
     private fun getCurrentDate(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())

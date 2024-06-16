@@ -129,6 +129,7 @@ class InicioRrHhActivity: AppCompatActivity() {
 
 
 
+
     private fun goToVerPerfil(userModel: UserModel) {
         val intent = Intent(applicationContext, PerfilUsuarioActivity::class.java)
         intent.putExtra("userModel", userModel)

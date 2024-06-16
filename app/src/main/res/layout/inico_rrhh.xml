@@ -13,13 +13,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/rectangulo_celeste"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/elipse_scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
         app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.431"
+        app:layout_constraintTop_toBottomOf="@+id/top"
+        app:layout_constraintVertical_bias="0.5"
         app:layout_constraintWidth_percent="0.93">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraint_titulo"
@@ -73,17 +73,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraint_titulo"
-            app:layout_constraintVertical_bias="0.0">
+            app:layout_constraintTop_toBottomOf="@+id/empleados_titulo">
 
             <LinearLayout
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="vertical" />
         </ScrollView>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -271,9 +268,9 @@
             android:layout_height="53dp"
 
             app:layout_constraintEnd_toEndOf="@+id/cuenta_nav"
-            app:layout_constraintHorizontal_bias="0.88"
-            app:layout_constraintVertical_bias="0.5"
-            app:layout_constraintStart_toStartOf="@+id/empleados_nav">
+            app:layout_constraintHorizontal_bias="0.859"
+            app:layout_constraintStart_toStartOf="@+id/empleados_nav"
+            tools:layout_editor_absoluteY="0dp">
 
             <TextView
                 android:id="@id/licencia_nav"
@@ -319,8 +316,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent">
-    </View>
+        app:layout_constraintStart_toStartOf="parent"></View>
 
     <ImageView
         android:id="@+id/imagen_add"
@@ -331,11 +327,11 @@
         android:onClick="goToRegistroRrHhPrimeraSala"
         app:layout_constraintBottom_toBottomOf="@+id/elipse_scan"
         app:layout_constraintEnd_toEndOf="@+id/elipse_scan"
+        app:layout_constraintHeight_percent="0.08"
         app:layout_constraintStart_toStartOf="@+id/elipse_scan"
         app:layout_constraintTop_toTopOf="@+id/elipse_scan"
-        app:srcCompat="@drawable/add_round"
         app:layout_constraintWidth_percent="0.18"
-        app:layout_constraintHeight_percent="0.08"/>
+        app:srcCompat="@drawable/add_round" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top"

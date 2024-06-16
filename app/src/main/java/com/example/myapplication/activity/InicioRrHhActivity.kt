@@ -114,8 +114,10 @@ class InicioRrHhActivity: AppCompatActivity() {
                 textViewEmpleado.text = user.getFullName()
                 if (user.rol .uppercase() != "ESTUDIANTE" ) {
                     listaEmpleados.add(Empleado(user.getFullName(),user._id))
+
                 }
                 container.addView(itemView)
+
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
                     goToModificacionUsuario(user)
                 }

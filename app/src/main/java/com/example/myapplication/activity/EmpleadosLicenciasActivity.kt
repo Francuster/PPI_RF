@@ -45,7 +45,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         }
         // Observar cambios en data
         else{
-        mostrarTodosLosEmpleados()
+            mostrarTodosLosEmpleados()
         }
 
     }
@@ -80,6 +80,10 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
                 textViewEmpleado.text = fullName
 
+                // Disable click event for the TextView
+                textViewEmpleado.isClickable = false
+                textViewEmpleado.isFocusable = false
+
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
@@ -101,7 +105,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     }
 
     private fun fetch(search: String, endpoint: String, tag: String) {
-      showLoadingOverlay()
+        showLoadingOverlay()
         val request = Request.Builder()
             .url(BuildConfig.BASE_URL + endpoint) // Cambia esto por la URL de tu API
             .build()
@@ -174,4 +178,3 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     }
 
 }
-

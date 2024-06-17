@@ -43,10 +43,11 @@
                 android:textSize="20sp"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/flecha_atras"
                 app:layout_constraintStart_toEndOf="@+id/imagen_licencia"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.5"
-                app:layout_constraintWidth_percent="0.64"
+
                 tools:ignore="MissingConstraints" />
 
             <ImageView
@@ -63,7 +64,7 @@
                 app:layout_constraintWidth_percent="0.12"
                 app:srcCompat="@drawable/icon_licencia" />
             <ImageView
-                android:id="@+id/imagen_volver"
+                android:id="@+id/flecha_atras"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:onClick="goToAtrasInicioRRHH"
@@ -114,10 +115,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top"
         android:layout_width="match_parent"
-        android:layout_height="53dp"
+        android:layout_height="0dp"
         android:background="@drawable/rectangulo_superior"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="0.00"
+        app:layout_constraintHeight_percent="0.07"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintWidth_percent="0.90"

@@ -95,32 +95,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:id="@+id/elipse_scan"
-        android:layout_width="68dp"
-        android:layout_height="65dp"
-        android:background="@drawable/elipse_nav"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent">
-    </View>
-
-    <ImageView
-        android:id="@+id/imagen_add"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-
-
-        android:onClick="goToCargarLicencia"
-        app:layout_constraintBottom_toBottomOf="@+id/elipse_scan"
-        app:layout_constraintEnd_toEndOf="@+id/elipse_scan"
-        app:layout_constraintStart_toStartOf="@+id/elipse_scan"
-        app:layout_constraintTop_toTopOf="@+id/elipse_scan"
-        app:srcCompat="@drawable/add_round"
-        app:layout_constraintWidth_percent="0.18"
-        app:layout_constraintHeight_percent="0.08"/>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top"
         android:layout_width="match_parent"

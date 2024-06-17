@@ -23,38 +23,43 @@
         app:layout_constraintVertical_bias="0.431"
         app:layout_constraintWidth_percent="0.93">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_titulo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/rectangulo_celeste"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.14"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="1.0">
 
-        <TextView
-            android:id="@+id/ingreso_exitoso"
-            android:layout_width="300dp"
-            android:layout_height="38dp"
-            android:fontFamily="@font/inter_extrabold"
-            android:text="INGRESOS/EGRESOS"
-            android:textAlignment="center"
-            android:textSize="17sp"
-            android:textStyle="bold"
+            <TextView
+                android:id="@+id/ingreso_exitoso"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="INGRESOS/EGRESOS"
+                android:textAlignment="center"
+                android:textSize="@dimen/view_title"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/logo_ingresoegreso"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5"
+                tools:ignore="MissingConstraints" />
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.341"
-            app:layout_constraintStart_toEndOf="@+id/logo_ingresoegreso"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.026"
-            tools:ignore="MissingConstraints" />
-
-        <ImageView
-            android:id="@+id/logo_ingresoegreso"
-            android:layout_width="62dp"
-            android:layout_height="44dp"
-
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.026"
-            app:srcCompat="@drawable/sort_arrow" />
+            <ImageView
+                android:id="@+id/logo_ingresoegreso"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHeight_percent="0.6"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.12"
+                app:srcCompat="@drawable/sort_arrow" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -62,11 +67,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nav"
         android:layout_width="match_parent"
-        android:layout_height="53dp"
+        android:layout_height="0dp"
         android:background="@drawable/rectangulo_nav"
 
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="0.00"
+        app:layout_constraintHeight_percent="0.075"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:layout_constraintWidth_percent="0.90"
@@ -75,16 +80,15 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cuenta_nav"
 
-            android:layout_width="80dp"
-            android:layout_height="47dp"
-
-
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.70"
+            app:layout_constraintWidth_percent="0.150"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.951"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.666">
+            app:layout_constraintHorizontal_bias="0.951"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@id/cuenta"
@@ -93,25 +97,19 @@
                 android:fontFamily="@font/inter_extrabold"
                 android:text="Cuenta"
                 android:textAlignment="center"
-                android:textSize="7sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.492"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.771"
+                android:textSize="@dimen/nav_text"
+                app:layout_constraintTop_toBottomOf="@id/imagen_nav_cuenta"
+                app:layout_constraintWidth_percent="1.00"
                 tools:ignore="MissingConstraints" />
 
             <ImageView
                 android:id="@+id/imagen_nav_cuenta"
-                android:layout_width="28dp"
-                android:layout_height="25dp"
-
-
-                app:layout_constraintBottom_toTopOf="@+id/cuenta"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent="0.60"
+                app:layout_constraintWidth_percent="0.45"
+                app:layout_constraintVertical_bias="0"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.495"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/menu" />
 
@@ -119,9 +117,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ingreso_egreso_nav"
-            android:layout_width="66dp"
-            android:layout_height="45dp"
-
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.70"
+            app:layout_constraintWidth_percent="0.150"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.046"
@@ -131,40 +130,40 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/ingreso_egreso_form"
-                android:layout_width="66dp"
-                android:layout_height="45dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
 
+                app:layout_constraintHeight_percent="1.0"
+                app:layout_constraintWidth_percent="1.0"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0">
+                >
 
                 <TextView
                     android:id="@id/nav_ingresoegreso"
-                    android:layout_width="52dp"
-                    android:layout_height="23dp"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:fontFamily="@font/inter_extrabold"
                     android:onClick="goToFormulario"
                     android:text="Ingreso/Egreso"
                     android:textAlignment="center"
-                    android:textSize="7sp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:textSize="@dimen/nav_text"
+                    app:layout_constraintWidth_percent="1.00"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="1.0"
+                    app:layout_constraintTop_toBottomOf="@id/imagen_nav_ingresoegreso"
                     tools:ignore="MissingConstraints" />
 
                 <ImageView
                     android:id="@+id/imagen_nav_ingresoegreso"
-                    android:layout_width="28dp"
-                    android:layout_height="25dp"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:onClick="goToFormulario"
-
-                    app:layout_constraintBottom_toTopOf="@+id/nav_ingresoegreso"
+                    app:layout_constraintHeight_percent="0.60"
+                    app:layout_constraintWidth_percent="0.45"
+                    app:layout_constraintVertical_bias="0"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -175,41 +174,41 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ingreso_especial_nav"
-            android:layout_width="66dp"
-            android:layout_height="45dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
 
-            android:layout_marginEnd="240dp"
+            app:layout_constraintHeight_percent="0.70"
+            app:layout_constraintWidth_percent="0.150"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.923"
+            app:layout_constraintHorizontal_bias="0.25"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.625">
+            app:layout_constraintVertical_bias="0.5">
 
             <TextView
                 android:id="@id/nav_ingresoegreso"
-                android:layout_width="52dp"
-                android:layout_height="23dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_extrabold"
                 android:onClick="goToQREspecial"
                 android:text="Log especial"
                 android:textAlignment="center"
-                android:textSize="7sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:textSize="@dimen/nav_text"
+                app:layout_constraintWidth_percent="1.00"
+                app:layout_constraintTop_toBottomOf="@id/imagen_nav_ingresoegresoespecial"
                 app:layout_constraintVertical_bias="1.0"
                 tools:ignore="MissingConstraints" />
 
             <ImageView
                 android:id="@+id/imagen_nav_ingresoegresoespecial"
-                android:layout_width="28dp"
-                android:layout_height="25dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:onClick="goToQREspecial"
-
-                app:layout_constraintBottom_toTopOf="@+id/nav_ingresoegreso"
+                app:layout_constraintHeight_percent="0.60"
+                app:layout_constraintWidth_percent="0.45"
+                app:layout_constraintVertical_bias="0"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -218,9 +217,10 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/logs_nav"
-            android:layout_width="70dp"
-            android:layout_height="47dp"
-
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.70"
+            app:layout_constraintWidth_percent="0.150"
             android:onClick="goToReporteSeguridad"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -230,27 +230,24 @@
 
             <TextView
                 android:id="@id/cuenta"
-                android:layout_width="64dp"
-                android:layout_height="14dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_extrabold"
                 android:text="Logs"
                 android:textAlignment="center"
-                android:textSize="7sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.787"
+                android:textSize="@dimen/nav_text"
+                app:layout_constraintWidth_percent="1.00"
+                app:layout_constraintTop_toBottomOf="@+id/imagen_nav_logs"
+
                 tools:ignore="MissingConstraints" />
 
             <ImageView
                 android:id="@+id/imagen_nav_logs"
-                android:layout_width="21dp"
-                android:layout_height="21dp"
-
-
-                app:layout_constraintBottom_toTopOf="@+id/cuenta"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent="0.60"
+                app:layout_constraintWidth_percent="0.45"
+                app:layout_constraintVertical_bias="0"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/hand_held__tablet_kindle_device_electronics_ipad_computer" />
@@ -260,19 +257,25 @@
 
     <View
         android:id="@+id/elipse_scan"
-        android:layout_width="68dp"
-        android:layout_height="65dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:background="@drawable/elipse_nav"
+        app:layout_constraintHeight_percent="0.085"
+        app:layout_constraintWidth_percent="0.150"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"></View>
+        app:layout_constraintStart_toStartOf="parent">
+
+    </View>
 
     <ImageView
         android:id="@+id/imagen_scan"
-        android:layout_width="49dp"
-        android:layout_height="47dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:onClick="goToAnteEscanea"
+        app:layout_constraintHeight_percent="0.06"
+        app:layout_constraintWidth_percent="0.120"
         app:layout_constraintBottom_toBottomOf="@+id/elipse_scan"
         app:layout_constraintEnd_toEndOf="@+id/elipse_scan"
         app:layout_constraintStart_toStartOf="@+id/elipse_scan"
@@ -282,11 +285,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/top"
         android:layout_width="match_parent"
-        android:layout_height="53dp"
+        android:layout_height="0dp"
         android:background="@drawable/rectangulo_superior"
 
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="0.00"
+        app:layout_constraintHeight_percent="0.07"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0"
         app:layout_constraintWidth_percent="0.90"

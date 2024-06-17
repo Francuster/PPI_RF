@@ -39,7 +39,7 @@
                 android:fontFamily="@font/inter_extrabold"
                 android:text="LICENCIAS"
                 android:textAlignment="center"
-                android:textSize="20sp"
+                android:textSize="@dimen/view_title"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -110,11 +110,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nav"
         android:layout_width="match_parent"
-        android:layout_height="53dp"
+        android:layout_height="0dp"
         android:background="@drawable/rectangulo_nav"
 
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="0.00"
+        app:layout_constraintHeight_percent="0.075"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:layout_constraintWidth_percent="0.90"

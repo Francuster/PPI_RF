@@ -2,5 +2,6 @@
 <resources>
 
     <dimen name="text_size_match_parent">55sp</dimen>
-
+    <dimen name="nav_text">8sp</dimen>
+    <dimen name="view_title">20sp</dimen>
 </resources>

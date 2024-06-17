@@ -21,40 +21,49 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.431"
         app:layout_constraintWidth_percent="0.93">
-
-
-        <TextView
-            android:id="@+id/ingreso_exitoso"
-            android:layout_width="300dp"
-            android:layout_height="38dp"
-            android:fontFamily="@font/inter_extrabold"
-            android:text="REPORTES SEGURIDAD"
-            android:textAlignment="center"
-            android:textSize="17sp"
-            android:textStyle="bold"
-
-            app:layout_constraintBottom_toBottomOf="parent"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraint_titulo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/rectangulo_celeste"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/logo_ingresoegreso"
+            app:layout_constraintHeight_percent="0.14"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.026"
-            tools:ignore="MissingConstraints" />
+            app:layout_constraintWidth_percent="1.0">
 
-        <ImageView
-            android:id="@+id/logo_ingresoegreso"
-            android:layout_width="62dp"
-            android:layout_height="44dp"
-            android:onClick="goTo"
+            <TextView
+                android:id="@+id/ingreso_exitoso"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_extrabold"
+                android:text="REPORTES SEGURIDAD"
+                android:textAlignment="center"
+                android:textSize="@dimen/view_title"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/logo_ingresoegreso"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5"
+                tools:ignore="MissingConstraints" />
 
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.026"
-            app:srcCompat="@drawable/hand_held__tablet_kindle_device_electronics_ipad_computer" />
+            <ImageView
+                android:id="@+id/logo_ingresoegreso"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:onClick="goTo"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintWidth_percent="0.12"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5"
+                app:srcCompat="@drawable/hand_held__tablet_kindle_device_electronics_ipad_computer" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
         <CalendarView
             android:id="@+id/calendarView"
@@ -91,11 +100,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/nav"
         android:layout_width="match_parent"
-        android:layout_height="53dp"
+        android:layout_height="0dp"
         android:background="@drawable/rectangulo_nav"
 
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHeight_percent="0.00"
+        app:layout_constraintHeight_percent="0.075"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:layout_constraintWidth_percent="0.90"

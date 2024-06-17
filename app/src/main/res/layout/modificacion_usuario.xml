@@ -35,17 +35,16 @@
 
         <ImageView
                 android:id="@+id/imagen_volver"
-                android:layout_width="62dp"
-                android:layout_height="40dp"
-
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:onClick="goToAtrasInicioRRHH"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/modificacion_titulo"
-                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_bias="0.02"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.30"
+                app:layout_constraintVertical_bias="0.5"
+                app:layout_constraintWidth_percent="0.12"
                 app:srcCompat="@drawable/arrow_left" />
 
 
@@ -56,7 +55,7 @@
                 android:fontFamily="@font/inter_extrabold"
                 android:text="MODIFICAR USUARIO"
                 android:textAlignment="center"
-                android:textSize="20sp"
+                android:textSize="@dimen/view_title"
 
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

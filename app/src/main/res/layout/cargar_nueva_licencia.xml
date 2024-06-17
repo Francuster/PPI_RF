@@ -86,7 +86,7 @@
             android:background="@drawable/rectangulo_alerta"
             app:layout_constraintBottom_toTopOf="@id/boton_create"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintWidth_percent="0.9"
             app:layout_constraintHeight_percent="0.6"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/constraint_titulo"/>

@@ -388,11 +388,13 @@ class RegistroUsuarioActivity : AppCompatActivity() {
 
     fun goToRegistroDenegado() {
         val intent = Intent(applicationContext, RegistroDenegado2Activity::class.java)
+        intent.putExtra("origen", "RegistroUsuario")
         startActivity(intent)
     }
 
     fun Siguiente(view: View) {
-        val intent = Intent(applicationContext, Denegado::class.java)
+        val intent = Intent(applicationContext, RegistroDenegado2Activity::class.java)
+        intent.putExtra("origen", "RegistroUsuario")
         startActivity(intent)
     }
 

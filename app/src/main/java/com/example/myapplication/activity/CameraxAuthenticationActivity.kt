@@ -557,7 +557,7 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
         countDownTimer?.cancel()
     }
     private fun mostrarPantallaErrorIngreso() {
-        val intent = Intent(applicationContext, RegistroDenegadoActivity::class.java)
+        val intent = Intent(applicationContext, IngresoDenegadoActivity::class.java)
         startActivity(intent)
     }
     private fun stopScanTimer() {

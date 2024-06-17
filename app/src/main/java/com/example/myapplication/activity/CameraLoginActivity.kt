@@ -1,4 +1,4 @@
-package com.example.myapplication.activity
+/*package com.example.myapplication.activity
 
 import android.Manifest
 import android.content.Intent
@@ -617,4 +617,4 @@ class CameraLoginActivity : AppCompatActivity(), Camera.PreviewCallback {
         }
     }
 
-}
+}*/

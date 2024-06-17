@@ -1,3 +1,5 @@
+
+/* CAMARA VIEJA DEPRECADA
 package com.example.myapplication.activity
 
 import android.Manifest
@@ -565,4 +567,4 @@ class CameraIngresoEgresoActivity : AppCompatActivity(), Camera.PreviewCallback 
         }
     }
 
-}
+}*/

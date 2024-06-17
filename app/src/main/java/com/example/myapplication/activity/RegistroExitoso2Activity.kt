@@ -20,15 +20,19 @@ class RegistroExitoso2Activity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ingreso_exitoso)
 
-        // Actualizar TextViews estado
         val textoNombreUsuario = findViewById<TextView>(R.id.ingreso_denegado)
-        textoNombreUsuario.text = "REGISTRO EXITOSO"
-
-        // Mostrar diálogo al iniciar la actividad
         val origen = intent.getStringExtra("origen")
-        if (origen == "RegistroUsuarioActivity") {
-            userId = intent.getStringExtra("userId") ?: ""
-            mostrarDialogoRegistroRostro()
+
+        if (origen == "ModificacionUsuarioActivity") {
+            textoNombreUsuario.text = "MODIFICACIÓN EXITOSA"
+        } else {
+            textoNombreUsuario.text = "REGISTRO EXITOSO"
+            // Mostrar diálogo al iniciar la actividad
+            val origen = intent.getStringExtra("origen")
+            if (origen == "RegistroUsuarioActivity") {
+                userId = intent.getStringExtra("userId") ?: ""
+                mostrarDialogoRegistroRostro()
+            }
         }
     }
 

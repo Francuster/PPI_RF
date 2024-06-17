@@ -132,24 +132,6 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         }
     }
 
-    fun goToModificacionRol(view: View) {
-        val intent = Intent(applicationContext, ModificacionRolActivity::class.java)
-        startActivityForResult(intent, ROLE_REQUEST_CODE)
-    }
-
-    fun goToModificacionHora(view: View) {
-        val intent = Intent(applicationContext, ModificacionHoraActivity::class.java)
-        startActivityForResult(intent, HOURS_REQUEST_CODE)
-    }
-
-    fun goToModificacionTexto(view: View) {
-        val tag = view.tag as? String
-        tag?.let {
-            val intent = Intent(this, ModificacionTextoActivity::class.java)
-            intent.putExtra("campo", tag)
-            startActivityForResult(intent, TEXT_REQUEST_CODE)
-        }
-    }
 
     fun goToAtrasInicioRRHH(view: View) {
         val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
@@ -312,11 +294,17 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
     private fun goToModificacionExitosa() {
         val intent = Intent(applicationContext, RegistroExitoso2Activity::class.java)
+        intent.putExtra("exito", true)
+        intent.putExtra("origen", "ModificacionUsuarioActivity") // Indica el origen como ModificacionUsuarioActivity
         startActivity(intent)
     }
 
     private fun goToModificacionError() {
         val intent = Intent(applicationContext, RegistroDenegado2Activity::class.java)
+        intent.putExtra("error", true)
+        intent.putExtra("origen", "ModificacionUsuarioActivity") // Indica el origen como ModificacionUsuarioActivity
         startActivity(intent)
     }
+
+
 }

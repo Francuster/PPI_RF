@@ -1,4 +1,4 @@
-package com.example.myapplication.activity
+/*package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -51,3 +51,4 @@ class ModificacionRolActivity : AppCompatActivity() {
         }
     }
 }
+*/

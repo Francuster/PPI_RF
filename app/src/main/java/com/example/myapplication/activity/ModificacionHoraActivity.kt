@@ -1,3 +1,4 @@
+/*
 package com.example.myapplication.activity
 
 import android.app.TimePickerDialog
@@ -81,3 +82,4 @@ class ModificacionHoraActivity : AppCompatActivity() {
         startActivity(intent)
     }
 }
+*/

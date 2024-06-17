@@ -84,6 +84,12 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 textViewEmpleado.isClickable = false
                 textViewEmpleado.isFocusable = false
 
+                // Ocultar imagenes de ojo y editar
+                val imagenOjo: View = itemView.findViewById(R.id.imagen_ojo)
+                val imagenEditar: View = itemView.findViewById(R.id.imagen_editar)
+                imagenOjo.visibility = View.GONE
+                imagenEditar.visibility = View.GONE
+
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
@@ -94,6 +100,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
             }
         }
     }
+
 
     private fun goToMostrarLicenciasDelEmpleado(empleado: Empleado) {
         val intent = Intent(applicationContext, LicenciasEmpleadoActivity::class.java)

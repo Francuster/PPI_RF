@@ -6,6 +6,7 @@ import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -105,16 +106,20 @@ class InicioRrHhActivity : AppCompatActivity() {
                 listaEmpleados.add(Empleado(user.getFullName(), user._id))
                 container.addView(itemView)
 
-                itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
+                itemView.findViewById<View>(R.id.imagen_editar).setOnClickListener {
                     goToModificacionUsuario(user)
                 }
-                itemView.findViewById<View>(R.id.empleado).setOnClickListener {
+                itemView.findViewById<View>(R.id.imagen_ojo).setOnClickListener {
                     goToVerPerfil(user)
                 }
-            }
 
+                // Ocultar la flecha
+                val imagenFlecha: ImageView = itemView.findViewById(R.id.imagen_flecha)
+                imagenFlecha.visibility = View.GONE
+            }
         }
     }
+
 
     private fun goToVerPerfil(userModel: UserModel) {
         val intent = Intent(applicationContext, PerfilUsuarioActivity::class.java)

@@ -131,6 +131,9 @@ dependencies {
     implementation ("androidx.core:core:1.6.0")
 
 
+    implementation("com.google.android.material:material:1.4.0")
+
+
     //ML KIT Google
 //    implementation ("com.google.android.gms:play-services-mlkit:17.0.0")
 

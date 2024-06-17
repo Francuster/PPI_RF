@@ -8,51 +8,80 @@
     android:background="@drawable/fondo_blanco"
     tools:context=".Escanea">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/ingresoEmpleado"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/rectangulo_celeste_ingreso"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHeight_percent="0.10"
-    app:layout_constraintHorizontal_bias="0.421"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.302"
-    app:layout_constraintWidth_percent="0.9">
-
-    <TextView
-        android:id="@+id/empleado"
-        android:layout_width="248dp"
-        android:layout_height="40dp"
-        android:fontFamily="@font/inter_extrabold"
-        android:text="Nombre Empleado"
-        android:textAlignment="center"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:onClick="goToPerfilUsuario"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ingresoEmpleado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rectangulo_celeste_ingreso"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.061"
+        app:layout_constraintHeight_percent="0.10"
+        app:layout_constraintHorizontal_bias="0.421"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintVertical_bias="0.302"
+        app:layout_constraintWidth_percent="0.9">
 
-    <ImageView
-        android:id="@+id/imagen_flecha"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.90"
-        app:layout_constraintHorizontal_bias="0.553"
-        app:layout_constraintStart_toEndOf="@+id/empleado"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.521"
-        app:layout_constraintWidth_percent="0.15"
-        app:srcCompat="@drawable/expand_right_light" />
+        <TextView
+            android:id="@+id/empleado"
+            android:layout_width="248dp"
+            android:layout_height="40dp"
+            android:fontFamily="@font/inter_extrabold"
+            android:text="Nombre Empleado"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.03"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="MissingConstraints" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/imagen_ojo"
+            android:layout_width="54dp"
+            android:layout_height="35dp"
+            android:onClick="goToVerPerfil"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.90"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/imagen_editar"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6"
+            app:layout_constraintWidth_percent="0.15"
+            app:srcCompat="@drawable/ic_visibility_black_24dp" />
+
+        <ImageView
+            android:id="@+id/imagen_flecha"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.90"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/imagen_ojo"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintWidth_percent="0.15"
+            app:srcCompat="@drawable/expand_right_light" />
+
+        <ImageView
+            android:id="@+id/imagen_editar"
+            android:layout_width="47dp"
+            android:layout_height="34dp"
+            android:onClick="goToModificacionUsuario"
+            android:src="@drawable/ic_edit_black_24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.90"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintStart_toEndOf="@+id/empleado"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

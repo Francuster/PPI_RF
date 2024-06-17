@@ -66,7 +66,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         userModel = intent.getSerializableExtra("userModel") as UserModel
 
         val textoNombreUsuario = findViewById<TextView>(R.id.modificacion_titulo)
-        textoNombreUsuario.text = "Modificando usuario:\n${userModel.getFullName()} "
+        textoNombreUsuario.text = "MODIFICAR USUARIO:\n${userModel.getFullName()} "
 
         val spinner: Spinner = findViewById(R.id.tipo_cuenta)
         val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, rolArrayList)

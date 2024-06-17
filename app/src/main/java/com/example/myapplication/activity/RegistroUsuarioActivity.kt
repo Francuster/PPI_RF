@@ -1,6 +1,5 @@
 package com.example.myapplication.activity
 
-
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -28,24 +27,22 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-
-class RegistroUsuarioActivity:AppCompatActivity() {
+class RegistroUsuarioActivity : AppCompatActivity() {
     private val CAMERA_REQUEST_CODE = 100
     private var imageByteArray: ByteArray? = null
     private var horariosList = listOf<HorarioModel>()
     private lateinit var horarioSpinner: Spinner
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(!isServiceRunning(applicationContext, NetworkChangeService ::class.java)){
+        if (!isServiceRunning(applicationContext, NetworkChangeService::class.java)) {
             val intent = Intent(this, NetworkChangeService::class.java)
             startService(intent)
         }
 
         setContentView(R.layout.registro_primera_sala_rrhh)
-        val spinner:Spinner = findViewById<Spinner>(R.id.tipo_cuenta)
-        var elementos=ArrayList<String>()
+        val spinner: Spinner = findViewById<Spinner>(R.id.tipo_cuenta)
+        var elementos = ArrayList<String>()
 
         elementos.add("ADMINISTRADOR")
         elementos.add("DOCENTE")
@@ -55,14 +52,12 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         elementos.add("RECURSOS HUMANOS")
         elementos.add("PERSONAL JERÁRQUICO")
 
-        val adaptador=ArrayAdapter(this,R.layout.desplegable_tipo_cuenta,elementos)
+        val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, elementos)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
-        spinner.adapter=adaptador
+        spinner.adapter = adaptador
 
         agregarFiltrosValidaciones()
         getHorarios()
-
-
     }
 
     private fun agregarFiltrosValidaciones() {
@@ -74,7 +69,14 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
         // Filtro para permitir solo letras y espacios en el nombre y apellido
         val letrasFilter = object : InputFilter {
-            override fun filter(source: CharSequence?, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
+            override fun filter(
+                source: CharSequence?,
+                start: Int,
+                end: Int,
+                dest: Spanned?,
+                dstart: Int,
+                dend: Int
+            ): CharSequence? {
                 val builder = StringBuilder()
                 for (i in start until end) {
                     val char = source?.get(i)
@@ -84,7 +86,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
                 }
                 return if (builder.isEmpty()) {
                     nombreEditText.error = "Solo se permiten letras"
-                    apellidoEditText.error="Solo se permiten letras"
+                    apellidoEditText.error = "Solo se permiten letras"
                     ""
                 } else {
                     null
@@ -94,7 +96,14 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
         // Filtro para permitir solo números en el documento
         val numerosFilter = object : InputFilter {
-            override fun filter(source: CharSequence?, start: Int, end: Int, dest: Spanned?, dstart: Int, dend: Int): CharSequence? {
+            override fun filter(
+                source: CharSequence?,
+                start: Int,
+                end: Int,
+                dest: Spanned?,
+                dstart: Int,
+                dend: Int
+            ): CharSequence? {
                 val builder = StringBuilder()
                 for (i in start until end) {
                     val char = source?.get(i)
@@ -164,6 +173,7 @@ class RegistroUsuarioActivity:AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {}
         })
+
         documentoEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -182,32 +192,69 @@ class RegistroUsuarioActivity:AppCompatActivity() {
             }
         })
 
-
-        tipoCuentaSpinner.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        tipoCuentaSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 val selectedItem = parent?.getItemAtPosition(position).toString()
                 if (selectedItem.isNullOrEmpty()) {
-                    (parent?.getChildAt(0) as? TextView)?.error = "Seleccione un tipo de cuenta válido"
+                    (parent?.getChildAt(0) as? TextView)?.error =
+                        "Seleccione un tipo de cuenta válido"
                 } else {
                     (parent?.getChildAt(0) as? TextView)?.error = null
                 }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                (parent?.getChildAt(0) as? TextView)?.error = "Seleccione un tipo de cuenta válido"
+                (parent?.getChildAt(0) as? TextView)?.error =
+                    "Seleccione un tipo de cuenta válido"
             }
-        })
+        }
     }
 
-    fun getHorarios(){
-        RetrofitClient.horariosApiService.get().enqueue(object: Callback<List<HorarioModel>>{
+    private fun esNombreValido(nombre: String): Boolean {
+        return nombre.isNotEmpty() && nombre.all { it.isLetter() || it.isWhitespace() }
+    }
+
+    private fun esApellidoValido(apellido: String): Boolean {
+        return apellido.isNotEmpty() && apellido.all { it.isLetter() || it.isWhitespace() }
+    }
+
+    private fun esDocumentoValido(documento: String): Boolean {
+        return documento.isNotEmpty() && documento.all { it.isDigit() }
+    }
+
+    private fun esEmailValido(email: String): Boolean {
+        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    }
+
+    private fun validarCampos(): Boolean {
+        val nombre = findViewById<EditText>(R.id.nombre_texto).text.toString()
+        val apellido = findViewById<EditText>(R.id.apellido_texto).text.toString()
+        val documento = findViewById<EditText>(R.id.documento_texto).text.toString()
+        val email = findViewById<EditText>(R.id.email_texto).text.toString()
+        val tipoCuenta = findViewById<Spinner>(R.id.tipo_cuenta).selectedItem.toString()
+        val horarioModel = horarioSpinner.selectedItem as HorarioModel
+
+        return esNombreValido(nombre) &&
+                esApellidoValido(apellido) &&
+                esDocumentoValido(documento) &&
+                esEmailValido(email) &&
+                tipoCuenta.isNotEmpty() &&
+                horarioModel._id.isNotEmpty()
+    }
+
+    fun getHorarios() {
+        RetrofitClient.horariosApiService.get().enqueue(object : Callback<List<HorarioModel>> {
             override fun onResponse(
                 call: Call<List<HorarioModel>>,
                 response: Response<List<HorarioModel>>
             ) {
-
-                if(response.code() == 200){
-                    if(response.body() != null){
+                if (response.code() == 200) {
+                    if (response.body() != null) {
                         Log.i("PerfilUsuario", response.body().toString())
 
                         horariosList = response.body()!!
@@ -222,44 +269,13 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         })
     }
 
-    fun cargarHorariosSpinner(){
+    fun cargarHorariosSpinner() {
         val spinner: Spinner = findViewById(R.id.horario_create)
 
         val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, horariosList)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter = adaptador
         horarioSpinner = spinner
-
-    }
-
-
-
-    private fun validarCampos(): Boolean {
-        val nombreEditText = findViewById<EditText>(R.id.nombre_texto)
-        val apellidoEditText = findViewById<EditText>(R.id.apellido_texto)
-        val documentoEditText = findViewById<EditText>(R.id.documento_texto)
-        val emailEditText = findViewById<EditText>(R.id.email_texto)
-        val tipoCuentaSpinner = findViewById<Spinner>(R.id.tipo_cuenta)
-
-        val nombre = nombreEditText.text.toString()
-        val apellido = apellidoEditText.text.toString()
-        val documento = documentoEditText.text.toString()
-        val email = emailEditText.text.toString()
-        val tipoCuenta = tipoCuentaSpinner.selectedItem.toString()
-        val horarioModel = horarioSpinner.selectedItem as HorarioModel
-
-
-        // Validar que ningún campo esté vacío
-        if (nombre.isEmpty() || apellido.isEmpty() || documento.isEmpty() || email.isEmpty() || tipoCuenta.isEmpty() || horarioModel._id.isEmpty()) {
-            return false
-        }
-
-        // Validar email
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            return false
-        }
-
-        return true
     }
 
     fun registrarUsuario(view: View) {
@@ -270,12 +286,12 @@ class RegistroUsuarioActivity:AppCompatActivity() {
             Toast.makeText(this, "Por favor, complete todos los campos correctamente", Toast.LENGTH_SHORT).show()
         }
     }
+
     fun goToCamaraParaRegistro(view: View) {
         val intent = Intent(this, CameraxAddFaceActivity::class.java)
         intent.putExtra("fromActivity", "RegistroUsuarioActivity")
         startActivityForResult(intent, CAMERA_REQUEST_CODE)
     }
-
 
     fun enviarDatosRegistro() {
         val nombreEditText = findViewById<EditText>(R.id.nombre_texto)
@@ -291,40 +307,73 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         val email = emailEditText.text.toString()
         val horarioModel = horarioSpinner.selectedItem as HorarioModel
 
-        val userModel = UserModel("", nombre, apellido, documento.toInt(), tipoCuenta, listOf(horarioModel._id), email)
+        val userModel = UserModel(
+            "",
+            nombre,
+            apellido,
+            documento.toInt(),
+            tipoCuenta,
+            listOf(horarioModel._id),
+            email
+        )
         RetrofitClient.userApiService.post(userModel).enqueue(object : Callback<ImagenModel> {
             override fun onResponse(call: Call<ImagenModel>, response: Response<ImagenModel>) {
                 when (response.code()) {
                     200 -> {
                         val userModelResponse = response.body()
 
-                        Toast.makeText(this@RegistroUsuarioActivity, "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@RegistroUsuarioActivity,
+                            "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO",
+                            Toast.LENGTH_SHORT
+                        ).show()
 
                         userModelResponse?._id?.let { userId ->
                             goToRegistroExitoso(userId)
                         }
                     }
+
                     201 -> {
-                        Toast.makeText(this@RegistroUsuarioActivity, "USUARIO REGISTRADO, PERO CON ERROR 201", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@RegistroUsuarioActivity,
+                            "USUARIO REGISTRADO, PERO CON ERROR 201",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         goToRegistroDenegado()
                     }
+
                     400 -> {
-                        Toast.makeText(this@RegistroUsuarioActivity, "ERROR: Debe llenar todos los campos y luego tomar la foto", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@RegistroUsuarioActivity,
+                            "ERROR: Debe llenar todos los campos y luego tomar la foto",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         goToRegistroDenegado()
                     }
+
                     500 -> {
-                        Toast.makeText(this@RegistroUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@RegistroUsuarioActivity, "Error 500", Toast.LENGTH_SHORT)
+                            .show()
                         goToRegistroDenegado()
                     }
+
                     else -> {
-                        Toast.makeText(this@RegistroUsuarioActivity, "Error desconocido, revise el servidor", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@RegistroUsuarioActivity,
+                            "Error desconocido, revise el servidor",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         goToRegistroDenegado()
                     }
                 }
             }
 
             override fun onFailure(call: Call<ImagenModel>, t: Throwable) {
-                Toast.makeText(this@RegistroUsuarioActivity, "Fallo en la solicitud de registro de usuario: ${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@RegistroUsuarioActivity,
+                    "Fallo en la solicitud de registro de usuario: ${t.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
                 goToRegistroDenegado()
             }
         })
@@ -336,20 +385,19 @@ class RegistroUsuarioActivity:AppCompatActivity() {
         intent.putExtra("userId", userId)
         startActivity(intent)
     }
-    fun goToRegistroDenegado() {
 
+    fun goToRegistroDenegado() {
         val intent = Intent(applicationContext, RegistroDenegado2Activity::class.java)
         startActivity(intent)
     }
-    fun Siguiente(view : View){
 
+    fun Siguiente(view: View) {
         val intent = Intent(applicationContext, Denegado::class.java)
         startActivity(intent)
-
     }
-    fun goInicioRRHH(view : View){
+
+    fun goInicioRRHH(view: View) {
         val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
         startActivity(intent)
     }
-
 }

@@ -12,14 +12,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="625dp"
         android:background="@drawable/rectangulo_celeste"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/elipse_scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
         app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top"
         app:layout_constraintVertical_bias="0.431"
         app:layout_constraintWidth_percent="0.93">
 
@@ -36,8 +36,9 @@
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.341"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/logo_ingresoegreso"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.026"
             tools:ignore="MissingConstraints" />
@@ -203,9 +204,9 @@
             android:id="@+id/ingreso_especial_nav"
             android:layout_width="66dp"
             android:layout_height="45dp"
-            android:onClick="goToQREspecial"
-
             android:layout_marginEnd="240dp"
+
+            android:onClick="goToQREspecial"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.923"

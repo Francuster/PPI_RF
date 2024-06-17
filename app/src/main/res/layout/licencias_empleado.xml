@@ -13,13 +13,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/rectangulo_celeste"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/nav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
-        app:layout_constraintHorizontal_bias="0.482"
+        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.431"
+        app:layout_constraintVertical_bias="0.784"
         app:layout_constraintWidth_percent="0.93">
 
 
@@ -59,8 +59,8 @@
             app:srcCompat="@drawable/arrow_left" />
 
         <ScrollView
-            android:layout_width="361dp"
-            android:layout_height="499dp"
+            android:layout_width="383dp"
+            android:layout_height="507dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -69,10 +69,10 @@
 
             <LinearLayout
                 android:id="@+id/container"
-                android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:gravity="center"
+                android:orientation="vertical" />
         </ScrollView>
 
 

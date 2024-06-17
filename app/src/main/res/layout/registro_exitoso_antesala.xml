@@ -10,8 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
-        android:layout_width="393dp"
-        android:layout_height="708dp"
+        android:layout_width="387dp"
+        android:layout_height="695dp"
         android:background="@drawable/rectangulo_celeste"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

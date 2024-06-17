@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.model.HorarioModel
@@ -46,6 +48,37 @@ class PerfilUsuarioActivity : AppCompatActivity() {
 
         }
     }
+
+    fun eliminarUsuario(view: View) {
+        // Crear un AlertDialog de confirmación antes de eliminar
+        AlertDialog.Builder(this)
+            .setTitle("Confirmar Eliminación")
+            .setMessage("¿Está seguro que desea eliminar este usuario?")
+            .setPositiveButton("Eliminar") { dialog, which ->
+                // Proceder con la eliminación del usuario si el usuario confirma
+                RetrofitClient.userApiService.delete(userModel._id)
+                    .enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                // Eliminar usuario correctamente, regresar a InicioRrHhActivity
+                                Toast.makeText(applicationContext, "Usuario eliminado correctamente", Toast.LENGTH_SHORT).show()
+                                goToAtrasIniRRHH(view)
+                            } else {
+                                Log.e("PerfilUsuario", "Eliminar usuario fallido: ${response.code()}")
+                                Toast.makeText(applicationContext, "Error al eliminar usuario", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            Log.e("PerfilUsuario", "Eliminar usuario onFailure", t)
+                            Toast.makeText(applicationContext, "Error al eliminar usuario", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+            }
+            .setNegativeButton("Cancelar", null) // Opción para cancelar la eliminación
+            .show()
+    }
+
 
     fun getHorarios(){
         RetrofitClient.horariosApiService.get().enqueue(object: Callback<List<HorarioModel>>{

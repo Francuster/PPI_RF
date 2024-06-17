@@ -95,10 +95,10 @@ class InicioRrHhActivity: AppCompatActivity() {
                 val itemView: View = inflater.inflate(R.layout.item_usuario, container, false)
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
                 textViewEmpleado.text = user.getFullName()
-                if (user.rol .uppercase() != "ESTUDIANTE" ) {
-                    listaEmpleados.add(Empleado(user.getFullName(),user._id))
-                    container.addView(itemView)
-                }
+
+                listaEmpleados.add(Empleado(user.getFullName(),user._id))
+                container.addView(itemView)
+
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
                     goToModificacionUsuario(user)
                 }
@@ -109,6 +109,7 @@ class InicioRrHhActivity: AppCompatActivity() {
 
         }
     }
+
 
 
 

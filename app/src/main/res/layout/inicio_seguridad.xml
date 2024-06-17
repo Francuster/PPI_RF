@@ -101,6 +101,7 @@
 
             android:layout_width="80dp"
             android:layout_height="47dp"
+            android:onClick="perfilSeguridadDetailAlert"
 
 
             app:layout_constraintBottom_toBottomOf="parent"
@@ -131,6 +132,7 @@
                 android:id="@+id/imagen_nav_cuenta"
                 android:layout_width="28dp"
                 android:layout_height="25dp"
+                android:onClick="perfilSeguridadDetailAlert"
 
 
                 app:layout_constraintBottom_toTopOf="@+id/cuenta"

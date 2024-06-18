@@ -3,6 +3,11 @@ package com.example.myapplication.activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
+import android.util.Log
+import android.util.Patterns
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -12,25 +17,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
-import com.example.myapplication.utils.NetworkChangeService
-import com.example.myapplication.utils.isServiceRunning
-
-import java.util.Locale
-import android.text.Editable
-import android.text.InputFilter
-import android.text.Spanned
-import android.text.TextWatcher
-import android.util.Log
-import android.util.Patterns
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.NetworkChangeService
+import com.example.myapplication.utils.isServiceRunning
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Locale
 
 class ModificacionUsuarioActivity : AppCompatActivity() {
-
+    private lateinit var loadingOverlayout: View
     private val CAMERA_REQUEST_CODE = 100
     private val TEXT_REQUEST_CODE = 101
     private val ROLE_REQUEST_CODE = 102
@@ -65,7 +63,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.modificacion_usuario)
-
+        loadingOverlayout = findViewById(R.id.loading_overlayout)
         userModel = intent.getSerializableExtra("userModel") as UserModel
 
         val textoNombreUsuario = findViewById<TextView>(R.id.modificacion_titulo)
@@ -89,6 +87,18 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         agregarFiltros()
         agregarValidaciones()
         getHorarios()
+    }
+
+    private fun showLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.GONE
+        }
     }
 
     private fun cargarDatos(userModel: UserModel) {
@@ -118,7 +128,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<List<HorarioModel>>, t: Throwable) {
                 Log.e("PerfilUsuario", "getHorarios onFailure")
-            }
+                            }
         })
     }
 
@@ -287,16 +297,20 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
         RetrofitClient.userApiService.put(userModel._id, updatedUser).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                showLoadingOverlay()
                 when (response.code()) {
                     200 -> {
+                        hideLoadingOverlay()
                         Toast.makeText(this@ModificacionUsuarioActivity, "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO", Toast.LENGTH_SHORT).show()
                         goToModificacionExitosa()
                     }
                     500 -> {
+                        hideLoadingOverlay()
                         goToModificacionError()
                         Toast.makeText(this@ModificacionUsuarioActivity, "Error 500", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
+                        hideLoadingOverlay()
                         goToModificacionError()
                         Toast.makeText(this@ModificacionUsuarioActivity, "Error: durante la actualización", Toast.LENGTH_SHORT).show()
                     }
@@ -305,6 +319,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Toast.makeText(this@ModificacionUsuarioActivity, "Fallo en la solicitud: ${t.message}", Toast.LENGTH_SHORT).show()
+                hideLoadingOverlay()
             }
         })
     }

@@ -11,16 +11,16 @@
         android:layout_height="138dp"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="62dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:src="@drawable/log3rtext" />
+            android:src="@drawable/log3rdownload" />
 
         <ProgressBar
             android:layout_width="146dp"
@@ -32,9 +32,9 @@
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:text="Aguarde, cargando datos..."
-            android:textColor="@android:color/white"
+            android:textStyle="bold"
             app:layout_constraintWidth_percent="0.23"
-             />
+            />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

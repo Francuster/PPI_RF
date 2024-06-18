@@ -10,7 +10,6 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -40,6 +39,7 @@ import java.io.IOException
 import java.util.Calendar
 
 class ReportesSeguridadActivity : AppCompatActivity() {
+    private lateinit var loadingOverlayout: View
     private lateinit var calendarView: CalendarView
     private lateinit var downloadButton: Button
     private var selectedDate: String? = null
@@ -82,6 +82,18 @@ class ReportesSeguridadActivity : AppCompatActivity() {
         }
     }
 
+    private fun showLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.GONE
+        }
+    }
+
     // Manejar la respuesta de la solicitud de permisos
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -105,6 +117,7 @@ class ReportesSeguridadActivity : AppCompatActivity() {
 
     // Función para descargar los logs en base a la fecha seleccionada
     private fun downloadLogs(date: String) {
+        showLoadingOverlay()
         // Construir la URL para la solicitud HTTP
         val url = BuildConfig.BASE_URL + "/api/logs/day?fecha=$date"
         val client = OkHttpClient()
@@ -125,6 +138,7 @@ class ReportesSeguridadActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
+                hideLoadingOverlay()
                 // Manejar la respuesta recibida del servidor
                 if (response.isSuccessful) {
                     response.body?.string()?.let { responseBody ->

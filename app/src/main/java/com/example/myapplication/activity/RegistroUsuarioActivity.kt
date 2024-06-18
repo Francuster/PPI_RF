@@ -16,7 +16,6 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.model.HorarioModel
@@ -30,7 +29,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class RegistroUsuarioActivity : AppCompatActivity() {
-
+    private lateinit var loadingOverlayout: View
     private var horariosList = listOf<HorarioModel>()
     private lateinit var horarioSpinner: Spinner
     private lateinit var registrarButton: Button
@@ -44,6 +43,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.registro_primera_sala_rrhh)
+        loadingOverlayout = findViewById(R.id.loading_overlayout)
         val spinner: Spinner = findViewById<Spinner>(R.id.tipo_cuenta)
         var elementos = ArrayList<String>()
 
@@ -65,6 +65,18 @@ class RegistroUsuarioActivity : AppCompatActivity() {
 
         agregarFiltrosValidaciones()
         getHorarios()
+    }
+
+    private fun showLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.GONE
+        }
     }
 
     private fun agregarFiltrosValidaciones() {
@@ -338,10 +350,11 @@ class RegistroUsuarioActivity : AppCompatActivity() {
         // Hacer la llamada a la API
         RetrofitClient.userApiService.post(userModel).enqueue(object : Callback<ImagenModel> {
             override fun onResponse(call: Call<ImagenModel>, response: Response<ImagenModel>) {
+                showLoadingOverlay()
                 when (response.code()) {
                     200 -> {
                         val userModelResponse = response.body()
-
+                        hideLoadingOverlay()
                         Toast.makeText(
                             this@RegistroUsuarioActivity,
                             "ÉXITO EN LA SOLICITUD: USUARIO REGISTRADO",
@@ -355,7 +368,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
 
                     201 -> {
                         val userModelResponse = response.body()
-
+                        hideLoadingOverlay()
                         Toast.makeText(
                             this@RegistroUsuarioActivity,
                             "USUARIO REGISTRADO, PERO CON ERROR 201",
@@ -368,6 +381,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
                     }
 
                     400 -> {
+                        hideLoadingOverlay()
                         Toast.makeText(
                             this@RegistroUsuarioActivity,
                             "ERROR: DNI o MAIL ya registrados en la base de datos",
@@ -377,6 +391,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
                     }
 
                     500 -> {
+                        hideLoadingOverlay()
                         Toast.makeText(
                             this@RegistroUsuarioActivity,
                             "Error 500",
@@ -386,6 +401,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
                     }
 
                     else -> {
+                        hideLoadingOverlay()
                         Toast.makeText(
                             this@RegistroUsuarioActivity,
                             "Error desconocido, revise el servidor",
@@ -402,6 +418,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
                     "Fallo en la solicitud de registro de usuario: ${t.message}",
                     Toast.LENGTH_SHORT
                 ).show()
+                hideLoadingOverlay()
                 goToRegistroDenegado()
             }
         })

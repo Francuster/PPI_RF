@@ -20,6 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class InicioRrHhActivity : AppCompatActivity() {
+    private lateinit var loadingOverlayout: View
     private var userModelList = arrayListOf<UserModel>()
     private var listaEmpleados = arrayListOf<Empleado>()
 
@@ -35,7 +36,7 @@ class InicioRrHhActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inico_rrhh)
-
+        loadingOverlayout = findViewById(R.id.loading_overlayout)
         if (GlobalData.empleado == null) {
             nombre = intent.getStringExtra("nombre")
             apellido = intent.getStringExtra("apellido") // nombre para mostrar
@@ -51,13 +52,24 @@ class InicioRrHhActivity : AppCompatActivity() {
         super.onResume()
         fetchUsers()
     }
+    private fun showLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.VISIBLE
+        }
+    }
 
+    private fun hideLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.GONE
+        }
+    }
     private fun fetchUsers() {
+        showLoadingOverlay()
         RetrofitClient.userApiService.get().enqueue(object : Callback<List<UserModel>> {
             override fun onResponse(
                 call: Call<List<UserModel>>,
                 response: Response<List<UserModel>>
-            ) {
+            ) { hideLoadingOverlay()
                 if (response.code() == 200) {
                     userModelList = response.body() as ArrayList<UserModel>
                     mostrarTodosLosEmpleados()
@@ -83,8 +95,9 @@ class InicioRrHhActivity : AppCompatActivity() {
                 val itemView: View = inflater.inflate(R.layout.item_usuario, container, false)
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
                 textViewEmpleado.text = user.getFullName()
-
-                listaEmpleados.add(Empleado(user.getFullName(), user._id))
+                if (user.rol.uppercase() !="ESTUDIANTE") {
+                    listaEmpleados.add(Empleado(user.getFullName(), user._id))
+                }
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_editar).setOnClickListener {

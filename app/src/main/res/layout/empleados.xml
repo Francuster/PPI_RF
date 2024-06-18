@@ -160,7 +160,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Incluye el layout de carga -->
     <include
-        android:id="@+id/loading_overlay"
+        android:id="@+id/loading_overlayout"
         layout="@layout/loading"
         android:visibility="gone" />
 

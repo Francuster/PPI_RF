@@ -22,7 +22,7 @@ import okhttp3.Response
 import java.io.IOException
 
 class EmpleadosLicenciasActivity: AppCompatActivity() {
-    private lateinit var loadingOverlay: View
+    private lateinit var loadingOverlayout: View
     private  var licenciasEmpleado = ArrayList<Licencia>()
     private lateinit var listaEmpleados: ArrayList<Empleado>
     private lateinit var empleadoBuscado: ArrayList<Empleado>
@@ -38,7 +38,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         empleadoBuscado = ArrayList()
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
         textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
-        loadingOverlay = findViewById(R.id.loading_overlay)
+        loadingOverlayout = findViewById(R.id.loading_overlayout)
         if(GlobalData.licencias.isEmpty() || listaEmpleados.size != InicioRrHhActivity.GlobalData.cantEmpleados){
             fetch("Licencias","/api/licencias","FetchLicencias")
             InicioRrHhActivity.GlobalData.cantEmpleados = listaEmpleados.size
@@ -52,13 +52,13 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
 
     private fun showLoadingOverlay() {
         runOnUiThread {
-            loadingOverlay.visibility = View.VISIBLE
+            loadingOverlayout.visibility = View.VISIBLE
         }
     }
 
     private fun hideLoadingOverlay() {
         runOnUiThread {
-            loadingOverlay.visibility = View.GONE
+            loadingOverlayout.visibility = View.GONE
         }
     }
 

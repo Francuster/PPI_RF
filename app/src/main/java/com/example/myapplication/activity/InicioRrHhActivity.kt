@@ -19,6 +19,7 @@ import retrofit2.Response
 
 
 class InicioRrHhActivity: AppCompatActivity() {
+    private lateinit var loadingOverlay: View
     private var userModelList = arrayListOf<UserModel>()
     private val handler = Handler()
     private var listaEmpleados = arrayListOf<Empleado>()
@@ -33,6 +34,7 @@ class InicioRrHhActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inico_rrhh)
+        loadingOverlay = findViewById(R.id.loading_overlayout)
         fetchUsers()
         if (GlobalData.empleado == null) {
             nombre = intent.getStringExtra("nombre")
@@ -50,13 +52,25 @@ class InicioRrHhActivity: AppCompatActivity() {
         // Detén la actualización periódica cuando la actividad se destruye
         handler.removeCallbacks(runnable)
     }
+    private fun showLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlay.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlay.visibility = View.GONE
+        }
+    }
 
     private fun fetchUsers() {
+        showLoadingOverlay()
         RetrofitClient.userApiService.get().enqueue(object: Callback<List<UserModel>>{
             override fun onResponse(
                 call: Call<List<UserModel>>,
                 response: Response<List<UserModel>>
-            ) {
+            ) { hideLoadingOverlay()
                 if(response.code() == 200){
                     userModelList = response.body() as ArrayList<UserModel>
                     mostrarTodosLosEmpleados()

@@ -5,10 +5,10 @@
       <entry key="InicioSeguridadActivity">
         <State />
       </entry>
-      <entry key="ModificacionUsuarioActivity">
+      <entry key="PerfilUsuarioActivity">
         <State />
       </entry>
-      <entry key="PerfilUsuarioActivity">
+      <entry key="RegistroUsuarioActivity">
         <State />
       </entry>
       <entry key="ReportesSeguridadActivity">

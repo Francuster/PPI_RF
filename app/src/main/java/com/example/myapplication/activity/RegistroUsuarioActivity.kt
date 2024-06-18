@@ -11,10 +11,12 @@ import android.util.Patterns
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.model.HorarioModel
@@ -28,10 +30,11 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class RegistroUsuarioActivity : AppCompatActivity() {
-    private val CAMERA_REQUEST_CODE = 100
-    private var imageByteArray: ByteArray? = null
+
     private var horariosList = listOf<HorarioModel>()
     private lateinit var horarioSpinner: Spinner
+    private lateinit var registrarButton: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +46,10 @@ class RegistroUsuarioActivity : AppCompatActivity() {
         setContentView(R.layout.registro_primera_sala_rrhh)
         val spinner: Spinner = findViewById<Spinner>(R.id.tipo_cuenta)
         var elementos = ArrayList<String>()
+
+        registrarButton = findViewById(R.id.boton_registrar_ingreso)
+        // Deshabilitar el botón registrar hasta que se carguen los horarios
+        registrarButton.isEnabled = false
 
         elementos.add("ADMINISTRADOR")
         elementos.add("DOCENTE")
@@ -167,7 +174,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
                 if (s.isNullOrEmpty()) {
                     emailEditText.error = "El campo no puede estar vacío"
                 } else if (!Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
-                    emailEditText.error = "Formato de email incorrecto"
+                    emailEditText.error = "El formato de mail es algo@algo.com"
                 }
             }
 
@@ -259,6 +266,8 @@ class RegistroUsuarioActivity : AppCompatActivity() {
 
                         horariosList = response.body()!!
                         cargarHorariosSpinner()
+                        // Habilitar el botón registrar
+                        registrarButton.isEnabled = true
                     }
                 }
             }
@@ -282,15 +291,17 @@ class RegistroUsuarioActivity : AppCompatActivity() {
         if (validarCampos()) {
             enviarDatosRegistro()
         } else {
-            // Mostrar mensaje de error general si algún campo no es válido
-            Toast.makeText(this, "Por favor, complete todos los campos correctamente", Toast.LENGTH_SHORT).show()
+            mostrarDialogoCamposIncompletos()
         }
     }
 
-    fun goToCamaraParaRegistro(view: View) {
-        val intent = Intent(this, CameraxAddFaceActivity::class.java)
-        intent.putExtra("fromActivity", "RegistroUsuarioActivity")
-        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+    private fun mostrarDialogoCamposIncompletos() {
+        val builder = android.app.AlertDialog.Builder(this)
+        builder.setTitle("Campos incompletos")
+        builder.setMessage("Por favor, complete todos los campos correctamente.")
+        builder.setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     fun enviarDatosRegistro() {
@@ -305,17 +316,26 @@ class RegistroUsuarioActivity : AppCompatActivity() {
         val documento = documentoEditText.text.toString()
         val tipoCuenta = tipoCuentaSpinner.selectedItem.toString()
         val email = emailEditText.text.toString()
-        val horarioModel = horarioSpinner.selectedItem as HorarioModel
 
+        // Obtener el horario seleccionado si está inicializado
+        val horarioModel = if (::horarioSpinner.isInitialized) {
+            horarioSpinner.selectedItem as? HorarioModel
+        } else {
+            null
+        }
+
+        // Crear el modelo de usuario
         val userModel = UserModel(
             "",
             nombre,
             apellido,
-            documento.toInt(),
+            documento.toIntOrNull() ?: 0, // Manejo seguro para convertir a Int
             tipoCuenta,
-            listOf(horarioModel._id),
+            horarioModel?.let { listOf(it._id) } ?: emptyList(),
             email
         )
+
+        // Hacer la llamada a la API
         RetrofitClient.userApiService.post(userModel).enqueue(object : Callback<ImagenModel> {
             override fun onResponse(call: Call<ImagenModel>, response: Response<ImagenModel>) {
                 when (response.code()) {
@@ -334,12 +354,17 @@ class RegistroUsuarioActivity : AppCompatActivity() {
                     }
 
                     201 -> {
+                        val userModelResponse = response.body()
+
                         Toast.makeText(
                             this@RegistroUsuarioActivity,
                             "USUARIO REGISTRADO, PERO CON ERROR 201",
                             Toast.LENGTH_SHORT
                         ).show()
-                        goToRegistroDenegado()
+
+                        userModelResponse?._id?.let { userId ->
+                            goToRegistroExitoso(userId)
+                        }
                     }
 
                     400 -> {
@@ -352,8 +377,11 @@ class RegistroUsuarioActivity : AppCompatActivity() {
                     }
 
                     500 -> {
-                        Toast.makeText(this@RegistroUsuarioActivity, "Error 500", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(
+                            this@RegistroUsuarioActivity,
+                            "Error 500",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         goToRegistroDenegado()
                     }
 
@@ -378,6 +406,19 @@ class RegistroUsuarioActivity : AppCompatActivity() {
             }
         })
     }
+
+
+    private fun mostrarAlertDialog(mensaje: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(mensaje)
+            .setCancelable(false)
+            .setPositiveButton("Aceptar") { dialog, _ ->
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
+    }
+
 
     private fun goToRegistroExitoso(userId: String) {
         val intent = Intent(this, RegistroExitoso2Activity::class.java)

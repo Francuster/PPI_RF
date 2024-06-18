@@ -204,15 +204,13 @@
             android:id="@+id/ingreso_especial_nav"
             android:layout_width="66dp"
             android:layout_height="45dp"
-            android:layout_marginEnd="240dp"
 
             android:onClick="goToQREspecial"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.923"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.625">
+            app:layout_constraintEnd_toStartOf="@+id/logs_nav"
+            app:layout_constraintHorizontal_bias="0.112"
+            app:layout_constraintStart_toEndOf="@+id/ingreso_egreso_nav"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@id/nav_ingresoegreso"

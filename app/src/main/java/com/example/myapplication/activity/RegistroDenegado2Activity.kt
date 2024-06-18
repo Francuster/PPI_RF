@@ -23,15 +23,16 @@ class RegistroDenegado2Activity : AppCompatActivity() {
 
         if (error && origen == "ModificacionUsuarioActivity") {
             textoNombreUsuario.text = "MODIFICACIÓN RECHAZADA"
-        } else {
+        }
+        if( origen =="RegistroExitosoAntesalaRrHh"){
+            textoNombreUsuario.text = "INGRESO DENEGADO"
+        }
+        else {
             textoNombreUsuario.text = "REGISTRO DENEGADO"
         }
 
         // Configurar el texto del botón según el origen
         when (origen) {
-            "CameraXAuthentication" -> {
-                botonSiguiente.text = "Siguiente"
-            }
             "RegistroUsuario", "RegistroExitosoAntesalaRrHh" -> {
                 botonSiguiente.text = "Volver a Inicio"
             }

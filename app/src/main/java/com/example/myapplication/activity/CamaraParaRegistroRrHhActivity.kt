@@ -1,3 +1,5 @@
+/*cAMARA VIEJA DEPRECADA
+
 package com.example.myapplication.activity
 
 import android.Manifest
@@ -410,3 +412,4 @@ class CamaraParaRegistroRrHhActivity : AppCompatActivity(), Camera.PreviewCallba
 
 }
 
+*/

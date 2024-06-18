@@ -120,12 +120,6 @@ class CameraxAddFaceActivity : AppCompatActivity() {
         if (embeddings != null) {
             val imgModel = ImagenModel("", embeddings!!, userId)
             val call: Call<ImagenModel> = RetrofitClient.imagenApiService.postImagenes(imgModel)
-//                if (intent.getStringExtra("fromActivity") == "RegistroUsuarioActivity") {
-//                    RetrofitClient.imagenApiService.postImagenes(imgModel)
-//                } else {
-//                    val userId = intent.getStringExtra("userId").toString()
-//                    RetrofitClient.imagenApiService.putImagenes(userId, imgModel)
-//                }
 
             call.enqueue(object : Callback<ImagenModel> {
                 override fun onResponse(call: Call<ImagenModel>, response: Response<ImagenModel>) {
@@ -136,7 +130,17 @@ class CameraxAddFaceActivity : AppCompatActivity() {
                             "Se registró la imagen exitosamente.",
                             Toast.LENGTH_SHORT
                         ).show()
-                        // Termina la actividad y vuelve al intent anterior
+
+                        // Verifica la bandera para decidir si volver a la actividad de RRHH
+                        if (intent.getStringExtra("fromActivity") == "RegistroUsuarioActivity") {
+                            // Volver a la actividad de RRHH
+                            val intent = Intent(this@CameraxAddFaceActivity, InicioRrHhActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            // No es necesario hacer nada especial si no se viene de "RegistroUsuarioActivity"
+                        }
+
+                        // Finaliza esta actividad
                         finish()
                     } else {
                         println("Failed to send Embeddings: ${response.code()}")
@@ -155,6 +159,7 @@ class CameraxAddFaceActivity : AppCompatActivity() {
             })
         }
     }
+
 
 
     override fun onResume() {
@@ -281,7 +286,7 @@ class CameraxAddFaceActivity : AppCompatActivity() {
 
     @get:Throws(NullPointerException::class)
     protected val rotation: Int
-        get() = previewView!!.display.rotation
+        get() = previewView?.display?.rotation ?: 0
 
     private fun switchCamera() {
         if (lensFacing == CameraSelector.LENS_FACING_BACK) {

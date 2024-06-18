@@ -2,52 +2,126 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
-import com.example.myapplication.activity.QRScannerActivity
 import com.example.myapplication.model.Empleado
+import com.example.myapplication.model.HorarioModel
+import com.example.myapplication.model.UserModel
+import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.deviceIsConnected
+import okhttp3.*
+import org.json.JSONArray
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
+class InicioSeguridadActivity : AppCompatActivity() {
 
-class InicioSeguridadActivity: AppCompatActivity() {
+    object GlobalData {
+        var seguridad: Empleado? = null
+    }
 
-        object GlobalData {
-            var seguridad: Empleado? = null
+    private lateinit var logContainer: LinearLayout
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.inicio_seguridad)
+
+        if (GlobalData.seguridad == null) {
+            val nombre = intent.getStringExtra("nombre")
+            val apellido = intent.getStringExtra("apellido")
+            val empleadoId = intent.getStringExtra("_id")
+
+            GlobalData.seguridad = Empleado(fullName = "$nombre $apellido", userId = "$empleadoId")
         }
-        private var nombre: String? = null
-        private var apellido: String? = null
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            setContentView(R.layout.inicio_seguridad)
+        val textoNombreUsuario = findViewById<TextView>(R.id.seguridad)
+        textoNombreUsuario.text = GlobalData.seguridad!!.fullName
 
-            if (GlobalData.seguridad == null) {
-                nombre = intent.getStringExtra("nombre")
-                apellido = intent.getStringExtra("apellido")//nombre para mostrar
-                GlobalData.seguridad = Empleado(fullName = "$nombre $apellido", userId = "124124")
+        logContainer = findViewById(R.id.container)
 
+        // Mostrar los logs del día actual
+        showLogsOfTheDay()
+    }
+
+    private fun showLogsOfTheDay() {
+        val url = "${BuildConfig.BASE_URL}/api/logs/day?fecha=${getCurrentDate()}"
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    Toast.makeText(this@InicioSeguridadActivity, "Error al cargar los logs: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
 
-            val textoNombreUsuario = findViewById<TextView>(R.id.seguridad)
-            textoNombreUsuario.text = GlobalData.seguridad!!.fullName
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    response.body?.string()?.let { responseBody ->
+                        runOnUiThread {
+                            displayLogs(responseBody)
+                        }
+                    }
+                } else {
+                    runOnUiThread {
+                        Toast.makeText(this@InicioSeguridadActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+    }
 
+    private fun displayLogs(responseBody: String) {
+        logContainer.removeAllViews()
+        try {
+            val logsArray = JSONArray(responseBody)
+            for (i in 0 until logsArray.length()) {
+                val log = logsArray.getJSONObject(i)
+                val logText = """
+                ┌────────────────────┐
+                │ Nombre: ${log.getString("nombre").padEnd(18)} 
+                │ Apellido: ${log.getString("apellido").padEnd(16)} 
+                │ DNI: ${log.getInt("dni").toString().padEnd(21)} 
+                │ Estado: ${log.getString("estado").padEnd(16)} 
+                │ Horario: ${log.getString("horario").padEnd(15)} 
+                │ Tipo: ${log.getString("tipo").padEnd(18)} 
+                └────────────────────┘
+                """.trimIndent()
+
+                val textView = TextView(this)
+                textView.text = logText
+                textView.setPadding(24, 16, 24, 16)
+                textView.setTextColor(ContextCompat.getColor(this, R.color.black))
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                logContainer.addView(textView)
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()
         }
-        override fun onResume() {
-            super.onResume()
-            setContentView(R.layout.inicio_seguridad)
-            val textoNombreUsuario = findViewById<TextView>(R.id.seguridad)
-            textoNombreUsuario.text = GlobalData.seguridad!!.fullName
-        }
+    }
+
+    private fun getCurrentDate(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return dateFormat.format(Date())
+    }
 
     fun goToAnteEscanea(view: View) {
-        if(deviceIsConnected(applicationContext)){
+        if (deviceIsConnected(applicationContext)) {
             val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
             startActivity(intent)
             finish()
-        }else{
+        } else {
             Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
             val intent = Intent(applicationContext, QRScannerActivity::class.java)
             startActivity(intent)
@@ -55,20 +129,19 @@ class InicioSeguridadActivity: AppCompatActivity() {
     }
 
     fun goToFormulario(view: View) {
-        if(deviceIsConnected(applicationContext)){
+        if (deviceIsConnected(applicationContext)) {
             val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
             startActivity(intent)
             finish()
-        }else{
+        } else {
             Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
             val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
             startActivity(intent)
         }
-
     }
 
     fun goToQREspecial(view: View) {
-        if(deviceIsConnected(applicationContext)){
+        if (deviceIsConnected(applicationContext)) {
             Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
             val intent = Intent(applicationContext, QRScannerActivity::class.java)
             startActivity(intent)
@@ -76,19 +149,113 @@ class InicioSeguridadActivity: AppCompatActivity() {
     }
 
     fun goToFormEspecial(view: View) {
-        if(deviceIsConnected(applicationContext)){
+        if (deviceIsConnected(applicationContext)) {
             Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
             val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
             startActivity(intent)
         }
     }
+
+    fun perfilSeguridadDetailAlert(view: View) {
+        obtenerYMostrarDetallesPerfil()
+    }
+
+    private fun obtenerYMostrarDetallesPerfil() {
+        val empleado = GlobalData.seguridad ?: return // Verificar que el empleado de seguridad no sea nulo
+        val empleadoId = empleado.userId // Obtener el ID del empleado de seguridad
+
+        // Llamar al método del servicio para obtener los detalles del empleado por su ID
+        RetrofitClient.userApiService.getById(empleadoId).enqueue(object : retrofit2.Callback<UserModel> {
+            override fun onResponse(call: retrofit2.Call<UserModel>, response: retrofit2.Response<UserModel>) {
+                if (response.isSuccessful) {
+                    val userModel = response.body()
+
+                    if (userModel != null) {
+                        obtenerYMostrarHorarios(userModel)
+                    } else {
+                        mostrarDialogoError()
+                    }
+                } else {
+                    mostrarDialogoError()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<UserModel>, t: Throwable) {
+                mostrarDialogoError()
+            }
+        })
+    }
+
+    private fun obtenerYMostrarHorarios(userModel: UserModel) {
+        val detallesBuilder = StringBuilder()
+        detallesBuilder.append("Nombre: ${userModel.nombre}\n")
+        detallesBuilder.append("Apellido: ${userModel.apellido}\n")
+        detallesBuilder.append("DNI: ${userModel.dni}\n")
+        detallesBuilder.append("Email: ${userModel.email}\n")
+
+        val horarios = mutableListOf<String>()
+        for (horarioId in userModel.horarios) {
+            RetrofitClient.horariosApiService.getById(horarioId).enqueue(object : retrofit2.Callback<HorarioModel> {
+                override fun onResponse(call: retrofit2.Call<HorarioModel>, response: retrofit2.Response<HorarioModel>) {
+                    if (response.isSuccessful) {
+                        val horario = response.body()
+                        if (horario != null) {
+                            horarios.add(horario.getFullName())
+                            if (horarios.size == userModel.horarios.size) {
+                                detallesBuilder.append("Horarios: ${horarios.joinToString(", ")}\n")
+                                mostrarDialogoPerfil(detallesBuilder.toString())
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: retrofit2.Call<HorarioModel>, t: Throwable) {
+                    mostrarDialogoError()
+                }
+            })
+        }
+    }
+
+    private fun mostrarDialogoPerfil(detalles: String) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Detalles del Perfil")
+            setMessage(detalles)
+
+            setPositiveButton("OK") { dialog, which ->
+                // Aquí puedes añadir alguna acción si lo deseas
+            }
+
+            setNegativeButton("Cancelar") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setCancelable(true)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun mostrarDialogoError() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Error")
+            setMessage("No se pudo obtener los detalles del perfil")
+
+            setPositiveButton("OK") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setCancelable(true)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
     fun goToReporteSeguridad(view: View) {
         val intent = Intent(applicationContext, ReportesSeguridadActivity::class.java)
         startActivity(intent)
     }
-
-
 }
-
-
-

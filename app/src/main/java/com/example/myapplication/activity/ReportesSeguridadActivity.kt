@@ -1,10 +1,17 @@
 package com.example.myapplication.activity
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.print.PrintAttributes
@@ -15,6 +22,10 @@ import android.widget.CalendarView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.FileProvider
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import okhttp3.Call
@@ -37,11 +48,16 @@ class ReportesSeguridadActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.reporte_seguridad)
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
-        textoNombreUsuario.text = InicioSeguridadActivity.GlobalData.seguridad!!.fullName
+        textoNombreUsuario.text = InicioSeguridadActivity.GlobalData.seguridad?.fullName ?: "Usuario"
 
         // Verificar y solicitar permisos si es necesario
-        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2)
+            }
         }
 
         // Asignar los elementos de la interfaz de usuario a las variables correspondientes
@@ -69,15 +85,23 @@ class ReportesSeguridadActivity : AppCompatActivity() {
     // Manejar la respuesta de la solicitud de permisos
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permiso concedido", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show()
+        when (requestCode) {
+            1 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permiso de escritura concedido", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Permiso de escritura denegado", Toast.LENGTH_SHORT).show()
+                }
+            }
+            2 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permiso de notificaciones concedido", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Permiso de notificaciones denegado", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
-
 
     // Función para descargar los logs en base a la fecha seleccionada
     private fun downloadLogs(date: String) {
@@ -148,14 +172,14 @@ class ReportesSeguridadActivity : AppCompatActivity() {
             for (i in 0 until logsArray.length()) {
                 val log = logsArray.getJSONObject(i)
                 val logText = """
-                ID: ${log.getString("_id")}
-                Horario: ${log.getString("horario")}
-                Nombre: ${log.getString("nombre")}
-                Apellido: ${log.getString("apellido")}
-                DNI: ${log.getInt("dni")}
-                Estado: ${log.getString("estado")}
-                Tipo: ${log.getString("tipo")}
-            """.trimIndent()
+                    ID: ${log.getString("_id")}
+                    Horario: ${log.getString("horario")}
+                    Nombre: ${log.getString("nombre")}
+                    Apellido: ${log.getString("apellido")}
+                    DNI: ${log.getInt("dni")}
+                    Estado: ${log.getString("estado")}
+                    Tipo: ${log.getString("tipo")}
+                """.trimIndent()
 
                 val maxPageHeight = 842f // Altura máxima de la página (ISO A4)
                 var currentPage = 1
@@ -185,6 +209,9 @@ class ReportesSeguridadActivity : AppCompatActivity() {
 
             document.close()
 
+            // Crear la notificación
+            createNotification(file)
+
             runOnUiThread {
                 Toast.makeText(this, "Logs guardados en $file", Toast.LENGTH_LONG).show()
             }
@@ -195,6 +222,41 @@ class ReportesSeguridadActivity : AppCompatActivity() {
         }
     }
 
+    // Función para crear una notificación que abra el archivo PDF
+    private fun createNotification(file: File) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channelId = "download_channel"
+        val channelName = "Download Notifications"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val uri = FileProvider.getUriForFile(this, "$packageName.provider", file)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/pdf")
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.escaneo)
+            .setContentTitle("Descarga completa")
+            .setContentText("Logs guardados en ${file.name}")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // Solicitar permiso de notificaciones si no está concedido
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2)
+            return
+        }
+        NotificationManagerCompat.from(this).notify(1, notification)
+    }
 
     fun goToAtras(view: View) {
         val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)

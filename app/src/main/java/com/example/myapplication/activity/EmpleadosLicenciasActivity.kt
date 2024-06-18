@@ -45,7 +45,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         }
         // Observar cambios en data
         else{
-        mostrarTodosLosEmpleados()
+            mostrarTodosLosEmpleados()
         }
 
     }
@@ -80,6 +80,16 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
                 textViewEmpleado.text = fullName
 
+                // Disable click event for the TextView
+                textViewEmpleado.isClickable = false
+                textViewEmpleado.isFocusable = false
+
+                // Ocultar imagenes de ojo y editar
+                val imagenOjo: View = itemView.findViewById(R.id.imagen_ojo)
+                val imagenEditar: View = itemView.findViewById(R.id.imagen_editar)
+                imagenOjo.visibility = View.GONE
+                imagenEditar.visibility = View.GONE
+
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
@@ -91,6 +101,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         }
     }
 
+
     private fun goToMostrarLicenciasDelEmpleado(empleado: Empleado) {
         val intent = Intent(applicationContext, LicenciasEmpleadoActivity::class.java)
         intent.putParcelableArrayListExtra("empleadoBuscado", ArrayList(empleadoBuscado))
@@ -101,7 +112,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     }
 
     private fun fetch(search: String, endpoint: String, tag: String) {
-      showLoadingOverlay()
+        showLoadingOverlay()
         val request = Request.Builder()
             .url(BuildConfig.BASE_URL + endpoint) // Cambia esto por la URL de tu API
             .build()
@@ -174,4 +185,3 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
     }
 
 }
-

@@ -52,9 +52,7 @@ import java.nio.ReadOnlyBufferException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.experimental.inv
-
 
 class CameraxLoginActivity : AppCompatActivity() {
     private var previewView: PreviewView? = null
@@ -65,7 +63,7 @@ class CameraxLoginActivity : AppCompatActivity() {
     private var analysisUseCase: ImageAnalysis? = null
     private var graphicOverlay: GraphicOverlay? = null
     private var detectionTextView: TextView? = null
-    private val isRequestInProgress = AtomicBoolean(false)
+
     private var flipX = false
 
     private var faceRecognition: FaceRecognition? = null
@@ -269,7 +267,7 @@ class CameraxLoginActivity : AppCompatActivity() {
         val scaleX = previewView!!.width.toFloat() / inputImage.height.toFloat()
         val scaleY = previewView!!.height.toFloat() / inputImage.width.toFloat()
 
-        if (faces.isNotEmpty() && !responseSuccess && isRequestInProgress.compareAndSet(false, true)) {
+        if (faces.isNotEmpty() && !responseSuccess) {
             detectionTextView!!.setText(R.string.face_detected)
             val face = faces[0]
             boundingBox = face.boundingBox
@@ -293,19 +291,14 @@ class CameraxLoginActivity : AppCompatActivity() {
                                 loginExitoso(embeddingsResponse)
                             }
                             responseSuccess = true
-                        } else if(response.code() == 401) {
-                            println("Sin acceso: ${response.code()}")
-                            isRequestInProgress.set(false)
                         } else {
                             println("Failed to send Embeddings: ${response.code()}")
-                            isRequestInProgress.set(false)
                         }
                         currentCall = null
                     }
 
                     override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
                         println("Error sending Embeddings: ${t.message}")
-                        isRequestInProgress.set(false)
                         currentCall = null
                     }
                 })

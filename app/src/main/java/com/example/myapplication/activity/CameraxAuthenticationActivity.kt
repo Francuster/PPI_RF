@@ -52,7 +52,6 @@ import java.nio.ReadOnlyBufferException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.experimental.inv
 
 class CameraxAuthenticationActivity : AppCompatActivity() {
@@ -64,7 +63,6 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
     private var analysisUseCase: ImageAnalysis? = null
     private var graphicOverlay: GraphicOverlay? = null
     private var detectionTextView: TextView? = null
-    private val isRequestInProgress = AtomicBoolean(false)
 
     private var flipX = false
 
@@ -270,7 +268,7 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
         val scaleX = previewView!!.width.toFloat() / inputImage.height.toFloat()
         val scaleY = previewView!!.height.toFloat() / inputImage.width.toFloat()
 
-        if (faces.isNotEmpty()) {
+        if (faces.size > 0) {
             detectionTextView!!.setText(R.string.face_detected)
             // get first face detected
             val face = faces[0]
@@ -289,7 +287,7 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
             val embeddings = faceRecognition?.getFaceEmbeddings(bitmap, this)
 
             if (embeddings != null && embeddings.isNotEmpty()) {
-                if (!responseSuccess && isRequestInProgress.compareAndSet(false, true)) {
+                if (!responseSuccess) {
                     currentCall?.cancel()
 
 
@@ -310,12 +308,8 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
                                 intent.putExtra("embeddingsResponse", response.body())
                                 startActivity(intent)
                                 responseSuccess = true
-                            } else if(response.code() == 401) {
-                                println("Sin acceso: ${response.code()}")
-                                isRequestInProgress.set(false)
                             } else {
                                 println("Failed to send Embeddings: ${response.code()}")
-                                isRequestInProgress.set(false)
                             }
                             // Limpiar la referencia de la llamada actual
                             currentCall = null
@@ -323,7 +317,6 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
 
                         override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
                             println("Error sending Embeddings: ${t.message}")
-                            isRequestInProgress.set(false)
                             // Limpiar la referencia de la llamada actual
                             currentCall = null
                         }

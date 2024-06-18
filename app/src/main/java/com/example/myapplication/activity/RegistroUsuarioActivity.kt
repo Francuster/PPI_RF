@@ -406,7 +406,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
             }
         })
     }
-    
+
 
 
     private fun goToRegistroExitoso(userId: String) {

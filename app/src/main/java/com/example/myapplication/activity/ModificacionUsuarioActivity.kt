@@ -1,9 +1,11 @@
 package com.example.myapplication.activity
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
@@ -40,6 +42,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private lateinit var documentoEditText: EditText
     private lateinit var rolSpinner: Spinner
     private lateinit var horarioSpinner: Spinner
+    private lateinit var actualizarButton: Button
     private lateinit var userModel: UserModel
 
     private var rolArrayList = arrayListOf(
@@ -78,6 +81,9 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         mailEditText = findViewById(R.id.email_texto)
         documentoEditText = findViewById(R.id.documento_texto)
         rolSpinner = spinner
+        actualizarButton = findViewById(R.id.boton_registrar_ingreso)
+
+        actualizarButton.isEnabled = false // Disable the button initially
 
         cargarDatos(userModel)
         agregarFiltros()
@@ -123,6 +129,8 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         spinner.adapter = adaptador
         horarioSpinner = spinner
         selectHorario()
+
+        actualizarButton.isEnabled = true // Enable the button once horarios are loaded
     }
 
     fun selectHorario() {
@@ -131,7 +139,6 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             horarioSpinner.setSelection(index)
         }
     }
-
 
     fun goToAtrasInicioRRHH(view: View) {
         val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
@@ -243,7 +250,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         if (validarCampos()) {
             enviarDatosModificacion()
         } else {
-            Toast.makeText(this, "Por favor, corrige los errores antes de continuar", Toast.LENGTH_SHORT).show()
+            mostrarDialogoCamposIncompletos()
         }
     }
 
@@ -256,6 +263,16 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
                 !apellidoEditText.text.isNullOrEmpty() &&
                 !mailEditText.text.isNullOrEmpty() &&
                 !documentoEditText.text.isNullOrEmpty()
+    }
+
+    private fun mostrarDialogoCamposIncompletos() {
+        AlertDialog.Builder(this)
+            .setTitle("Campos incompletos")
+            .setMessage("Por favor, corrige los errores antes de continuar.")
+            .setPositiveButton("Aceptar") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun enviarDatosModificacion() {
@@ -295,16 +312,14 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private fun goToModificacionExitosa() {
         val intent = Intent(applicationContext, RegistroExitoso2Activity::class.java)
         intent.putExtra("exito", true)
-        intent.putExtra("origen", "ModificacionUsuarioActivity") // Indica el origen como ModificacionUsuarioActivity
+        intent.putExtra("origen", "ModificacionUsuarioActivity")
         startActivity(intent)
     }
 
     private fun goToModificacionError() {
         val intent = Intent(applicationContext, RegistroDenegado2Activity::class.java)
         intent.putExtra("error", true)
-        intent.putExtra("origen", "ModificacionUsuarioActivity") // Indica el origen como ModificacionUsuarioActivity
+        intent.putExtra("origen", "ModificacionUsuarioActivity")
         startActivity(intent)
     }
-
-
 }

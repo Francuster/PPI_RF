@@ -2,7 +2,6 @@ package com.example.myapplication.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,13 +21,13 @@ import retrofit2.Response
 
 class InicioRrHhActivity : AppCompatActivity() {
     private var userModelList = arrayListOf<UserModel>()
-    private val handler = Handler()
     private var listaEmpleados = arrayListOf<Empleado>()
-    private lateinit var runnable: Runnable
+
     object GlobalData {
         var empleado: Empleado? = null
         var cantEmpleados: Int = 0
     }
+
     private var nombre: String? = null
     private var apellido: String? = null
     private var empleadoId: String? = null
@@ -36,26 +35,21 @@ class InicioRrHhActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inico_rrhh)
-        fetchUsers()
+
         if (GlobalData.empleado == null) {
             nombre = intent.getStringExtra("nombre")
             apellido = intent.getStringExtra("apellido") // nombre para mostrar
             empleadoId = intent.getStringExtra("_id")
             GlobalData.empleado = Empleado(fullName = "$nombre $apellido", userId = "$empleadoId")
         }
+
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
         textoNombreUsuario.text = GlobalData.empleado!!.fullName
-
-
-
-        // Programa la actualización de usuarios cada 10 segundos
-        scheduleUserUpdate()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // Detén la actualización periódica cuando la actividad se destruye
-        handler.removeCallbacks(runnable)
+    override fun onResume() {
+        super.onResume()
+        fetchUsers()
     }
 
     private fun fetchUsers() {
@@ -76,19 +70,6 @@ class InicioRrHhActivity : AppCompatActivity() {
                 Log.e("fetchUsers", "Error al traer usuarios")
             }
         })
-
-    }
-
-    // TODO: sigue corriendo incluso después de ir a otro activity
-    private fun scheduleUserUpdate() {
-        //        runnable = Runnable {
-        //            fetchUsers()
-        //            // Vuelve a programar la actualización después de 10 segundos
-        //            handler.postDelayed(runnable, 10000)
-        //        }
-
-        //        // Programa la primera ejecución después de 10 segundos
-        //        handler.postDelayed(runnable, 10000)
     }
 
     private fun mostrarTodosLosEmpleados() {
@@ -120,7 +101,6 @@ class InicioRrHhActivity : AppCompatActivity() {
         }
     }
 
-
     private fun goToVerPerfil(userModel: UserModel) {
         val intent = Intent(applicationContext, PerfilUsuarioActivity::class.java)
         intent.putExtra("userModel", userModel)
@@ -142,9 +122,11 @@ class InicioRrHhActivity : AppCompatActivity() {
         val intent = Intent(applicationContext, ConfiguracionRRHHActivity::class.java)
         startActivity(intent)
     }
-   fun perfilDetailAlert(view: View){
-       obtenerYMostrarDetallesPerfil()
-   }
+
+    fun perfilDetailAlert(view: View){
+        obtenerYMostrarDetallesPerfil()
+    }
+
     private fun obtenerYMostrarDetallesPerfil() {
         val empleado = GlobalData.empleado ?: return // Verificar que el empleado no sea nulo
         val empleadoId = empleado.userId // Obtener el ID del empleado

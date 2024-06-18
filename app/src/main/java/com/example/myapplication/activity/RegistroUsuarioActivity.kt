@@ -370,7 +370,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
                     400 -> {
                         Toast.makeText(
                             this@RegistroUsuarioActivity,
-                            "ERROR: Debe llenar todos los campos y luego tomar la foto",
+                            "ERROR: DNI o MAIL ya registrados en la base de datos",
                             Toast.LENGTH_SHORT
                         ).show()
                         goToRegistroDenegado()

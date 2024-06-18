@@ -406,18 +406,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
             }
         })
     }
-
-
-    private fun mostrarAlertDialog(mensaje: String) {
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage(mensaje)
-            .setCancelable(false)
-            .setPositiveButton("Aceptar") { dialog, _ ->
-                dialog.dismiss()
-            }
-        val alert = builder.create()
-        alert.show()
-    }
+    
 
 
     private fun goToRegistroExitoso(userId: String) {

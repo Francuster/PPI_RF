@@ -23,11 +23,9 @@ class RegistroDenegado2Activity : AppCompatActivity() {
 
         if (error && origen == "ModificacionUsuarioActivity") {
             textoNombreUsuario.text = "MODIFICACIÓN RECHAZADA"
-        }
-        if( origen =="RegistroExitosoAntesalaRrHh"){
+        } else if (origen == "RegistroExitosoAntesalaRrHh") {
             textoNombreUsuario.text = "INGRESO DENEGADO"
-        }
-        else {
+        } else {
             textoNombreUsuario.text = "REGISTRO DENEGADO"
         }
 
@@ -41,6 +39,7 @@ class RegistroDenegado2Activity : AppCompatActivity() {
             }
         }
     }
+
 
     fun Siguiente(view: View) {
         val origen = intent.getStringExtra("origen")

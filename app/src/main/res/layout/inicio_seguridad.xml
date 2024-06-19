@@ -58,10 +58,12 @@
             app:srcCompat="@drawable/sort_arrow" />
 
         <LinearLayout
+            android:id="@+id/logs_del_dia"
             android:layout_width="379dp"
             android:layout_height="499dp"
             android:orientation="vertical"
             android:padding="16dp"
+            android:alpha="1.0"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -272,8 +274,8 @@
 
             <ImageView
                 android:id="@+id/imagen_nav_logs"
-                android:layout_width="21dp"
-                android:layout_height="21dp"
+                android:layout_width="14dp"
+                android:layout_height="15dp"
 
 
                 app:layout_constraintBottom_toTopOf="@+id/cuenta"
@@ -364,5 +366,10 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Incluye el layout de carga -->
+    <include
+        android:id="@+id/loading_overlayout"
+        layout="@layout/loading"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

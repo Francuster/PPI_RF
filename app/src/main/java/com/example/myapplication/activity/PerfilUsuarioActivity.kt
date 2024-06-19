@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -18,14 +17,14 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class PerfilUsuarioActivity : AppCompatActivity() {
-
+    private lateinit var loadingOverlayout: View
     private lateinit var userModel: UserModel
     private lateinit var horariosList: List<HorarioModel>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.perfil_usuario) // Nombre corregido
-
+        loadingOverlayout = findViewById(R.id.loading_overlayout)
         userModel = intent.getSerializableExtra("userModel") as UserModel
 
         cargarDatos(userModel)
@@ -49,7 +48,22 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         }
     }
 
+    private fun showLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.GONE
+        }
+    }
+
     fun eliminarUsuario(view: View) {
+        val miVista = findViewById<View>(R.id.layout_hijo)
+        miVista.alpha = 0.10f // 10% de opacidad
+        showLoadingOverlay()
         // Crear un AlertDialog de confirmación antes de eliminar
         AlertDialog.Builder(this)
             .setTitle("Confirmar Eliminación")
@@ -59,6 +73,7 @@ class PerfilUsuarioActivity : AppCompatActivity() {
                 RetrofitClient.userApiService.delete(userModel._id)
                     .enqueue(object : Callback<Void> {
                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            hideLoadingOverlay()
                             if (response.isSuccessful) {
                                 // Eliminar usuario correctamente, regresar a InicioRrHhActivity
                                 Toast.makeText(applicationContext, "Usuario eliminado correctamente", Toast.LENGTH_SHORT).show()
@@ -71,6 +86,7 @@ class PerfilUsuarioActivity : AppCompatActivity() {
 
                         override fun onFailure(call: Call<Void>, t: Throwable) {
                             Log.e("PerfilUsuario", "Eliminar usuario onFailure", t)
+                            hideLoadingOverlay()
                             Toast.makeText(applicationContext, "Error al eliminar usuario", Toast.LENGTH_SHORT).show()
                         }
                     })

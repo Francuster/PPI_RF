@@ -1,5 +1,6 @@
 package com.example.myapplication.activity
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -22,6 +23,8 @@ import okhttp3.Response
 import java.io.IOException
 
 class EmpleadosLicenciasActivity: AppCompatActivity() {
+    private lateinit var miVista : View
+    private var segundos = 500L
     private lateinit var loadingOverlayout: View
     private  var licenciasEmpleado = ArrayList<Licencia>()
     private lateinit var listaEmpleados: ArrayList<Empleado>
@@ -39,15 +42,24 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
         textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
         loadingOverlayout = findViewById(R.id.loading_overlayout)
+        miVista = findViewById(R.id.layout_hijo)
+        miVista.alpha = 0.1f
+
         if(GlobalData.licencias.isEmpty() || listaEmpleados.size != InicioRrHhActivity.GlobalData.cantEmpleados){
             fetch("Licencias","/api/licencias","FetchLicencias")
             InicioRrHhActivity.GlobalData.cantEmpleados = listaEmpleados.size
-        }
-        // Observar cambios en data
-        else{
+        }else{
+            segundos = 800L
             mostrarTodosLosEmpleados()
         }
+    }
 
+    private fun aumentarOpacidad(segundos:Long){
+        runOnUiThread {
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
+            animator.duration = segundos
+            animator.start()
+        }
     }
 
     private fun showLoadingOverlay() {
@@ -64,6 +76,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
 
 
     private fun mostrarTodosLosEmpleados() {
+
         val container: LinearLayout = findViewById(R.id.container_empleado_licencias)
 
         runOnUiThread {
@@ -98,6 +111,8 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                     goToMostrarLicenciasDelEmpleado(empleado)
                 }
             }
+
+            aumentarOpacidad(segundos)
         }
     }
 
@@ -113,6 +128,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
 
     private fun fetch(search: String, endpoint: String, tag: String) {
         showLoadingOverlay()
+        miVista.alpha = 0.1f
         val request = Request.Builder()
             .url(BuildConfig.BASE_URL + endpoint) // Cambia esto por la URL de tu API
             .build()
@@ -121,6 +137,10 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
                 Log.e(tag, "Failed to fetch $search", e)
+                hideLoadingOverlay()
+                runOnUiThread {
+                    aumentarOpacidad(segundos)
+                }
             }
 
             override fun onResponse(call: Call, response: Response) {
@@ -149,6 +169,9 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                     }
                 } else {
                     hideLoadingOverlay()
+                    runOnUiThread {
+                        aumentarOpacidad(segundos)
+                    }
                     Log.e(tag, "Unsuccessful response")
                     response.body?.close() // Cerrar el cuerpo de la respuesta en caso de respuesta no exitosa
                 }

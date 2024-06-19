@@ -29,6 +29,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class RegistroUsuarioActivity : AppCompatActivity() {
+    private lateinit var miVista : View
     private lateinit var loadingOverlayout: View
     private var horariosList = listOf<HorarioModel>()
     private lateinit var horarioSpinner: Spinner
@@ -44,6 +45,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
 
         setContentView(R.layout.registro_primera_sala_rrhh)
         loadingOverlayout = findViewById(R.id.loading_overlayout)
+        miVista = findViewById(R.id.layout_hijo)
         val spinner: Spinner = findViewById<Spinner>(R.id.tipo_cuenta)
         var elementos = ArrayList<String>()
 
@@ -67,6 +69,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
         getHorarios()
     }
 
+
     private fun showLoadingOverlay() {
         runOnUiThread {
             loadingOverlayout.visibility = View.VISIBLE
@@ -78,6 +81,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
             loadingOverlayout.visibility = View.GONE
         }
     }
+
 
     private fun agregarFiltrosValidaciones() {
         val nombreEditText = findViewById<EditText>(R.id.nombre_texto)
@@ -301,6 +305,9 @@ class RegistroUsuarioActivity : AppCompatActivity() {
 
     fun registrarUsuario(view: View) {
         if (validarCampos()) {
+            val miVista = findViewById<View>(R.id.layout_hijo)
+            miVista.alpha = 0.10f // 10% de opacidad
+            showLoadingOverlay()
             enviarDatosRegistro()
         } else {
             mostrarDialogoCamposIncompletos()
@@ -350,7 +357,6 @@ class RegistroUsuarioActivity : AppCompatActivity() {
         // Hacer la llamada a la API
         RetrofitClient.userApiService.post(userModel).enqueue(object : Callback<ImagenModel> {
             override fun onResponse(call: Call<ImagenModel>, response: Response<ImagenModel>) {
-                showLoadingOverlay()
                 when (response.code()) {
                     200 -> {
                         val userModelResponse = response.body()

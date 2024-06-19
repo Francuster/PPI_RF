@@ -1,5 +1,6 @@
 package com.example.myapplication.activity
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +21,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class InicioRrHhActivity : AppCompatActivity() {
+    private lateinit var miVista : View
     private lateinit var loadingOverlayout: View
     private var userModelList = arrayListOf<UserModel>()
     private var listaEmpleados = arrayListOf<Empleado>()
@@ -37,6 +39,7 @@ class InicioRrHhActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inico_rrhh)
         loadingOverlayout = findViewById(R.id.loading_overlayout)
+        miVista = findViewById(R.id.layout_hijo)
         if (GlobalData.empleado == null) {
             nombre = intent.getStringExtra("nombre")
             apellido = intent.getStringExtra("apellido") // nombre para mostrar
@@ -52,6 +55,14 @@ class InicioRrHhActivity : AppCompatActivity() {
         super.onResume()
         fetchUsers()
     }
+
+    private fun aumentarOpacidad(){
+        runOnUiThread {
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
+            animator.duration = 500
+            animator.start()
+        }
+    }
     private fun showLoadingOverlay() {
         runOnUiThread {
             loadingOverlayout.visibility = View.VISIBLE
@@ -64,12 +75,17 @@ class InicioRrHhActivity : AppCompatActivity() {
         }
     }
     private fun fetchUsers() {
+        miVista.alpha = 0.10f // 10% de opacidad
         showLoadingOverlay()
         RetrofitClient.userApiService.get().enqueue(object : Callback<List<UserModel>> {
             override fun onResponse(
                 call: Call<List<UserModel>>,
                 response: Response<List<UserModel>>
-            ) { hideLoadingOverlay()
+            ) {
+                runOnUiThread {
+                    aumentarOpacidad()
+                }
+                hideLoadingOverlay()
                 if (response.code() == 200) {
                     userModelList = response.body() as ArrayList<UserModel>
                     mostrarTodosLosEmpleados()
@@ -79,6 +95,10 @@ class InicioRrHhActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<UserModel>>, t: Throwable) {
+                hideLoadingOverlay()
+                runOnUiThread {
+                    aumentarOpacidad()
+                }
                 Log.e("fetchUsers", "Error al traer usuarios")
             }
         })

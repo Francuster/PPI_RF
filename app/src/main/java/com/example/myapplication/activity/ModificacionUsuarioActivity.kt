@@ -1,5 +1,6 @@
 package com.example.myapplication.activity
 
+import android.animation.ObjectAnimator
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -28,6 +29,7 @@ import retrofit2.Response
 import java.util.Locale
 
 class ModificacionUsuarioActivity : AppCompatActivity() {
+    private lateinit var miVista : View
     private lateinit var loadingOverlayout: View
     private val CAMERA_REQUEST_CODE = 100
     private val TEXT_REQUEST_CODE = 101
@@ -63,6 +65,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.modificacion_usuario)
+        miVista = findViewById(R.id.layout_hijo)
         loadingOverlayout = findViewById(R.id.loading_overlayout)
         userModel = intent.getSerializableExtra("userModel") as UserModel
 
@@ -87,6 +90,14 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         agregarFiltros()
         agregarValidaciones()
         getHorarios()
+        aumentarOpacidad()
+    }
+    private fun aumentarOpacidad(){
+        runOnUiThread {
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
+            animator.duration = 1200
+            animator.start()
+        }
     }
 
     private fun showLoadingOverlay() {
@@ -258,6 +269,9 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
     fun actualizarUsuario(view: View) {
         if (validarCampos()) {
+            val miVista = findViewById<View>(R.id.layout_hijo)
+            miVista.alpha = 0.10f // 10% de opacidad
+            showLoadingOverlay()
             enviarDatosModificacion()
         } else {
             mostrarDialogoCamposIncompletos()
@@ -297,7 +311,6 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
         RetrofitClient.userApiService.put(userModel._id, updatedUser).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                showLoadingOverlay()
                 when (response.code()) {
                     200 -> {
                         hideLoadingOverlay()

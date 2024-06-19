@@ -1,5 +1,6 @@
 package com.example.myapplication.activity
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,7 @@ import java.util.Calendar
 import java.util.Locale
 
 class LicenciasEmpleadoActivity: AppCompatActivity() {
+    private lateinit var miVista : View
     private lateinit var licenciasEmpleado: ArrayList<Licencia>
     private lateinit var listaEmpleados: ArrayList<Empleado>
     private lateinit var empleadoBuscado: ArrayList<Empleado>
@@ -33,7 +35,8 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
         setContentView(R.layout.licencias_empleado)
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
         textoNombreUsuario.text =  InicioRrHhActivity.GlobalData.empleado!!.fullName
-
+        miVista = findViewById(R.id.layout_hijo)
+        miVista.alpha = 0.1f
         licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasEmpleado") ?: arrayListOf()
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()
@@ -45,7 +48,13 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
         mostrarTodasLasLicencias()
     }
 
-
+    private fun aumentarOpacidad(segundos:Long){
+        runOnUiThread {
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
+            animator.duration = segundos
+            animator.start()
+        }
+    }
 
     private fun mostrarTodasLasLicencias() {
         val container: LinearLayout = findViewById(R.id.container)
@@ -80,6 +89,7 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
                 }
 
             }
+            aumentarOpacidad(800L)
         }
     }
 

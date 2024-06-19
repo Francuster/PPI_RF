@@ -1,6 +1,7 @@
 package com.example.myapplication.activity
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -39,14 +40,16 @@ import java.io.IOException
 import java.util.Calendar
 
 class ReportesSeguridadActivity : AppCompatActivity() {
+    private lateinit var miVista : View
     private lateinit var loadingOverlayout: View
     private lateinit var calendarView: CalendarView
     private lateinit var downloadButton: Button
     private var selectedDate: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.reporte_seguridad)
+        loadingOverlayout = findViewById(R.id.loading_overlayout)
+        miVista = findViewById(R.id.layout_hijo)
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
         textoNombreUsuario.text = InicioSeguridadActivity.GlobalData.seguridad?.fullName ?: "Usuario"
 
@@ -79,6 +82,13 @@ class ReportesSeguridadActivity : AppCompatActivity() {
             } ?: run {
                 Toast.makeText(this, "Por favor seleccione una fecha", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+    private fun aumentarOpacidad(){
+        runOnUiThread {
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
+            animator.duration = 500
+            animator.start()
         }
     }
 
@@ -117,6 +127,7 @@ class ReportesSeguridadActivity : AppCompatActivity() {
 
     // Función para descargar los logs en base a la fecha seleccionada
     private fun downloadLogs(date: String) {
+        miVista.alpha = 0.10f // 10% de opacidad
         showLoadingOverlay()
         // Construir la URL para la solicitud HTTP
         val url = BuildConfig.BASE_URL + "/api/logs/day?fecha=$date"
@@ -139,6 +150,9 @@ class ReportesSeguridadActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call, response: Response) {
                 hideLoadingOverlay()
+                runOnUiThread {
+                    aumentarOpacidad()
+                }
                 // Manejar la respuesta recibida del servidor
                 if (response.isSuccessful) {
                     response.body?.string()?.let { responseBody ->

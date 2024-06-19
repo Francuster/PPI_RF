@@ -1,5 +1,6 @@
 package com.example.myapplication.activity
 
+import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
@@ -17,14 +18,20 @@ import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.deviceIsConnected
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONArray
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class InicioSeguridadActivity : AppCompatActivity() {
-
+    private lateinit var miVista : View
+    private lateinit var loadingOverlayout: View
     object GlobalData {
         var seguridad: Empleado? = null
     }
@@ -34,7 +41,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.inicio_seguridad)
-
+        loadingOverlayout = findViewById(R.id.loading_overlayout)
+        miVista = findViewById(R.id.logs_del_dia)
         if (GlobalData.seguridad == null) {
             val nombre = intent.getStringExtra("nombre")
             val apellido = intent.getStringExtra("apellido")
@@ -52,7 +60,29 @@ class InicioSeguridadActivity : AppCompatActivity() {
         showLogsOfTheDay()
     }
 
+    private fun aumentarOpacidad(){
+        runOnUiThread {
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
+            animator.duration = 500
+            animator.start()
+        }
+    }
+
+    private fun showLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.GONE
+        }
+    }
+
     private fun showLogsOfTheDay() {
+        miVista.alpha = 0.10f // 10% de opacidad
+        showLoadingOverlay()
         val url = "${BuildConfig.BASE_URL}/api/logs/day?fecha=${getCurrentDate()}"
         val client = OkHttpClient()
         val request = Request.Builder()
@@ -83,6 +113,10 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     private fun displayLogs(responseBody: String) {
+        hideLoadingOverlay()
+        runOnUiThread {
+            aumentarOpacidad()
+        }
         logContainer.removeAllViews()
         try {
             val logsArray = JSONArray(responseBody)

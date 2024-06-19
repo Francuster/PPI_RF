@@ -274,8 +274,8 @@
 
             <ImageView
                 android:id="@+id/imagen_nav_logs"
-                android:layout_width="14dp"
-                android:layout_height="15dp"
+                android:layout_width="21dp"
+                android:layout_height="21dp"
 
 
                 app:layout_constraintBottom_toTopOf="@+id/cuenta"

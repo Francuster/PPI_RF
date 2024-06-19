@@ -348,6 +348,26 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05"
             app:srcCompat="@drawable/arrow_left" />
+        <TextView
+            android:id="@+id/perfil_usuario_titulo"
+            android:layout_width="253dp"
+            android:layout_height="67dp"
+            android:fontFamily="@font/inter_extrabold"
+            android:text="USUARIO"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imagen_volver"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.053"
+            app:layout_constraintWidth_percent="0.63"
+            tools:ignore="MissingConstraints" />
 
         <Button
             android:id="@+id/boton_rechazar"

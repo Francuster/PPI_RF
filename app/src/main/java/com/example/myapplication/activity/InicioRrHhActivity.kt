@@ -259,4 +259,32 @@ class InicioRrHhActivity : AppCompatActivity() {
         intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
         startActivity(intent)
     }
+    fun dialogCloseSession(view: View){
+        val mensaje = "¿Quiere cerrar la sesión?"
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Sesion")
+            setMessage(mensaje)
+
+            setPositiveButton("OK") { dialog, which ->
+                goToLogin()
+            }
+
+            setNegativeButton("Cancelar") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setCancelable(true)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+
+
+    }
+
+    private fun goToLogin(){
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
+    }
 }

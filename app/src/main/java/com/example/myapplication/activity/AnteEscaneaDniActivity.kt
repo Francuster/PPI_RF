@@ -8,15 +8,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.utils.deviceIsConnected
 
-class AnteEscaneaActivity: AppCompatActivity() {
+class AnteEscaneaDniActivity : AppCompatActivity(){
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.escanear)
+        setContentView(R.layout.escanear_dni)
 
     }
     fun Siguiente(view : View){
         if(deviceIsConnected(applicationContext)){
-            val intent = Intent(applicationContext, CameraxAuthenticationActivity::class.java)
+            val intent = Intent(applicationContext, QRScannerActivity::class.java)
             startActivity(intent)
         }else{
             Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()

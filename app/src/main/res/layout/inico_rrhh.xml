@@ -300,6 +300,7 @@
             android:background="#00ECE6D9"
             android:backgroundTint="#ECE6D9"
             android:fontFamily="@font/lalezar"
+            android:onClick="dialogCloseSession"
             android:text="LOGER"
             android:textAlignment="textStart"
             android:textColor="#ECE6D9"

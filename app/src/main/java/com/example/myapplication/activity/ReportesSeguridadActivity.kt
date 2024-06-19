@@ -21,6 +21,7 @@ import android.widget.Button
 import android.widget.CalendarView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -28,6 +29,9 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
+import com.example.myapplication.model.HorarioModel
+import com.example.myapplication.model.UserModel
+import com.example.myapplication.service.RetrofitClient
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -285,6 +289,105 @@ class ReportesSeguridadActivity : AppCompatActivity() {
         }
         NotificationManagerCompat.from(this).notify(1, notification)
     }
+
+    fun perfilSeguridadDetailAlert(view: View) {
+        obtenerYMostrarDetallesPerfil()
+    }
+
+    private fun obtenerYMostrarDetallesPerfil() {
+        val empleado = InicioSeguridadActivity.GlobalData.seguridad ?: return // Verificar que el empleado de seguridad no sea nulo
+        val empleadoId = empleado.userId // Obtener el ID del empleado de seguridad
+
+        // Llamar al método del servicio para obtener los detalles del empleado por su ID
+        RetrofitClient.userApiService.getById(empleadoId).enqueue(object : retrofit2.Callback<UserModel> {
+            override fun onResponse(call: retrofit2.Call<UserModel>, response: retrofit2.Response<UserModel>) {
+                if (response.isSuccessful) {
+                    val userModel = response.body()
+
+                    if (userModel != null) {
+                        obtenerYMostrarHorarios(userModel)
+                    } else {
+                        mostrarDialogoError()
+                    }
+                } else {
+                    mostrarDialogoError()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<UserModel>, t: Throwable) {
+                mostrarDialogoError()
+            }
+        })
+    }
+
+    private fun obtenerYMostrarHorarios(userModel: UserModel) {
+        val detallesBuilder = StringBuilder()
+        detallesBuilder.append("Nombre: ${userModel.nombre}\n")
+        detallesBuilder.append("Apellido: ${userModel.apellido}\n")
+        detallesBuilder.append("DNI: ${userModel.dni}\n")
+        detallesBuilder.append("Email: ${userModel.email}\n")
+
+        val horarios = mutableListOf<String>()
+        for (horarioId in userModel.horarios) {
+            RetrofitClient.horariosApiService.getById(horarioId).enqueue(object : retrofit2.Callback<HorarioModel> {
+                override fun onResponse(call: retrofit2.Call<HorarioModel>, response: retrofit2.Response<HorarioModel>) {
+                    if (response.isSuccessful) {
+                        val horario = response.body()
+                        if (horario != null) {
+                            horarios.add(horario.getFullName())
+                            if (horarios.size == userModel.horarios.size) {
+                                detallesBuilder.append("Horarios: ${horarios.joinToString(", ")}\n")
+                                mostrarDialogoPerfil(detallesBuilder.toString())
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: retrofit2.Call<HorarioModel>, t: Throwable) {
+                    mostrarDialogoError()
+                }
+            })
+        }
+    }
+
+    private fun mostrarDialogoPerfil(detalles: String) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Detalles del Perfil")
+            setMessage(detalles)
+
+            setPositiveButton("OK") { dialog, which ->
+                // Aquí puedes añadir alguna acción si lo deseas
+            }
+
+            setNegativeButton("Cancelar") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setCancelable(true)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun mostrarDialogoError() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Error")
+            setMessage("No se pudo obtener los detalles del perfil")
+
+            setPositiveButton("OK") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setCancelable(true)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
 
     fun goToAtras(view: View) {
         val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)

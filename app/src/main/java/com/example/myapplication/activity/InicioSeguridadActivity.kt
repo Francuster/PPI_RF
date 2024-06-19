@@ -177,7 +177,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
     fun goToQREspecial(view: View) {
         if (deviceIsConnected(applicationContext)) {
             Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
-            val intent = Intent(applicationContext, QRScannerActivity::class.java)
+            val intent = Intent(applicationContext, AnteEscaneaDniActivity::class.java)
             startActivity(intent)
         }
     }
@@ -289,7 +289,42 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun goToReporteSeguridad(view: View) {
-        val intent = Intent(applicationContext, ReportesSeguridadActivity::class.java)
-        startActivity(intent)
+        if(deviceIsConnected(applicationContext)){
+            val intent = Intent(applicationContext, ReportesSeguridadActivity::class.java)
+            startActivity(intent)
+        }else{
+            Toast.makeText(this, "No estás conectado a Internet", Toast.LENGTH_SHORT).show()
+        }
+
     }
+
+    fun dialogCloseSession(view: View){
+        val mensaje = "¿Quiere cerrar la sesión?"
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Sesion")
+            setMessage(mensaje)
+
+            setPositiveButton("OK") { dialog, which ->
+                goToLogin()
+            }
+
+            setNegativeButton("Cancelar") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setCancelable(true)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+
+
+    }
+
+    private fun goToLogin(){
+    val intent = Intent(applicationContext, MainActivity::class.java)
+    startActivity(intent)
+    }
+
 }

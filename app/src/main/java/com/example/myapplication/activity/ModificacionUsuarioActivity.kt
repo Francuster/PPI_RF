@@ -213,10 +213,13 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                val filteredText = s.toString().filter { it.isLetter() || it.isWhitespace() }
-                if (s.toString() != filteredText) {
-                    nombreEditText.setText(filteredText)
-                    nombreEditText.setSelection(filteredText.length)
+                val text = s.toString()
+                if (text.isNotEmpty()) {
+                    val capitalizedText = text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase()
+                    if (capitalizedText != text) {
+                        nombreEditText.setText(capitalizedText)
+                        nombreEditText.setSelection(capitalizedText.length)
+                    }
                 }
             }
         })
@@ -231,10 +234,13 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                val filteredText = s.toString().filter { it.isLetter() || it.isWhitespace() }
-                if (s.toString() != filteredText) {
-                    apellidoEditText.setText(filteredText)
-                    apellidoEditText.setSelection(filteredText.length)
+                val text = s.toString()
+                if (text.isNotEmpty()) {
+                    val capitalizedText = text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase()
+                    if (capitalizedText != text) {
+                        apellidoEditText.setText(capitalizedText)
+                        apellidoEditText.setSelection(capitalizedText.length)
+                    }
                 }
             }
         })
@@ -271,6 +277,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             }
         })
     }
+
 
     fun actualizarUsuario(view: View) {
         if (validarCampos()) {

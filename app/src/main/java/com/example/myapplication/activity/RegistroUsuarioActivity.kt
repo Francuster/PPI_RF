@@ -13,16 +13,20 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
+import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.ImagenModel
+import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.NetworkChangeService
+import com.example.myapplication.utils.imageToggleAtras
 import com.example.myapplication.utils.isServiceRunning
 import retrofit2.Call
 import retrofit2.Callback
@@ -64,6 +68,8 @@ class RegistroUsuarioActivity : AppCompatActivity() {
         val adaptador = ArrayAdapter(this, R.layout.desplegable_tipo_cuenta, elementos)
         adaptador.setDropDownViewResource(R.layout.desplegable_tipo_cuenta)
         spinner.adapter = adaptador
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irInicioRrHhActivity",ArrayList<Empleado>(),ArrayList<Licencia>(),ArrayList<Empleado>())
 
         agregarFiltrosValidaciones()
         getHorarios()

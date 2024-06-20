@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +14,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.Licencia
+import com.example.myapplication.utils.imageToggleAtras
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.Call
@@ -44,6 +46,8 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         loadingOverlayout = findViewById(R.id.loading_overlayout)
         miVista = findViewById(R.id.layout_hijo)
         miVista.alpha = 0.1f
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irInicioRrHhActivity",ArrayList<Empleado>(),ArrayList<Licencia>(),ArrayList<Empleado>())
 
         if(GlobalData.licencias.isEmpty() || listaEmpleados.size != InicioRrHhActivity.GlobalData.cantEmpleados){
             fetch("Licencias","/api/licencias","FetchLicencias")

@@ -74,16 +74,13 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         }
     }
 
-
     private fun mostrarTodosLosEmpleados() {
-
         val container: LinearLayout = findViewById(R.id.container_empleado_licencias)
 
         runOnUiThread {
             container.removeAllViews() // Elimina vistas antiguas antes de agregar las nuevas
 
             for (empleado in listaEmpleados) {
-
                 val userId = empleado.userId
                 val fullName = empleado.fullName
 
@@ -106,6 +103,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
+                    empleadoBuscado.clear()
                     empleadoBuscado.add(empleado)
                     cargarLicenciasDelEmpleado(userId)
                     goToMostrarLicenciasDelEmpleado(empleado)
@@ -116,14 +114,12 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         }
     }
 
-
     private fun goToMostrarLicenciasDelEmpleado(empleado: Empleado) {
         val intent = Intent(applicationContext, LicenciasEmpleadoActivity::class.java)
         intent.putParcelableArrayListExtra("empleadoBuscado", ArrayList(empleadoBuscado))
         intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))
         intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
         startActivity(intent)
-
     }
 
     private fun fetch(search: String, endpoint: String, tag: String) {
@@ -176,35 +172,20 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                     response.body?.close() // Cerrar el cuerpo de la respuesta en caso de respuesta no exitosa
                 }
             }
-
         })
     }
 
     private fun cargarLicenciasDelEmpleado(userId: String) {
-        runOnUiThread {
-            for (licencia  in GlobalData.licencias){
-
-                val licenciaId = licencia._id
-                val userIdCheck = licencia.userId
-
-                if (userId == userIdCheck) {
-                    val fechaDesde = licencia.fechaDesde
-                    val fechaHasta = licencia.fechaHasta
-
-                    // Crear una nueva instancia de Licencia y añadirla a la lista
-                    val nuevaLicencia = Licencia(licenciaId,fechaDesde, fechaHasta, userId)
-                    licenciasEmpleado.add(nuevaLicencia)
-
-                }
+        licenciasEmpleado.clear() // Clear the previous licenses
+        for (licencia in GlobalData.licencias) {
+            if (licencia.userId == userId) {
+                licenciasEmpleado.add(licencia)
             }
         }
     }
-
-
 
     fun goToAtrasInicioRRHH(view: View) {
         val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
         startActivity(intent)
     }
-
 }

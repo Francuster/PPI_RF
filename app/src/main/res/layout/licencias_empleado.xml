@@ -27,7 +27,6 @@
             android:id="@+id/empleado_licencias_titulo"
             android:layout_width="252dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="48dp"
             android:fontFamily="@font/inter_extrabold"
             android:text="LICENCIAS "
             android:textAlignment="center"
@@ -35,8 +34,8 @@
 
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintEnd_toStartOf="@+id/imagen_volver"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/imagen_licencia"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05"
@@ -55,26 +54,30 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05"
             app:srcCompat="@drawable/icon_licencia" />
+
         <ImageView
             android:id="@+id/imagen_volver"
             android:layout_width="62dp"
             android:layout_height="40dp"
-            
+            android:onClick="goToAtrasEmpleadosLicencias"
+
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.97"
+            app:layout_constraintStart_toEndOf="@+id/empleado_licencias_titulo"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05"
             app:srcCompat="@drawable/arrow_left" />
 
         <ScrollView
-            android:layout_width="383dp"
-            android:layout_height="507dp"
+            android:layout_width="342dp"
+            android:layout_height="503dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/empleado_licencias_titulo"
             app:layout_constraintVertical_bias="0.965">
 
             <LinearLayout

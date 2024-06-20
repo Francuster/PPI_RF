@@ -19,6 +19,7 @@ import android.print.pdf.PrintedPdfDocument
 import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -29,9 +30,12 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
+import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
+import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.imageToggleAtras
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -87,6 +91,8 @@ class ReportesSeguridadActivity : AppCompatActivity() {
                 Toast.makeText(this, "Por favor seleccione una fecha", Toast.LENGTH_SHORT).show()
             }
         }
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irInicioSeguridadActivity",ArrayList<Empleado>(),ArrayList<Licencia>(),ArrayList<Empleado>())
     }
     private fun aumentarOpacidad(){
         runOnUiThread {

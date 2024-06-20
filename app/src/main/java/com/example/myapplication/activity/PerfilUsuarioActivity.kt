@@ -4,14 +4,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
+import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
+import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.imageToggleAtras
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,7 +30,8 @@ class PerfilUsuarioActivity : AppCompatActivity() {
         setContentView(R.layout.perfil_usuario) // Nombre corregido
         loadingOverlayout = findViewById(R.id.loading_overlayout)
         userModel = intent.getSerializableExtra("userModel") as UserModel
-
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irInicioRrHhActivity",ArrayList<Empleado>(),ArrayList<Licencia>(),ArrayList<Empleado>())
         cargarDatos(userModel)
         getHorarios()
     }

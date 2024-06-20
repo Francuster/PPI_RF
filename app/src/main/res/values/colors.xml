@@ -9,4 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="azul_claro">#ADD8E6</color>
     <color name="my_red">#75EF5F55</color>
+    <color name="blanco_crema">#ECE6D9</color>
+    <color name="celeste_button">#8CD7D7</color>
+    <color name="verde_button">#92C16C</color>
+    <color name="blanco_letra_botton">#FBFEFE</color>
+    <color name="gris_flecha_volver">#B4B0A6</color>
 </resources>

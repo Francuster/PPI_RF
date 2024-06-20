@@ -3,16 +3,23 @@ package com.example.myapplication.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
+import com.example.myapplication.model.Empleado
+import com.example.myapplication.model.Licencia
 import com.example.myapplication.utils.deviceIsConnected
+import com.example.myapplication.utils.imageToggleAtras
 
 class AnteEscaneaDniActivity : AppCompatActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.escanear_dni)
+
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irInicioSeguridadActivity",ArrayList<Empleado>(),ArrayList<Licencia>(),ArrayList<Empleado>())
 
     }
     fun Siguiente(view : View){
@@ -25,8 +32,4 @@ class AnteEscaneaDniActivity : AppCompatActivity(){
         }
     }
 
-    fun goToAtras(view: View) {
-        val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
-        startActivity(intent)
-    }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -14,6 +15,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.Licencia
+import com.example.myapplication.utils.imageToggleAtras
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -46,6 +48,8 @@ class LicenciasEmpleadoActivity: AppCompatActivity() {
         val texto = "LICENCIAS DE :\n${empleadoBuscado[0].fullName}"
         empleadoLicenciasTitulo.text = texto
         mostrarTodasLasLicencias()
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irEmpleadosLicenciasActivity",listaEmpleados,ArrayList<Licencia>(),ArrayList<Empleado>())
     }
 
     private fun aumentarOpacidad(segundos:Long){

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.LicenciaRequest
 import com.example.myapplication.model.LicenciaResponse
 import com.example.myapplication.service.RetrofitClient.apiService
+import com.example.myapplication.utils.imageToggleAtras
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -49,9 +51,13 @@ class CargarLicenciaActivity : AppCompatActivity() {
         listaEmpleados = intent.getParcelableArrayListExtra<Empleado>("listaEmpleados") ?: arrayListOf()
         licenciasEmpleado = intent.getParcelableArrayListExtra<Licencia>("licenciasEmpleado") ?: arrayListOf()
         empleadoBuscado = intent.getParcelableArrayListExtra<Empleado>("empleadoBuscado") ?: arrayListOf()
+
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irLicenciasEmpleadoActivity",listaEmpleados,licenciasEmpleado,empleadoBuscado)
         // Asignar los elementos de la interfaz de usuario a las variables correspondientes
         calendarView = findViewById(R.id.licence_calendarView)
         cargarButton = findViewById(R.id.boton_create)
+
 
         val calendar = Calendar.getInstance()
         val minDate = calendar.timeInMillis // Obtener la fecha actual en milisegundos

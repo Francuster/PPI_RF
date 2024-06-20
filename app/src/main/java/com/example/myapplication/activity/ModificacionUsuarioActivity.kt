@@ -13,15 +13,19 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
+import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
+import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.NetworkChangeService
+import com.example.myapplication.utils.imageToggleAtras
 import com.example.myapplication.utils.isServiceRunning
 import retrofit2.Call
 import retrofit2.Callback
@@ -85,7 +89,8 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         actualizarButton = findViewById(R.id.boton_registrar_ingreso)
 
         actualizarButton.isEnabled = false // Disable the button initially
-
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irInicioRrHhActivity",ArrayList<Empleado>(),ArrayList<Licencia>(),ArrayList<Empleado>())
         cargarDatos(userModel)
         agregarFiltros()
         agregarValidaciones()
@@ -94,8 +99,8 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     }
     private fun aumentarOpacidad(){
         runOnUiThread {
-            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
-            animator.duration = 1200
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.5f, 1f)
+            animator.duration = 500
             animator.start()
         }
     }
@@ -161,7 +166,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         }
     }
 
-    fun goToAtrasInicioRRHH(view: View) {
+    fun goToAtrasInicioRRHH() {
         val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
         startActivity(intent)
     }
@@ -350,4 +355,5 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
         intent.putExtra("origen", "ModificacionUsuarioActivity")
         startActivity(intent)
     }
+
 }

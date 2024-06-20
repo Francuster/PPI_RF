@@ -135,7 +135,7 @@ class CargarLicenciaActivity : AppCompatActivity() {
     }
 
     private fun mostrarDialogoFechasSeleccionadas() {
-        val mensaje = "Fechas seleccionadas:\nDesde: $fechaDesde\nHasta: $fechaHasta"
+        val mensaje = "Fechas seleccionadas:\nDesde: $fechaDesde\nHasta: $fechaHasta\n Si son correctas, seleccione OK y luego CREAR"
         AlertDialog.Builder(this)
             .setTitle("Confirmar Fechas")
             .setMessage(mensaje)

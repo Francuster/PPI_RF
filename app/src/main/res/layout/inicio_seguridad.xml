@@ -29,11 +29,11 @@
             android:layout_width="300dp"
             android:layout_height="38dp"
             android:fontFamily="@font/inter_extrabold"
+            android:paddingStart="15dp"
             android:text="INGRESOS/EGRESOS DEL DÍA"
             android:textAlignment="center"
             android:textSize="17sp"
             android:textStyle="bold"
-            android:paddingStart="15dp"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -58,13 +58,27 @@
             app:layout_constraintVertical_bias="0.026"
             app:srcCompat="@drawable/sort_arrow" />
 
+        <TextView
+            android:id="@+id/total_logs_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="4dp"
+            android:text="Total logs del día: 0"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/logs_del_dia"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ingreso_exitoso" />
+
         <LinearLayout
             android:id="@+id/logs_del_dia"
             android:layout_width="379dp"
             android:layout_height="499dp"
+            android:alpha="1.0"
             android:orientation="vertical"
             android:padding="16dp"
-            android:alpha="1.0"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

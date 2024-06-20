@@ -18,16 +18,11 @@ import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.deviceIsConnected
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
+import okhttp3.*
 import org.json.JSONArray
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class InicioSeguridadActivity : AppCompatActivity() {
     private lateinit var miVista : View
@@ -37,6 +32,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     private lateinit var logContainer: LinearLayout
+    private lateinit var totalLogsTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +51,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
         textoNombreUsuario.text = GlobalData.seguridad!!.fullName
 
         logContainer = findViewById(R.id.container)
+        totalLogsTextView = findViewById(R.id.total_logs_textview)
 
         // Mostrar los logs del día actual
         showLogsOfTheDay()
@@ -118,19 +115,24 @@ class InicioSeguridadActivity : AppCompatActivity() {
             aumentarOpacidad()
         }
         logContainer.removeAllViews()
+
         try {
             val logsArray = JSONArray(responseBody)
+            val totalLogs = logsArray.length()
+            totalLogsTextView.text = "Total logs del día: $totalLogs"
+
             for (i in 0 until logsArray.length()) {
+                val logNumber = i + 1
                 val log = logsArray.getJSONObject(i)
                 val logText = """
-                ┌────────────────────┐
-                │ Nombre: ${log.getString("nombre").padEnd(18)} 
-                │ Apellido: ${log.getString("apellido").padEnd(16)} 
-                │ DNI: ${log.getInt("dni").toString().padEnd(21)} 
-                │ Estado: ${log.getString("estado").padEnd(16)} 
-                │ Horario: ${log.getString("horario").padEnd(15)} 
-                │ Tipo: ${log.getString("tipo").padEnd(18)} 
-                └────────────────────┘
+                $logNumber. ┌────────────────────┐
+                     Nombre: ${log.getString("nombre").padEnd(18)} 
+                     Apellido: ${log.getString("apellido").padEnd(16)} 
+                     DNI: ${log.getInt("dni").toString().padEnd(21)} 
+                     Estado: ${log.getString("estado").padEnd(16)} 
+                     Horario: ${log.getString("horario").padEnd(15)} 
+                     Tipo: ${log.getString("tipo").padEnd(18)} 
+                    └────────────────────┘
                 """.trimIndent()
 
                 val textView = TextView(this)
@@ -138,7 +140,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
                 textView.setPadding(24, 16, 24, 16)
                 textView.setTextColor(ContextCompat.getColor(this, R.color.black))
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-                logContainer.addView(textView)
+                logContainer.addView(textView, 0)  // Añadir cada log al inicio de la lista
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -318,13 +320,10 @@ class InicioSeguridadActivity : AppCompatActivity() {
 
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
-
-
     }
 
     private fun goToLogin(){
-    val intent = Intent(applicationContext, MainActivity::class.java)
-    startActivity(intent)
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
     }
-
 }

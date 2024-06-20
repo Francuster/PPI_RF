@@ -215,7 +215,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val text = s.toString()
                 if (text.isNotEmpty()) {
-                    val capitalizedText = text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase()
+                    val capitalizedText = text.split(" ").joinToString(" ") { it.capitalize() }
                     if (capitalizedText != text) {
                         nombreEditText.setText(capitalizedText)
                         nombreEditText.setSelection(capitalizedText.length)
@@ -236,7 +236,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val text = s.toString()
                 if (text.isNotEmpty()) {
-                    val capitalizedText = text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase()
+                    val capitalizedText = text.split(" ").joinToString(" ") { it.capitalize() }
                     if (capitalizedText != text) {
                         apellidoEditText.setText(capitalizedText)
                         apellidoEditText.setSelection(capitalizedText.length)
@@ -277,6 +277,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
             }
         })
     }
+
 
 
     fun actualizarUsuario(view: View) {
@@ -337,7 +338,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
                     else -> {
                         hideLoadingOverlay()
                         goToModificacionError()
-                        Toast.makeText(this@ModificacionUsuarioActivity, "Error: durante la actualización", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ModificacionUsuarioActivity, "Error: DNI o MAIL ya registrados", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

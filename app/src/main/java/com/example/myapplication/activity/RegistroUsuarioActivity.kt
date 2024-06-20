@@ -162,7 +162,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val text = s.toString()
                 if (text.isNotEmpty()) {
-                    val capitalizedText = text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase()
+                    val capitalizedText = text.split(" ").joinToString(" ") { it.capitalize() }
                     if (capitalizedText != text) {
                         nombreEditText.setText(capitalizedText)
                         nombreEditText.setSelection(capitalizedText.length)
@@ -180,7 +180,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val text = s.toString()
                 if (text.isNotEmpty()) {
-                    val capitalizedText = text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase()
+                    val capitalizedText = text.split(" ").joinToString(" ") { it.capitalize() }
                     if (capitalizedText != text) {
                         apellidoEditText.setText(capitalizedText)
                         apellidoEditText.setSelection(capitalizedText.length)
@@ -206,11 +206,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
         documentoEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s.isNullOrEmpty()) {
-                    documentoEditText.error = "El campo no puede estar vacío"
-                }
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
                 val filteredText = s.toString().filter { it.isDigit() }
@@ -243,6 +239,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
             }
         }
     }
+
 
 
     private fun esNombreValido(nombre: String): Boolean {

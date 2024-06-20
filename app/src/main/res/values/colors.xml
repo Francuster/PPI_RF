@@ -10,4 +10,7 @@
     <color name="azul_claro">#ADD8E6</color>
     <color name="my_red">#75EF5F55</color>
     <color name="blanco_crema">#ECE6D9</color>
+    <color name="celeste_button">#8cd7d7</color>
+    <color name="verde_button">#92c16c</color>
+    <color name="blanco_letra_botton">#fbfefe</color>
 </resources>

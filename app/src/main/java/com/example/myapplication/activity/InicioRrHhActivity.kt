@@ -4,24 +4,32 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import okhttp3.*
+import org.json.JSONArray
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class InicioRrHhActivity : AppCompatActivity() {
-    private lateinit var miVista : View
+    private lateinit var miVista: View
     private lateinit var loadingOverlayout: View
     private var userModelList = arrayListOf<UserModel>()
     private var listaEmpleados = arrayListOf<Empleado>()
@@ -56,13 +64,14 @@ class InicioRrHhActivity : AppCompatActivity() {
         fetchUsers()
     }
 
-    private fun aumentarOpacidad(){
+    private fun aumentarOpacidad() {
         runOnUiThread {
             val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
             animator.duration = 500
             animator.start()
         }
     }
+
     private fun showLoadingOverlay() {
         runOnUiThread {
             loadingOverlayout.visibility = View.VISIBLE
@@ -74,19 +83,20 @@ class InicioRrHhActivity : AppCompatActivity() {
             loadingOverlayout.visibility = View.GONE
         }
     }
+
     private fun fetchUsers() {
         miVista.alpha = 0.10f // 10% de opacidad
         showLoadingOverlay()
-        RetrofitClient.userApiService.get().enqueue(object : Callback<List<UserModel>> {
+        RetrofitClient.userApiService.get().enqueue(object : retrofit2.Callback<List<UserModel>> {
             override fun onResponse(
-                call: Call<List<UserModel>>,
-                response: Response<List<UserModel>>
+                call: retrofit2.Call<List<UserModel>>,
+                response: retrofit2.Response<List<UserModel>>
             ) {
                 runOnUiThread {
                     aumentarOpacidad()
                 }
                 hideLoadingOverlay()
-                if (response.code() == 200) {
+                if (response.isSuccessful) {
                     userModelList = response.body() as ArrayList<UserModel>
                     mostrarTodosLosEmpleados()
                 } else {
@@ -94,12 +104,12 @@ class InicioRrHhActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<List<UserModel>>, t: Throwable) {
+            override fun onFailure(call: retrofit2.Call<List<UserModel>>, t: Throwable) {
                 hideLoadingOverlay()
                 runOnUiThread {
                     aumentarOpacidad()
                 }
-                Log.e("fetchUsers", "Error al traer usuarios")
+                Log.e("fetchUsers", "Error al traer usuarios", t)
             }
         })
     }
@@ -111,11 +121,11 @@ class InicioRrHhActivity : AppCompatActivity() {
             container.removeAllViews() // Elimina vistas antiguas antes de agregar las nuevas
 
             for (user in userModelList) {
-                val inflater: LayoutInflater = LayoutInflater.from(this)
+                val inflater: LayoutInflater = LayoutInflater.from(this@InicioRrHhActivity)
                 val itemView: View = inflater.inflate(R.layout.item_usuario, container, false)
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
                 textViewEmpleado.text = user.getFullName()
-                if (user.rol.uppercase() !="ESTUDIANTE") {
+                if (user.rol.uppercase() != "ESTUDIANTE") {
                     listaEmpleados.add(Empleado(user.getFullName(), user._id))
                 }
                 container.addView(itemView)
@@ -156,8 +166,118 @@ class InicioRrHhActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    fun perfilDetailAlert(view: View){
+    fun perfilDetailAlert(view: View) {
         obtenerYMostrarDetallesPerfil()
+    }
+
+    fun mostrarIngresosEgresosDelDia(view: View) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Ingresos y Egresos del Día")
+
+            val dialogLayout = ScrollView(this@InicioRrHhActivity)
+            dialogLayout.setPadding(24, 24, 24, 24)
+
+            val container = LinearLayout(this@InicioRrHhActivity)
+            container.orientation = LinearLayout.VERTICAL
+            dialogLayout.addView(container)
+
+            val totalLogsTextView = TextView(this@InicioRrHhActivity)
+            totalLogsTextView.textSize = 16f
+            totalLogsTextView.setTextColor(ContextCompat.getColor(this@InicioRrHhActivity, R.color.black))
+            totalLogsTextView.setPadding(0, 16, 0, 16)
+            container.addView(totalLogsTextView)
+
+            val logContainer = LinearLayout(this@InicioRrHhActivity)
+            logContainer.orientation = LinearLayout.VERTICAL
+            container.addView(logContainer)
+
+            val url = "${BuildConfig.BASE_URL}/api/logs/day?fecha=${getCurrentDate()}"
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url(url)
+                .build()
+
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    runOnUiThread {
+                        Toast.makeText(this@InicioRrHhActivity, "Error al cargar los logs: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.isSuccessful) {
+                        response.body?.string()?.let { responseBody ->
+                            runOnUiThread {
+                                displayLogs(responseBody, logContainer, totalLogsTextView)
+                            }
+                        }
+                    } else {
+                        runOnUiThread {
+                            Toast.makeText(this@InicioRrHhActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            })
+
+            setPositiveButton("OK") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setView(dialogLayout)
+            setCancelable(true)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+
+        // Configurar el tamaño del diálogo
+        val window = alertDialog.window
+        val attributes = window?.attributes
+        attributes?.width = LinearLayout.LayoutParams.MATCH_PARENT
+        attributes?.height = LinearLayout.LayoutParams.WRAP_CONTENT
+        window?.attributes = attributes as WindowManager.LayoutParams
+    }
+
+
+
+    private fun displayLogs(responseBody: String, logContainer: LinearLayout, totalLogsTextView: TextView) {
+        logContainer.removeAllViews()
+
+        try {
+            val logsArray = JSONArray(responseBody)
+            val totalLogs = logsArray.length()
+            totalLogsTextView.text = "Total logs del día: $totalLogs"
+
+            for (i in 0 until logsArray.length()) {
+                val logNumber = i + 1
+                val log = logsArray.getJSONObject(i)
+                val logText = """
+                    $logNumber. ┌────────────────────┐
+                         Nombre: ${log.getString("nombre").padEnd(18)} 
+                         Apellido: ${log.getString("apellido").padEnd(16)} 
+                         DNI: ${log.getInt("dni").toString().padEnd(21)} 
+                         Estado: ${log.getString("estado").padEnd(16)} 
+                         Horario: ${log.getString("horario").padEnd(15)} 
+                         Tipo: ${log.getString("tipo").padEnd(18)} 
+                        └────────────────────┘
+                    """.trimIndent()
+
+                val textView = TextView(this@InicioRrHhActivity)
+                textView.text = logText
+                textView.setPadding(24, 16, 24, 16)
+                textView.setTextColor(ContextCompat.getColor(this@InicioRrHhActivity, R.color.black))
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                logContainer.addView(textView)  // Añadir cada log a la lista
+            }
+        } catch (e: Exception) {
+            Toast.makeText(this@InicioRrHhActivity, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun getCurrentDate(): String {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return sdf.format(Date())
     }
 
     private fun obtenerYMostrarDetallesPerfil() {
@@ -165,8 +285,8 @@ class InicioRrHhActivity : AppCompatActivity() {
         val empleadoId = empleado.userId // Obtener el ID del empleado
 
         // Llamar al método del servicio para obtener los detalles del empleado por su ID
-        RetrofitClient.userApiService.getById(empleadoId).enqueue(object : Callback<UserModel> {
-            override fun onResponse(call: Call<UserModel>, response: Response<UserModel>) {
+        RetrofitClient.userApiService.getById(empleadoId).enqueue(object : retrofit2.Callback<UserModel> {
+            override fun onResponse(call: retrofit2.Call<UserModel>, response: retrofit2.Response<UserModel>) {
                 if (response.isSuccessful) {
                     val userModel = response.body()
 
@@ -180,7 +300,7 @@ class InicioRrHhActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onFailure(call: Call<UserModel>, t: Throwable) {
+            override fun onFailure(call: retrofit2.Call<UserModel>, t: Throwable) {
                 mostrarDialogoError()
             }
         })
@@ -195,8 +315,8 @@ class InicioRrHhActivity : AppCompatActivity() {
 
         val horarios = mutableListOf<String>()
         for (horarioId in userModel.horarios) {
-            RetrofitClient.horariosApiService.getById(horarioId).enqueue(object : Callback<HorarioModel> {
-                override fun onResponse(call: Call<HorarioModel>, response: Response<HorarioModel>) {
+            RetrofitClient.horariosApiService.getById(horarioId).enqueue(object : retrofit2.Callback<HorarioModel> {
+                override fun onResponse(call: retrofit2.Call<HorarioModel>, response: retrofit2.Response<HorarioModel>) {
                     if (response.isSuccessful) {
                         val horario = response.body()
                         if (horario != null) {
@@ -209,7 +329,7 @@ class InicioRrHhActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<HorarioModel>, t: Throwable) {
+                override fun onFailure(call: retrofit2.Call<HorarioModel>, t: Throwable) {
                     mostrarDialogoError()
                 }
             })
@@ -259,7 +379,8 @@ class InicioRrHhActivity : AppCompatActivity() {
         intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
         startActivity(intent)
     }
-    fun dialogCloseSession(view: View){
+
+    fun dialogCloseSession(view: View) {
         val mensaje = "¿Quiere cerrar la sesión?"
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.apply {
@@ -279,11 +400,9 @@ class InicioRrHhActivity : AppCompatActivity() {
 
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
-
-
     }
 
-    private fun goToLogin(){
+    private fun goToLogin() {
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(intent)
     }

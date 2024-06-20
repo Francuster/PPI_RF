@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -14,10 +15,16 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.Licencia
-import okhttp3.*
+import com.example.myapplication.utils.imageToggleAtras
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 class LicenciasEmpleadoActivity : AppCompatActivity() {
     private lateinit var miVista: View
@@ -41,6 +48,8 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
         listaEmpleados = intent.getParcelableArrayListExtra("listaEmpleados") ?: arrayListOf()
         empleadoBuscado = intent.getParcelableArrayListExtra("empleadoBuscado") ?: arrayListOf()
 
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irEmpleadosLicenciasActivity",listaEmpleados,ArrayList<Licencia>(),ArrayList<Empleado>())
         // Obtén una referencia al TextView
         val empleadoLicenciasTitulo: TextView = findViewById(R.id.empleado_licencias_titulo)
         // Establece el nuevo texto

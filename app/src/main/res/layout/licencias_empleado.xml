@@ -59,7 +59,7 @@
             android:id="@+id/imagen_volver"
             android:layout_width="62dp"
             android:layout_height="40dp"
-            android:onClick="goToAtrasEmpleadosLicencias"
+            
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.97"

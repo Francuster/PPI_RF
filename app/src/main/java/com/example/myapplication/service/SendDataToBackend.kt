@@ -9,12 +9,15 @@ import com.example.myapplication.database.Connection
 import com.example.myapplication.model.CorteInternet
 import com.example.myapplication.model.Log
 import com.example.myapplication.model.Registro
+import com.google.gson.Gson
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.FormBody
+import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.internal.wait
@@ -100,15 +103,13 @@ class SendDataToBackend (private val context: Context) {
     }
 
 
-    fun getLocalRegs(): Int {
-        var count: Int = 0
+    fun getLocalRegs(): List<Registro> {
         val connection = Connection(context)
-        val db = connection.writableDatabase
+        val db = connection.readableDatabase
         val puntero = db.rawQuery("SELECT * FROM LOGS", null)
-
+        val registros = mutableListOf<Registro>()
         if (puntero.moveToFirst()) {
-            val registros = mutableListOf<Registro>()
-            db.beginTransaction()
+
             try {
                 do {
                     val reg = Registro(
@@ -121,105 +122,23 @@ class SendDataToBackend (private val context: Context) {
                     )
                     registros.add(reg)
                 } while (puntero.moveToNext())
-
-                // Envía los registros en lote
-                if (sendLocalRegs(registros)) {
-                    count = registros.size
-                    // Borra los registros si se enviaron correctamente
-                    db.delete("LOGS", null, null)
-                } else {
-                    throw Exception("Error al enviar los registros")
-                }
-
-                Toast.makeText(context, "Cantidad de registros sincronizados: " + count, Toast.LENGTH_SHORT).show()
-                db.setTransactionSuccessful()
             } catch (e: Exception) {
                 e.printStackTrace()
-            } finally {
-                db.endTransaction()
             }
-
             puntero.close()
             db.close()
-
         } else {
             puntero.close()
             db.close()
-
         }
-        return count
+        return registros
     }
 
-    fun sendLocalRegs(registros: List<Registro>): Boolean {
-        var sended = true
-        val url = BuildConfig.BASE_URL + "/api/logs/authenticationOffline"
-
-        val client = OkHttpClient().newBuilder()
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .writeTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(20, TimeUnit.SECONDS)
-            .build()
-
-        // Crear el cuerpo de la solicitud HTTP
-        val registrosJson = JSONArray()
-        for (reg in registros) {
-            val jsonObject = JSONObject()
-            jsonObject.put("horario", reg.horario)
-            jsonObject.put("nombre", reg.nombre)
-            jsonObject.put("apellido", reg.apellido)
-            jsonObject.put("dni", reg.dni)
-            jsonObject.put("estado", reg.estado)
-            jsonObject.put("tipo", reg.tipo)
-            registrosJson.put(jsonObject)
-        }
-
-        val requestBody = registrosJson.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-
-        val request = Request.Builder()
-            .url(url)
-            .post(requestBody)
-            .build()
-
-
-        activeCall = client.newCall(request)
-
-        activeCall?.enqueue(object : Callback {
-
-            override fun onResponse(call: Call, response: Response) {
-                try {
-                    if (response.isSuccessful) {
-                        Toast.makeText(context, "Registro exitoso", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, "HTTP request unsuccessful with status code ${response.code}", Toast.LENGTH_SHORT).show()
-                        sended = false
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Toast.makeText(context, "Error en la respuesta: ${e.message}", Toast.LENGTH_SHORT).show()
-                    sended = false
-                } finally {
-                    response.body?.close()
-                    activeCall = null
-                }
-            }
-
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                Toast.makeText(context, "No se ha podido hacer la sincronización", Toast.LENGTH_SHORT).show()
-                activeCall = null
-                sended = false
-            }
-        })
-
-        return sended
-    }
-
-
-    fun sendDisconnectReports(corte : CorteInternet): Boolean{
+    fun sendDisconnectInfo(corte : CorteInternet,registros: List<Registro>): Boolean{
 
         var sended:Boolean=true
 
-        val url = BuildConfig.BASE_URL + "/api/reportes/cortes"
+        val url = BuildConfig.BASE_URL + "/api/reportes/infoSync"
 
         // CREAR CONEXION
         val client = OkHttpClient().newBuilder()
@@ -228,13 +147,28 @@ class SendDataToBackend (private val context: Context) {
             .readTimeout(20, TimeUnit.SECONDS)
             .build()
 
-        // Crear el cuerpo de la solicitud HTTP
-        val requestBody = FormBody.Builder()
-            .add("horarioDesconexion", corte.horarioDesconexion)
-            .add("horarioReconexion", corte.horarioReconexion)
-            .add("cantRegSincronizados", corte.cantRegistros.toString())
-            .add("periodoDeCorte",corte.periodoDeCorte)
-            .build()
+        val jsonObject = JSONObject()
+        jsonObject.put("horarioDesconexion", corte.horarioDesconexion)
+        jsonObject.put("horarioReconexion", corte.horarioReconexion)
+        jsonObject.put("cantRegSincronizados", corte.cantRegistros)
+        jsonObject.put("periodoDeCorte", corte.periodoDeCorte)
+
+        val registrosArray = JSONArray()
+        for (registro in registros) {
+            val registroObject = JSONObject()
+            registroObject.put("horario", registro.horario)
+            registroObject.put("nombre", registro.nombre)
+            registroObject.put("apellido", registro.apellido)
+            registroObject.put("dni", registro.dni)
+            registroObject.put("estado", registro.estado)
+            registroObject.put("tipo", registro.tipo)
+            registrosArray.put(registroObject)
+        }
+
+        jsonObject.put("registros", registrosArray)
+
+        val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+        val requestBody = RequestBody.create(mediaType, jsonObject.toString())
 
         // Crea la solicitud POST
         val request = Request.Builder()
@@ -251,10 +185,13 @@ class SendDataToBackend (private val context: Context) {
                 try {
                     // La solicitud fue exitosa //
                     if (response.isSuccessful) {
-                        sended=true
+                        sended = true
+                        // Llama a limpiarRegistrosOffline en el hilo principal de la UI
+                        Handler(Looper.getMainLooper()).post {
+                            limpiarRegistrosOffline(context)
+                        }
                     } else {
-                        sended=false
-
+                        sended = false
                     }
 
                 } catch (e: Exception) {e.printStackTrace()
@@ -273,5 +210,22 @@ class SendDataToBackend (private val context: Context) {
             }
         })
         return sended
+    }
+    fun limpiarRegistrosOffline(context: Context) {
+        val connection = Connection(context)
+        val db = connection.writableDatabase
+        try {
+            db.beginTransaction()
+            try {
+                db.delete("LOGS", null, null)
+                db.setTransactionSuccessful()
+            } finally {
+                db.endTransaction()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            db.close()
+        }
     }
 }

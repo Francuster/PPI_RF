@@ -33,20 +33,21 @@ class NetworkChangeService : Service() {
 
                         val regRequest = SendDataToBackend(applicationContext)
 
-                        val cantRegistrosSincronizados=regRequest.getLocalRegs()
+                        val listaDeRegistrosASincronizar=regRequest.getLocalRegs()
+                        val cantRegistrosSincronizados=listaDeRegistrosASincronizar.size
 
                         if(cantRegistrosSincronizados>0){
                             Toast.makeText(this, "Sincronización exitosa", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Cantidad de registros sincronizados: " + cantRegistrosSincronizados, Toast.LENGTH_SHORT).show()
                         }
                         else{
                             Toast.makeText(this, "No existen nuevos registros para sincronizar.", Toast.LENGTH_SHORT).show()
                         }
 
-                        //Calcular y enviar el período de corte acá
                         val periodoDeCorte= calcularPeriodoCorte(horarioDesconexion,horarioReconexion)
                         val corte=CorteInternet(horarioDesconexion,horarioReconexion,cantRegistrosSincronizados,periodoDeCorte)
 
-                        regRequest.sendDisconnectReports(corte)
+                        regRequest.sendDisconnectInfo(corte,listaDeRegistrosASincronizar)
                     }
 
                 } else {

@@ -262,8 +262,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
                 // Aquí puedes añadir alguna acción si lo deseas
             }
 
-            setNegativeButton("Cancelar") { dialog, which ->
-                dialog.dismiss()
+            setNegativeButton("Cerrar sesión") { dialog, which ->
+                mostrarDialogoConfirmacion()
             }
 
             setCancelable(true)
@@ -271,6 +271,28 @@ class InicioSeguridadActivity : AppCompatActivity() {
 
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
+    }
+    private fun mostrarDialogoConfirmacion() {
+        val confirmDialogBuilder = AlertDialog.Builder(this)
+        confirmDialogBuilder.apply {
+            setTitle("Confirmación")
+            setMessage("¿Está seguro que desea cerrar sesión?")
+
+            setPositiveButton("Sí") { dialog, which ->
+                val intent = Intent(applicationContext, MainActivity::class.java)
+                startActivity(intent)
+                finish()  // Finaliza la actividad actual para evitar que el usuario regrese usando el botón de atrás
+            }
+
+            setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setCancelable(true)
+        }
+
+        val confirmDialog = confirmDialogBuilder.create()
+        confirmDialog.show()
     }
 
     private fun mostrarDialogoError() {

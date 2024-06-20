@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
@@ -56,7 +57,18 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
         val texto = "LICENCIAS DE :\n${empleadoBuscado[0].fullName}"
         empleadoLicenciasTitulo.text = texto
 
+        mostrarDialogo()
         mostrarTodasLasLicencias()
+    }
+
+    private fun mostrarDialogo() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Información")
+        builder.setMessage("Para agregar una licencia nueva toque el botón '+'.\n\nPara borrar una licencia toque el botón 'x' al lado de la licencia a borrar.")
+        builder.setPositiveButton("OK") { dialog, _ ->
+            dialog.dismiss()
+        }
+        builder.create().show()
     }
 
     private fun aumentarOpacidad(segundos: Long) {
@@ -181,5 +193,4 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
-
 }

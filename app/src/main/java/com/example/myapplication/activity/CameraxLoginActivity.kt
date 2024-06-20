@@ -52,6 +52,7 @@ import java.nio.ReadOnlyBufferException
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.experimental.inv
 
 class CameraxLoginActivity : AppCompatActivity() {
@@ -63,7 +64,7 @@ class CameraxLoginActivity : AppCompatActivity() {
     private var analysisUseCase: ImageAnalysis? = null
     private var graphicOverlay: GraphicOverlay? = null
     private var detectionTextView: TextView? = null
-
+    private val isRequestInProgress = AtomicBoolean(false)
     private var flipX = false
 
     private var faceRecognition: FaceRecognition? = null
@@ -267,7 +268,7 @@ class CameraxLoginActivity : AppCompatActivity() {
         val scaleX = previewView!!.width.toFloat() / inputImage.height.toFloat()
         val scaleY = previewView!!.height.toFloat() / inputImage.width.toFloat()
 
-        if (faces.isNotEmpty() && !responseSuccess) {
+        if (faces.isNotEmpty() && !responseSuccess && isRequestInProgress.compareAndSet(false, true)) {
             detectionTextView!!.setText(R.string.face_detected)
             val face = faces[0]
             boundingBox = face.boundingBox
@@ -291,14 +292,19 @@ class CameraxLoginActivity : AppCompatActivity() {
                                 loginExitoso(embeddingsResponse)
                             }
                             responseSuccess = true
+                        } else if(response.code() == 401) {
+                            println("Sin acceso: ${response.code()}")
+                            isRequestInProgress.set(false)
                         } else {
                             println("Failed to send Embeddings: ${response.code()}")
+                            isRequestInProgress.set(false)
                         }
                         currentCall = null
                     }
 
                     override fun onFailure(call: Call<EmbeddingsResponse>, t: Throwable) {
                         println("Error sending Embeddings: ${t.message}")
+                        isRequestInProgress.set(false)
                         currentCall = null
                     }
                 })
@@ -314,13 +320,14 @@ class CameraxLoginActivity : AppCompatActivity() {
         // Crear el Intent y pasar los datos
         if(embeddingsResponse.data.rol.equals("recursos humanos")||embeddingsResponse.data.rol.equals("RECURSOS HUMANOS")){
             val intent = Intent(this, InicioRrHhActivity::class.java)
+            intent.putExtra("_id", embeddingsResponse.data._id)
 
             intent.putExtra("nombre", embeddingsResponse.data.nombre)
             intent.putExtra("apellido", embeddingsResponse.data.apellido)
             startActivity(intent)
         } else if(embeddingsResponse.data.rol.equals("seguridad")||embeddingsResponse.data.rol.equals("SEGURIDAD")){
             val intent = Intent(this, InicioSeguridadActivity::class.java)
-
+            intent.putExtra("_id", embeddingsResponse.data._id)
             intent.putExtra("nombre", embeddingsResponse.data.nombre)
             intent.putExtra("apellido", embeddingsResponse.data.apellido)
             startActivity(intent)

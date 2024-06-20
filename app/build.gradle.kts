@@ -96,6 +96,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
     // OKhttp para peticiones y solicitudes
     implementation ("com.squareup.okhttp3:okhttp:4.9.2")
     // Kotlin Extensions for OkHttp
@@ -126,6 +127,12 @@ dependencies {
 
     //gson
     implementation ("com.google.code.gson:gson:2.11.0")
+
+    implementation ("androidx.core:core:1.6.0")
+
+
+    implementation("com.google.android.material:material:1.4.0")
+
 
     //ML KIT Google
 //    implementation ("com.google.android.gms:play-services-mlkit:17.0.0")

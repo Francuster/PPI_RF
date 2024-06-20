@@ -12,13 +12,14 @@
         android:id="@+id/layout_hijo"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:alpha="1.0"
         android:background="@drawable/rectangulo_celeste"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/nav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
         app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top"
         app:layout_constraintVertical_bias="0.431"
         app:layout_constraintWidth_percent="0.93">
 
@@ -26,53 +27,65 @@
         <TextView
             android:id="@+id/empleados_titulo"
             android:layout_width="252dp"
-            android:layout_height="33dp"
-            android:layout_marginEnd="48dp"
+            android:layout_height="wrap_content"
             android:fontFamily="@font/inter_extrabold"
             android:text="EMPLEADOS"
             android:textAlignment="center"
-            android:textSize="20sp"
 
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/imagen_volver"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/imagen_licencia"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05"
             app:layout_constraintWidth_percent="0.5"
             tools:ignore="MissingConstraints" />
 
         <ImageView
-            android:id="@+id/imagen_volver"
+            android:id="@+id/imagen_licencia"
             android:layout_width="62dp"
             android:layout_height="40dp"
 
-
-            android:onClick="goToAtrasInicioRRHH"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.028"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.05"
+            app:srcCompat="@drawable/icon_licencia" />
+            <ImageView
+            android:id="@+id/imagen_volver"
+            android:layout_width="62dp"
+            android:layout_height="40dp"
+
+
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.97"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.05"
             app:srcCompat="@drawable/arrow_left" />
 
         <ScrollView
-            android:layout_width="361dp"
-            android:layout_height="499dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.965">
+            app:layout_constraintTop_toBottomOf="@+id/empleados_titulo">
 
             <LinearLayout
                 android:id="@+id/container_empleado_licencias"
-                android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:gravity="center"
+                android:orientation="vertical" />
         </ScrollView>
 
 
@@ -158,7 +171,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!-- Incluye el layout de carga -->
     <include
-        android:id="@+id/loading_overlay"
+        android:id="@+id/loading_overlayout"
         layout="@layout/loading"
         android:visibility="gone" />
 

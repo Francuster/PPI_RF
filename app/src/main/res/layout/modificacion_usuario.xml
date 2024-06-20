@@ -12,6 +12,7 @@
         android:id="@+id/layout_hijo"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:alpha="0.5"
         android:background="@drawable/rectangulo_celeste"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,8 +26,8 @@
 
         <TextView
             android:id="@+id/modificacion_titulo"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="253dp"
+            android:layout_height="67dp"
             android:fontFamily="@font/inter_extrabold"
             android:text="MODIFICAR USUARIO"
             android:textAlignment="center"
@@ -50,12 +51,13 @@
             android:layout_height="0dp"
 
             android:background="@drawable/rectangulo_alerta"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/tipo_cuenta"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.532"
+            app:layout_constraintVertical_bias="0.971"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -105,14 +107,14 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/apellido"
 
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
-            app:layout_constraintHorizontal_bias="0.526"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.163"
+            app:layout_constraintTop_toBottomOf="@+id/modificacion_titulo"
+            app:layout_constraintVertical_bias="0.583"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -161,13 +163,14 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/email"
 
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.287"
+            app:layout_constraintTop_toBottomOf="@+id/modificacion_titulo"
+            app:layout_constraintVertical_bias="0.938"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -217,12 +220,13 @@
             android:layout_height="0dp"
             android:background="@drawable/rectangulo_alerta"
 
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/documento"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.405"
+            app:layout_constraintVertical_bias="0.975"
             app:layout_constraintWidth_percent="0.90">
 
 
@@ -272,8 +276,6 @@
             android:layout_width="62dp"
             android:layout_height="40dp"
 
-
-            android:onClick="goToAtrasInicioRRHH"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/modificacion_titulo"
@@ -299,7 +301,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.895"
+            app:layout_constraintVertical_bias="0.911"
             app:layout_constraintWidth_percent="0.48" />
 
         <Button
@@ -316,8 +318,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.05"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
 
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/boton_siguiente"
             app:layout_constraintVertical_bias="0.659"
             app:layout_constraintWidth_percent="0.38" />
@@ -330,13 +333,13 @@
             android:hint="TIPO CUENTA"
             android:popupBackground="@drawable/rectangulo_alerta"
             android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/horario_edit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
             app:layout_constraintHorizontal_bias="0.526"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.65"
+            app:layout_constraintVertical_bias="0.98"
             app:layout_constraintWidth_percent="0.90" />
 
         <ImageView
@@ -345,13 +348,12 @@
             android:layout_height="39dp"
 
 
-            android:layout_marginTop="29dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.07"
+            app:layout_constraintHorizontal_bias="0.082"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.627"
+            app:layout_constraintTop_toTopOf="@+id/tipo_cuenta"
+            app:layout_constraintVertical_bias="0.052"
             app:srcCompat="@drawable/collaborations_idea__collaborations_idea_work" />
 
         <Spinner
@@ -362,13 +364,19 @@
             android:hint="HORARIO"
             android:popupBackground="@drawable/rectangulo_alerta"
             android:textAlignment="center"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/boton_siguiente"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.10"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.78"
+            app:layout_constraintVertical_bias="0.97"
             app:layout_constraintWidth_percent="0.90" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>    <!-- Incluye el layout de carga -->
+    <include
+    android:id="@+id/loading_overlayout"
+    layout="@layout/loading"
+    android:visibility="gone" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

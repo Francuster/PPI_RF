@@ -23,15 +23,15 @@
 
         <TextView
             android:id="@+id/ingreso_denegado"
-            android:layout_width="349dp"
-            android:layout_height="47dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="346dp"
+            android:layout_height="99dp"
             android:fontFamily="@font/inter_extrabold"
             android:text="INGRESO EXITOSO"
             android:textAlignment="center"
 
             android:textSize="32dp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/elipse_correcto"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.484"
             app:layout_constraintStart_toStartOf="parent"

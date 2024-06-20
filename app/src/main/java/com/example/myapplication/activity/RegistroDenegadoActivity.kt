@@ -1,3 +1,5 @@
+
+/*DEPRECADO
 package com.example.myapplication.activity
 
 import android.content.Intent
@@ -16,4 +18,4 @@ class RegistroDenegadoActivity: AppCompatActivity() {
             val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
             startActivity(intent)
     }
-}
+}*/

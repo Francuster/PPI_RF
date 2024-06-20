@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity."
+    tools:context=".activity.AnteEscaneaDniActivity"
     android:background="@drawable/fondo_blanco">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -72,14 +72,14 @@
                 app:layout_constraintTop_toTopOf="@id/alerta"
                 app:layout_constraintBottom_toBottomOf="@id/alerta"
                 android:fontFamily="@font/inter_extrabold"
-                android:text="ACTIVA LA CAMARA PARA TOMAR LOS DATOS BIOMETRICOS"
+                android:text="ACTIVA LA CAMARA PARA ESCANEAR DNI"
                 android:textAlignment="center"
                 android:textSize="20dp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteY="5dp" />
+                app:layout_constraintVertical_bias="0.50" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -103,7 +103,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.919"
             app:layout_constraintWidth_percent="0.48" />
-
 
         <View
             android:id="@+id/elipse_correcto"
@@ -137,7 +136,7 @@
             app:layout_constraintStart_toStartOf="@+id/elipse_correcto"
             app:layout_constraintTop_toTopOf="@+id/elipse_correcto"
             app:layout_constraintVertical_bias="0.523"
-            app:srcCompat="@drawable/escaneo" />
+            app:srcCompat="@drawable/categoria" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

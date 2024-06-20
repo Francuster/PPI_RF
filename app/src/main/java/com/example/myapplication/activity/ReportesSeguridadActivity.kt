@@ -1,10 +1,17 @@
 package com.example.myapplication.activity
 
+import android.Manifest
+import android.animation.ObjectAnimator
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.print.PrintAttributes
@@ -12,11 +19,23 @@ import android.print.pdf.PrintedPdfDocument
 import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.FileProvider
 import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
+import com.example.myapplication.model.Empleado
+import com.example.myapplication.model.HorarioModel
+import com.example.myapplication.model.Licencia
+import com.example.myapplication.model.UserModel
+import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.imageToggleAtras
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -29,19 +48,27 @@ import java.io.IOException
 import java.util.Calendar
 
 class ReportesSeguridadActivity : AppCompatActivity() {
+    private lateinit var miVista : View
+    private lateinit var loadingOverlayout: View
     private lateinit var calendarView: CalendarView
     private lateinit var downloadButton: Button
     private var selectedDate: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.reporte_seguridad)
+        loadingOverlayout = findViewById(R.id.loading_overlayout)
+        miVista = findViewById(R.id.layout_hijo)
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
-        textoNombreUsuario.text = InicioSeguridadActivity.GlobalData.seguridad!!.fullName
+        textoNombreUsuario.text = InicioSeguridadActivity.GlobalData.seguridad?.fullName ?: "Usuario"
 
         // Verificar y solicitar permisos si es necesario
-        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2)
+            }
         }
 
         // Asignar los elementos de la interfaz de usuario a las variables correspondientes
@@ -64,23 +91,54 @@ class ReportesSeguridadActivity : AppCompatActivity() {
                 Toast.makeText(this, "Por favor seleccione una fecha", Toast.LENGTH_SHORT).show()
             }
         }
+        val imageView = findViewById<ImageView>(R.id.imagen_volver)
+        imageToggleAtras(imageView,applicationContext,"irInicioSeguridadActivity",ArrayList<Empleado>(),ArrayList<Licencia>(),ArrayList<Empleado>())
+    }
+    private fun aumentarOpacidad(){
+        runOnUiThread {
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
+            animator.duration = 500
+            animator.start()
+        }
+    }
+
+    private fun showLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.VISIBLE
+        }
+    }
+
+    private fun hideLoadingOverlay() {
+        runOnUiThread {
+            loadingOverlayout.visibility = View.GONE
+        }
     }
 
     // Manejar la respuesta de la solicitud de permisos
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 1) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permiso concedido", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show()
+        when (requestCode) {
+            1 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permiso de escritura concedido", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Permiso de escritura denegado", Toast.LENGTH_SHORT).show()
+                }
+            }
+            2 -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permiso de notificaciones concedido", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Permiso de notificaciones denegado", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
-
     // Función para descargar los logs en base a la fecha seleccionada
     private fun downloadLogs(date: String) {
+        miVista.alpha = 0.10f // 10% de opacidad
+        showLoadingOverlay()
         // Construir la URL para la solicitud HTTP
         val url = BuildConfig.BASE_URL + "/api/logs/day?fecha=$date"
         val client = OkHttpClient()
@@ -101,6 +159,10 @@ class ReportesSeguridadActivity : AppCompatActivity() {
             }
 
             override fun onResponse(call: Call, response: Response) {
+                hideLoadingOverlay()
+                runOnUiThread {
+                    aumentarOpacidad()
+                }
                 // Manejar la respuesta recibida del servidor
                 if (response.isSuccessful) {
                     response.body?.string()?.let { responseBody ->
@@ -148,14 +210,14 @@ class ReportesSeguridadActivity : AppCompatActivity() {
             for (i in 0 until logsArray.length()) {
                 val log = logsArray.getJSONObject(i)
                 val logText = """
-                ID: ${log.getString("_id")}
-                Horario: ${log.getString("horario")}
-                Nombre: ${log.getString("nombre")}
-                Apellido: ${log.getString("apellido")}
-                DNI: ${log.getInt("dni")}
-                Estado: ${log.getString("estado")}
-                Tipo: ${log.getString("tipo")}
-            """.trimIndent()
+                    ID: ${log.getString("_id")}
+                    Horario: ${log.getString("horario")}
+                    Nombre: ${log.getString("nombre")}
+                    Apellido: ${log.getString("apellido")}
+                    DNI: ${log.getInt("dni")}
+                    Estado: ${log.getString("estado")}
+                    Tipo: ${log.getString("tipo")}
+                """.trimIndent()
 
                 val maxPageHeight = 842f // Altura máxima de la página (ISO A4)
                 var currentPage = 1
@@ -185,6 +247,9 @@ class ReportesSeguridadActivity : AppCompatActivity() {
 
             document.close()
 
+            // Crear la notificación
+            createNotification(file)
+
             runOnUiThread {
                 Toast.makeText(this, "Logs guardados en $file", Toast.LENGTH_LONG).show()
             }
@@ -193,6 +258,140 @@ class ReportesSeguridadActivity : AppCompatActivity() {
                 Toast.makeText(this, "Error al guardar el archivo: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    // Función para crear una notificación que abra el archivo PDF
+    private fun createNotification(file: File) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val channelId = "download_channel"
+        val channelName = "Download Notifications"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val uri = FileProvider.getUriForFile(this, "$packageName.provider", file)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/pdf")
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val notification = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.escaneo)
+            .setContentTitle("Descarga completa")
+            .setContentText("Logs guardados en ${file.name}")
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // Solicitar permiso de notificaciones si no está concedido
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 2)
+            return
+        }
+        NotificationManagerCompat.from(this).notify(1, notification)
+    }
+
+    fun perfilSeguridadDetailAlert(view: View) {
+        obtenerYMostrarDetallesPerfil()
+    }
+
+    private fun obtenerYMostrarDetallesPerfil() {
+        val empleado = InicioSeguridadActivity.GlobalData.seguridad ?: return // Verificar que el empleado de seguridad no sea nulo
+        val empleadoId = empleado.userId // Obtener el ID del empleado de seguridad
+
+        // Llamar al método del servicio para obtener los detalles del empleado por su ID
+        RetrofitClient.userApiService.getById(empleadoId).enqueue(object : retrofit2.Callback<UserModel> {
+            override fun onResponse(call: retrofit2.Call<UserModel>, response: retrofit2.Response<UserModel>) {
+                if (response.isSuccessful) {
+                    val userModel = response.body()
+
+                    if (userModel != null) {
+                        obtenerYMostrarHorarios(userModel)
+                    } else {
+                        mostrarDialogoError()
+                    }
+                } else {
+                    mostrarDialogoError()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<UserModel>, t: Throwable) {
+                mostrarDialogoError()
+            }
+        })
+    }
+
+    private fun obtenerYMostrarHorarios(userModel: UserModel) {
+        val detallesBuilder = StringBuilder()
+        detallesBuilder.append("Nombre: ${userModel.nombre}\n")
+        detallesBuilder.append("Apellido: ${userModel.apellido}\n")
+        detallesBuilder.append("DNI: ${userModel.dni}\n")
+        detallesBuilder.append("Email: ${userModel.email}\n")
+
+        val horarios = mutableListOf<String>()
+        for (horarioId in userModel.horarios) {
+            RetrofitClient.horariosApiService.getById(horarioId).enqueue(object : retrofit2.Callback<HorarioModel> {
+                override fun onResponse(call: retrofit2.Call<HorarioModel>, response: retrofit2.Response<HorarioModel>) {
+                    if (response.isSuccessful) {
+                        val horario = response.body()
+                        if (horario != null) {
+                            horarios.add(horario.getFullName())
+                            if (horarios.size == userModel.horarios.size) {
+                                detallesBuilder.append("Horarios: ${horarios.joinToString(", ")}\n")
+                                mostrarDialogoPerfil(detallesBuilder.toString())
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: retrofit2.Call<HorarioModel>, t: Throwable) {
+                    mostrarDialogoError()
+                }
+            })
+        }
+    }
+
+    private fun mostrarDialogoPerfil(detalles: String) {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Detalles del Perfil")
+            setMessage(detalles)
+
+            setPositiveButton("OK") { dialog, which ->
+                // Aquí puedes añadir alguna acción si lo deseas
+            }
+
+            setNegativeButton("Cancelar") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setCancelable(true)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
+    }
+
+    private fun mostrarDialogoError() {
+        val alertDialogBuilder = AlertDialog.Builder(this)
+        alertDialogBuilder.apply {
+            setTitle("Error")
+            setMessage("No se pudo obtener los detalles del perfil")
+
+            setPositiveButton("OK") { dialog, which ->
+                dialog.dismiss()
+            }
+
+            setCancelable(true)
+        }
+
+        val alertDialog = alertDialogBuilder.create()
+        alertDialog.show()
     }
 
 

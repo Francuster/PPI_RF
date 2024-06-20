@@ -12,8 +12,9 @@
         android:id="@+id/layout_hijo"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:alpha="1.0"
         android:background="@drawable/rectangulo_celeste"
-        app:layout_constraintBottom_toTopOf="@+id/elipse_scan"
+        app:layout_constraintBottom_toTopOf="@+id/nav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
         app:layout_constraintHorizontal_bias="0.482"
@@ -35,7 +36,7 @@
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.119"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/logo_empleados"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.053"
@@ -86,106 +87,63 @@
         app:layout_constraintWidth_percent="0.90"
         tools:layout_editor_absoluteX="0dp">
 
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cuenta_nav"
             android:layout_width="60dp"
             android:layout_height="45dp"
-
+            android:onClick="perfilDetailAlert"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.954"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5">
-
-            <TextView
-                android:id="@id/cuenta"
-                android:layout_width="64dp"
-                android:layout_height="14dp"
-                android:fontFamily="@font/inter_extrabold"
-                android:text="Cuenta"
-                android:textAlignment="center"
-                android:textSize="7sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.787"
-                tools:ignore="MissingConstraints" />
+            app:layout_constraintVertical_bias="0.625">
 
             <ImageView
                 android:id="@+id/imagen_nav_cuenta"
                 android:layout_width="28dp"
                 android:layout_height="25dp"
 
-
-                app:layout_constraintBottom_toTopOf="@+id/cuenta"
+                app:layout_constraintTop_toTopOf="@+id/cuenta_nav"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:srcCompat="@drawable/menu" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/logs_nav"
-            android:layout_width="57dp"
-            android:layout_height="46dp"
-
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/cuenta_nav"
-            app:layout_constraintHorizontal_bias="0.703"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.428">
-
             <TextView
                 android:id="@id/cuenta"
-                android:layout_width="64dp"
-                android:layout_height="14dp"
+                android:layout_width="wrap_content"
+                android:layout_height="23dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:text="Logs"
+                android:text="Ver\nCuenta"
                 android:textAlignment="center"
                 android:textSize="7sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.787"
-                tools:ignore="MissingConstraints" />
-
-            <ImageView
-                android:id="@+id/imagen_nav_logs"
-                android:layout_width="21dp"
-                android:layout_height="21dp"
-
-
-                app:layout_constraintBottom_toTopOf="@+id/cuenta"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/hand_held__tablet_kindle_device_electronics_ipad_computer" />
+                app:layout_constraintTop_toBottomOf="@+id/imagen_nav_cuenta"                 tools:ignore="MissingConstraints"
+                />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/ingreso_egreso_nav"
-            android:layout_width="112dp"
-            android:layout_height="47dp"
-
+            android:layout_width="80dp"
+            android:layout_height="45dp"
+            android:onClick="mostrarIngresosEgresosDelDia"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.20"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.023"
+            app:layout_constraintStart_toEndOf="@+id/empleados_nav"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5">
+            app:layout_constraintVertical_bias="0.625">
 
             <TextView
                 android:id="@id/nav_ingresoegreso"
                 android:layout_width="107dp"
                 android:layout_height="20dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:text="Ingreso/Egreso"
+                android:text="Ver \nIngreso/Egreso"
                 android:textAlignment="center"
                 android:textSize="7sp"
                 android:textStyle="bold"
@@ -209,7 +167,6 @@
                 app:srcCompat="@drawable/sort_arrow" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/empleados_nav"
             android:layout_width="75dp"
@@ -217,17 +174,16 @@
             android:onClick="goToCfgCerteza"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.000"
+            app:layout_constraintHorizontal_bias="0.02"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5">
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@id/nav_empleados"
                 android:layout_width="107dp"
                 android:layout_height="20dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:text="Configurar Certeza"
+                android:text="Configurar\n Certeza"
                 android:textAlignment="center"
                 android:textSize="7sp"
                 android:textStyle="bold"
@@ -256,8 +212,8 @@
             android:layout_width="63dp"
             android:layout_height="53dp"
 
-            app:layout_constraintEnd_toEndOf="@+id/cuenta_nav"
-            app:layout_constraintHorizontal_bias="0.859"
+            app:layout_constraintEnd_toStartOf="@+id/cuenta_nav"
+            app:layout_constraintHorizontal_bias="0.923"
             app:layout_constraintStart_toStartOf="@+id/empleados_nav"
             tools:layout_editor_absoluteY="0dp">
 
@@ -266,7 +222,7 @@
                 android:layout_width="55dp"
                 android:layout_height="23dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:text="Licencias"
+                android:text="Empleados\nLicencias"
                 android:textAlignment="center"
                 android:textSize="7sp"
                 android:textStyle="bold"
@@ -286,7 +242,6 @@
                 android:onClick="goToLicences"
                 app:layout_constraintBottom_toTopOf="@+id/licencia_nav"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.487"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
@@ -342,6 +297,7 @@
             android:background="#00ECE6D9"
             android:backgroundTint="#ECE6D9"
             android:fontFamily="@font/lalezar"
+            android:onClick="dialogCloseSession"
             android:text="LOGER"
             android:textAlignment="textStart"
             android:textColor="#ECE6D9"
@@ -381,5 +337,11 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Incluye el layout de carga -->
+    <include
+        android:id="@+id/loading_overlayout"
+        layout="@layout/loading"
+        android:visibility="gone" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,14 +12,14 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_hijo"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="625dp"
         android:background="@drawable/rectangulo_celeste"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/elipse_scan"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.8"
         app:layout_constraintHorizontal_bias="0.482"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top"
         app:layout_constraintVertical_bias="0.431"
         app:layout_constraintWidth_percent="0.93">
 
@@ -29,15 +29,17 @@
             android:layout_width="300dp"
             android:layout_height="38dp"
             android:fontFamily="@font/inter_extrabold"
-            android:text="INGRESOS/EGRESOS"
+            android:paddingStart="15dp"
+            android:text="INGRESOS/EGRESOS DEL DÍA"
             android:textAlignment="center"
             android:textSize="17sp"
             android:textStyle="bold"
 
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.341"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/logo_ingresoegreso"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.026"
             tools:ignore="MissingConstraints" />
@@ -56,6 +58,46 @@
             app:layout_constraintVertical_bias="0.026"
             app:srcCompat="@drawable/sort_arrow" />
 
+        <TextView
+            android:id="@+id/total_logs_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginTop="4dp"
+            android:text="Total logs del día: 0"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/logs_del_dia"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ingreso_exitoso" />
+
+        <LinearLayout
+            android:id="@+id/logs_del_dia"
+            android:layout_width="379dp"
+            android:layout_height="499dp"
+            android:alpha="1.0"
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ingreso_exitoso">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="499dp"
+                android:layout_weight="1"
+                android:paddingTop="16dp">
+
+                <LinearLayout
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -77,6 +119,7 @@
 
             android:layout_width="80dp"
             android:layout_height="47dp"
+            android:onClick="perfilSeguridadDetailAlert"
 
 
             app:layout_constraintBottom_toBottomOf="parent"
@@ -107,6 +150,7 @@
                 android:id="@+id/imagen_nav_cuenta"
                 android:layout_width="28dp"
                 android:layout_height="25dp"
+                android:onClick="perfilSeguridadDetailAlert"
 
 
                 app:layout_constraintBottom_toTopOf="@+id/cuenta"
@@ -146,7 +190,6 @@
                     android:layout_width="52dp"
                     android:layout_height="23dp"
                     android:fontFamily="@font/inter_extrabold"
-                    android:onClick="goToFormulario"
                     android:text="Ingreso/Egreso"
                     android:textAlignment="center"
                     android:textSize="7sp"
@@ -163,7 +206,7 @@
                     android:layout_width="28dp"
                     android:layout_height="25dp"
 
-
+                    android:onClick="goToFormulario"
                     app:layout_constraintBottom_toTopOf="@+id/nav_ingresoegreso"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -178,21 +221,19 @@
             android:layout_width="66dp"
             android:layout_height="45dp"
 
-            android:layout_marginEnd="240dp"
+            android:onClick="goToQREspecial"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.923"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.625">
+            app:layout_constraintEnd_toStartOf="@+id/logs_nav"
+            app:layout_constraintHorizontal_bias="0.112"
+            app:layout_constraintStart_toEndOf="@+id/ingreso_egreso_nav"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@id/nav_ingresoegreso"
                 android:layout_width="52dp"
                 android:layout_height="23dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:onClick="goToQREspecial"
-                android:text="Log especial"
+                android:text="Log especial dni QR"
                 android:textAlignment="center"
                 android:textSize="7sp"
                 android:textStyle="bold"
@@ -205,9 +246,9 @@
 
             <ImageView
                 android:id="@+id/imagen_nav_ingresoegresoespecial"
-                android:layout_width="28dp"
-                android:layout_height="25dp"
-
+                android:layout_width="21dp"
+                android:layout_height="23dp"
+                android:onClick="goToQREspecial"
 
                 app:layout_constraintBottom_toTopOf="@+id/nav_ingresoegreso"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -221,7 +262,6 @@
             android:layout_width="70dp"
             android:layout_height="47dp"
 
-            android:onClick="goToReporteSeguridad"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.721"
@@ -233,7 +273,7 @@
                 android:layout_width="64dp"
                 android:layout_height="14dp"
                 android:fontFamily="@font/inter_extrabold"
-                android:text="Logs"
+                android:text="Logs Historial"
                 android:textAlignment="center"
                 android:textSize="7sp"
                 android:textStyle="bold"
@@ -248,7 +288,7 @@
                 android:id="@+id/imagen_nav_logs"
                 android:layout_width="21dp"
                 android:layout_height="21dp"
-
+                android:onClick="goToReporteSeguridad"
 
                 app:layout_constraintBottom_toTopOf="@+id/cuenta"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -300,6 +340,7 @@
             android:backgroundTint="#ECE6D9"
             android:fontFamily="@font/lalezar"
             android:text="LOGER"
+            android:onClick="dialogCloseSession"
             android:textAlignment="textStart"
             android:textColor="#ECE6D9"
             android:textColorLink="#ECE6D9"
@@ -338,5 +379,10 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Incluye el layout de carga -->
+    <include
+        android:id="@+id/loading_overlayout"
+        layout="@layout/loading"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,21 +1,21 @@
 package com.example.myapplication.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.ConfiguracionModel
+import com.example.myapplication.model.Empleado
+import com.example.myapplication.model.Licencia
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.imageToggleAtras
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.IOException
 
 class ConfiguracionRRHHActivity : AppCompatActivity() {
 
@@ -29,15 +29,12 @@ class ConfiguracionRRHHActivity : AppCompatActivity() {
 
                 seekBar = findViewById(R.id.seekBar)
                 textCerteza = findViewById(R.id.certeza_configuracion) // Inicializar textCerteza después de setContentView()
-
+                val imageView = findViewById<ImageView>(R.id.imagen_volver)
+                imageToggleAtras(imageView,applicationContext,"irInicioRrHhActivity",ArrayList<Empleado>(),ArrayList<Licencia>(),ArrayList<Empleado>())
                 onChangeSeekBar()
                 obtenerCerteza() // Llamar a obtenerCerteza() después de inicializar textCerteza
         }
 
-        fun goBackInicioRRHH(view: View) {
-                val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
-                startActivity(intent)
-        }
 
         private fun onChangeSeekBar(){
                 seekBar.setOnSeekBarChangeListener( object : SeekBar.OnSeekBarChangeListener{

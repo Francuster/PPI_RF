@@ -188,8 +188,12 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         }
     }
 
-    fun goToAtrasInicioRRHH(view: View) {
+    override fun onBackPressed() {
+        super.onBackPressed()
+        // Aquí se define el comportamiento para ir hacia atrás desde C
         val intent = Intent(applicationContext, InicioRrHhActivity::class.java)
         startActivity(intent)
+        finish()
     }
+
 }

@@ -321,7 +321,12 @@ class InicioSeguridadActivity : AppCompatActivity() {
         val alertDialog = alertDialogBuilder.create()
         alertDialog.show()
     }
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
     private fun goToLogin(){
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(intent)

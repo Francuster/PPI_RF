@@ -173,4 +173,13 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
             loadingOverlayout.visibility = View.GONE
         }
     }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        // Aquí se define el comportamiento para ir hacia atrás desde C
+        val intent = Intent(applicationContext, EmpleadosLicenciasActivity::class.java)
+        intent.putParcelableArrayListExtra("listaEmpleados", java.util.ArrayList(listaEmpleados))
+        startActivity(intent)
+        finish()
+    }
+
 }

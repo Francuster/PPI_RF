@@ -165,7 +165,9 @@ class CargarLicenciaActivity : AppCompatActivity() {
         seleccionFecha = true
         // Asegurarse de restablecer el minDate en el hilo principal
         runOnUiThread {
-            calendarView.minDate = Calendar.getInstance().timeInMillis
+            val hoy = Calendar.getInstance().timeInMillis
+            calendarView.minDate = hoy
+            calendarView.setDate(hoy, false, true) // Reposicionar en la fecha actual
         }
         cargarButton.isEnabled = false
     }

@@ -22,11 +22,16 @@ import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONArray
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class InicioRrHhActivity : AppCompatActivity() {
     private lateinit var miVista: View
@@ -171,6 +176,44 @@ class InicioRrHhActivity : AppCompatActivity() {
     }
 
     fun mostrarIngresosEgresosDelDia(view: View) {
+        miVista.alpha = 0.10f // 10% de opacidad
+        showLoadingOverlay()
+
+        val url = "${BuildConfig.BASE_URL}/api/logs/day?fecha=${getCurrentDate()}"
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    miVista.alpha = 1.0f // 100% de opacidad
+                    hideLoadingOverlay()
+                    Toast.makeText(this@InicioRrHhActivity, "Error al cargar los logs: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+
+                hideLoadingOverlay()
+                if (response.isSuccessful) {
+                    response.body?.string()?.let { responseBody ->
+                        runOnUiThread {
+                            displayLogs(responseBody)
+                        }
+                    }
+                } else {
+                    runOnUiThread {
+                        aumentarOpacidad()
+                        Toast.makeText(this@InicioRrHhActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun displayLogs(responseBody: String) {
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.apply {
             setTitle("Ingresos y Egresos del Día")
@@ -192,35 +235,38 @@ class InicioRrHhActivity : AppCompatActivity() {
             logContainer.orientation = LinearLayout.VERTICAL
             container.addView(logContainer)
 
-            val url = "${BuildConfig.BASE_URL}/api/logs/day?fecha=${getCurrentDate()}"
-            val client = OkHttpClient()
-            val request = Request.Builder()
-                .url(url)
-                .build()
+            try {
+                val logsArray = JSONArray(responseBody)
+                val totalLogs = logsArray.length()
+                totalLogsTextView.text = "Total logs del día: $totalLogs"
 
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    runOnUiThread {
-                        Toast.makeText(this@InicioRrHhActivity, "Error al cargar los logs: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
+                for (i in 0 until logsArray.length()) {
+                    val logNumber = i + 1
+                    val log = logsArray.getJSONObject(i)
+                    val logText = """
+                    $logNumber. ┌────────────────────┐
+                         Nombre: ${log.getString("nombre").padEnd(18)} 
+                         Apellido: ${log.getString("apellido").padEnd(16)} 
+                         DNI: ${log.getInt("dni").toString().padEnd(21)} 
+                         Estado: ${log.getString("estado").padEnd(16)} 
+                         Horario: ${log.getString("horario").padEnd(15)} 
+                         Tipo: ${log.getString("tipo").padEnd(18)} 
+                        └────────────────────┘
+                    """.trimIndent()
+
+                    val textView = TextView(this@InicioRrHhActivity)
+                    textView.text = logText
+                    textView.setPadding(24, 16, 24, 16)
+                    textView.setTextColor(ContextCompat.getColor(this@InicioRrHhActivity, R.color.black))
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                    logContainer.addView(textView)  // Añadir cada log a la lista
                 }
+            } catch (e: Exception) {
+                Toast.makeText(this@InicioRrHhActivity, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
 
-                override fun onResponse(call: Call, response: Response) {
-                    if (response.isSuccessful) {
-                        response.body?.string()?.let { responseBody ->
-                            runOnUiThread {
-                                displayLogs(responseBody, logContainer, totalLogsTextView)
-                            }
-                        }
-                    } else {
-                        runOnUiThread {
-                            Toast.makeText(this@InicioRrHhActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            })
-
-            setPositiveButton("OK") { dialog, which ->
+            setPositiveButton("OK") { dialog, _ ->
+                aumentarOpacidad()
                 dialog.dismiss()
             }
 
@@ -237,42 +283,6 @@ class InicioRrHhActivity : AppCompatActivity() {
         attributes?.width = LinearLayout.LayoutParams.MATCH_PARENT
         attributes?.height = LinearLayout.LayoutParams.WRAP_CONTENT
         window?.attributes = attributes as WindowManager.LayoutParams
-    }
-
-
-
-    private fun displayLogs(responseBody: String, logContainer: LinearLayout, totalLogsTextView: TextView) {
-        logContainer.removeAllViews()
-
-        try {
-            val logsArray = JSONArray(responseBody)
-            val totalLogs = logsArray.length()
-            totalLogsTextView.text = "Total logs del día: $totalLogs"
-
-            for (i in 0 until logsArray.length()) {
-                val logNumber = i + 1
-                val log = logsArray.getJSONObject(i)
-                val logText = """
-                    $logNumber. ┌────────────────────┐
-                         Nombre: ${log.getString("nombre").padEnd(18)} 
-                         Apellido: ${log.getString("apellido").padEnd(16)} 
-                         DNI: ${log.getInt("dni").toString().padEnd(21)} 
-                         Estado: ${log.getString("estado").padEnd(16)} 
-                         Horario: ${log.getString("horario").padEnd(15)} 
-                         Tipo: ${log.getString("tipo").padEnd(18)} 
-                        └────────────────────┘
-                    """.trimIndent()
-
-                val textView = TextView(this@InicioRrHhActivity)
-                textView.text = logText
-                textView.setPadding(24, 16, 24, 16)
-                textView.setTextColor(ContextCompat.getColor(this@InicioRrHhActivity, R.color.black))
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-                logContainer.addView(textView)  // Añadir cada log a la lista
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this@InicioRrHhActivity, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun getCurrentDate(): String {

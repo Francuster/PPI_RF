@@ -76,9 +76,10 @@ class CargarLicenciaActivity : AppCompatActivity() {
                 val diffInDays = ((selectedCalendar.timeInMillis - primeraFechaSeleccionada!!.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
                 if ((diffInDays + 1) % 7 != 0 || diffInDays + 1 > 35) {
                     Toast.makeText(this, "La Licencia tiene que ser múltiplo de 7 días y no mayor a 35 días", Toast.LENGTH_SHORT).show()
-                } else {
+                } else  {
                     fechaHasta = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedCalendar.time)
                     mostrarDialogoConfirmacionFechaHasta(selectedCalendar)
+
                 }
             }
         }
@@ -106,14 +107,20 @@ class CargarLicenciaActivity : AppCompatActivity() {
             .setPositiveButton("Sí") { _, _ ->
                 primeraFechaSeleccionada = selectedCalendar
                 seleccionFecha = false
-                calendarView.minDate = primeraFechaSeleccionada!!.timeInMillis + (1000 * 60 * 60 * 24)
+                // Asegurarse de actualizar el minDate en el hilo principal
+                runOnUiThread {
+                    calendarView.minDate = primeraFechaSeleccionada!!.timeInMillis + (1000 * 60 * 60 * 24)
+                }
                 Toast.makeText(this, "Seleccione la fecha de finalización", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancelar") { _, _ ->
                 fechaDesde = null
                 primeraFechaSeleccionada = null
                 seleccionFecha = true
-                calendarView.minDate = Calendar.getInstance().timeInMillis
+                // Asegurarse de restablecer el minDate en el hilo principal
+                runOnUiThread {
+                    calendarView.minDate = Calendar.getInstance().timeInMillis
+                }
             }
             .show()
     }
@@ -129,7 +136,10 @@ class CargarLicenciaActivity : AppCompatActivity() {
             .setNegativeButton("Cancelar") { _, _ ->
                 fechaHasta = null
                 seleccionFecha = false
-                calendarView.minDate = primeraFechaSeleccionada!!.timeInMillis + (1000 * 60 * 60 * 24)
+                // Asegurarse de restablecer el minDate en el hilo principal
+                runOnUiThread {
+                    calendarView.minDate = primeraFechaSeleccionada!!.timeInMillis + (1000 * 60 * 60 * 24)
+                }
             }
             .show()
     }
@@ -153,7 +163,10 @@ class CargarLicenciaActivity : AppCompatActivity() {
         fechaHasta = null
         primeraFechaSeleccionada = null
         seleccionFecha = true
-        calendarView.minDate = Calendar.getInstance().timeInMillis
+        // Asegurarse de restablecer el minDate en el hilo principal
+        runOnUiThread {
+            calendarView.minDate = Calendar.getInstance().timeInMillis
+        }
         cargarButton.isEnabled = false
     }
 

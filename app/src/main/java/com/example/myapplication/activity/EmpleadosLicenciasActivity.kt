@@ -2,7 +2,9 @@ package com.example.myapplication.activity
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -77,6 +79,16 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
             loadingOverlayout.visibility = View.GONE
         }
     }
+    // Función para cambiar el color temporalmente
+    private fun ImageView.changeColorTemporarily(color: Int, duration: Long) {
+        val originalColorFilter = this.colorFilter
+        this.setColorFilter(color)
+
+        // Restaurar el color original después de un retraso
+        Handler().postDelayed({
+            this.colorFilter = originalColorFilter
+        }, duration)
+    }
 
     private fun mostrarTodosLosEmpleados() {
         val container: LinearLayout = findViewById(R.id.container_empleado_licencias)
@@ -107,6 +119,8 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
+                    val imageView = it as ImageView
+                    imageView.changeColorTemporarily(Color.BLACK, 200) // Cambia a NEGRO por 200 ms
                     empleadoBuscado.clear()
                     empleadoBuscado.add(empleado)
                     cargarLicenciasDelEmpleado(userId)

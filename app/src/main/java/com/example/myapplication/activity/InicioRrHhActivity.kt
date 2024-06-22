@@ -2,7 +2,9 @@ package com.example.myapplication.activity
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -118,7 +120,16 @@ class InicioRrHhActivity : AppCompatActivity() {
             }
         })
     }
+    // Función para cambiar el color temporalmente
+    private fun ImageView.changeColorTemporarily(color: Int, duration: Long) {
+        val originalColorFilter = this.colorFilter
+        this.setColorFilter(color)
 
+        // Restaurar el color original después de un retraso
+        Handler().postDelayed({
+            this.colorFilter = originalColorFilter
+        }, duration)
+    }
     private fun mostrarTodosLosEmpleados() {
         val container: LinearLayout = findViewById(R.id.container)
 
@@ -136,9 +147,13 @@ class InicioRrHhActivity : AppCompatActivity() {
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_editar).setOnClickListener {
+                    val imageView = it as ImageView
+                    imageView.changeColorTemporarily(Color.GRAY, 200) // Cambia a gris por 200 ms
                     goToModificacionUsuario(user)
                 }
                 itemView.findViewById<View>(R.id.imagen_ojo).setOnClickListener {
+                    val imageView = it as ImageView
+                    imageView.changeColorTemporarily(Color.GRAY, 200) // Cambia a gris por 200 ms
                     goToVerPerfil(user)
                 }
 

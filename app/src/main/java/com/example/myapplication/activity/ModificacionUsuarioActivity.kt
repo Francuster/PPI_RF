@@ -175,7 +175,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     }
 
     fun goToCameraParaRegistro(view: View) {
-        botonImagen =  findViewById(R.id.boton_rechazar)
+        botonImagen =  findViewById(R.id.boton_siguiente)
         botonImagen.changeTextColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms)
         val intent = Intent(this, CameraxAddFaceActivity::class.java)
         intent.putExtra("fromActivity", "ModificacionUsuarioActivity")

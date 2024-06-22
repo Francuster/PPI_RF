@@ -2,6 +2,7 @@ package com.example.myapplication.activity
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,6 +17,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.Licencia
+import com.example.myapplication.utils.changeColorTemporarily
 import com.example.myapplication.utils.imageToggleAtras
 import okhttp3.Call
 import okhttp3.Callback
@@ -113,6 +115,8 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
     }
 
     fun goToCargarLicencia(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_add)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 200 ms
         val intent = Intent(applicationContext, CargarLicenciaActivity::class.java)
         intent.putParcelableArrayListExtra("empleadoBuscado", ArrayList(empleadoBuscado))
         intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))

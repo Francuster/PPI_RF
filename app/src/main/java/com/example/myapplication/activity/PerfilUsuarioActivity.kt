@@ -1,9 +1,11 @@
 package com.example.myapplication.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -15,6 +17,7 @@ import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.changeTextColorTemporarily
 import com.example.myapplication.utils.imageToggleAtras
 import retrofit2.Call
 import retrofit2.Callback
@@ -24,7 +27,7 @@ class PerfilUsuarioActivity : AppCompatActivity() {
     private lateinit var loadingOverlayout: View
     private lateinit var userModel: UserModel
     private lateinit var horariosList: List<HorarioModel>
-
+    private lateinit var boton: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.perfil_usuario) // Nombre corregido
@@ -66,6 +69,10 @@ class PerfilUsuarioActivity : AppCompatActivity() {
     }
 
     fun eliminarUsuario(view: View) {
+
+        boton =  findViewById(R.id.boton_rechazar)
+        boton.changeTextColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms)
+
         val miVista = findViewById<View>(R.id.layout_hijo)
         miVista.alpha = 0.10f // 10% de opacidad
         showLoadingOverlay()

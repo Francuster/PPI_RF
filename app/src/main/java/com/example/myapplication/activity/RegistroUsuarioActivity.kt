@@ -1,6 +1,7 @@
 package com.example.myapplication.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -26,6 +27,7 @@ import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.NetworkChangeService
+import com.example.myapplication.utils.changeTextColorTemporarily
 import com.example.myapplication.utils.imageToggleAtras
 import com.example.myapplication.utils.isServiceRunning
 import retrofit2.Call
@@ -308,6 +310,7 @@ class RegistroUsuarioActivity : AppCompatActivity() {
     }
 
     fun registrarUsuario(view: View) {
+        registrarButton.changeTextColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms)
         if (validarCampos()) {
             val miVista = findViewById<View>(R.id.layout_hijo)
             miVista.alpha = 0.10f // 10% de opacidad

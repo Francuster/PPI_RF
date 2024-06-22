@@ -3,6 +3,7 @@ package com.example.myapplication.activity
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -25,6 +26,7 @@ import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.NetworkChangeService
+import com.example.myapplication.utils.changeTextColorTemporarily
 import com.example.myapplication.utils.imageToggleAtras
 import com.example.myapplication.utils.isServiceRunning
 import retrofit2.Call
@@ -46,6 +48,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     private lateinit var documentoEditText: EditText
     private lateinit var rolSpinner: Spinner
     private lateinit var horarioSpinner: Spinner
+    private lateinit var botonImagen: Button
     private lateinit var actualizarButton: Button
     private lateinit var userModel: UserModel
 
@@ -172,6 +175,8 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
     }
 
     fun goToCameraParaRegistro(view: View) {
+        botonImagen =  findViewById(R.id.boton_rechazar)
+        botonImagen.changeTextColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms)
         val intent = Intent(this, CameraxAddFaceActivity::class.java)
         intent.putExtra("fromActivity", "ModificacionUsuarioActivity")
         intent.putExtra("userId", userModel._id)
@@ -281,6 +286,7 @@ class ModificacionUsuarioActivity : AppCompatActivity() {
 
 
     fun actualizarUsuario(view: View) {
+        actualizarButton.changeTextColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms)
         if (validarCampos()) {
             val miVista = findViewById<View>(R.id.layout_hijo)
             miVista.alpha = 0.10f // 10% de opacidad

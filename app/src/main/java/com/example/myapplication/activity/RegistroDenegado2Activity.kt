@@ -1,14 +1,17 @@
 package com.example.myapplication.activity
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
+import com.example.myapplication.utils.changeTextColorTemporarily
 
 class RegistroDenegado2Activity : AppCompatActivity() {
+    private lateinit var boton: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.ingreso_denegado)
@@ -42,6 +45,8 @@ class RegistroDenegado2Activity : AppCompatActivity() {
 
 
     fun Siguiente(view: View) {
+        boton =  findViewById(R.id.boton_siguiente)
+        boton.changeTextColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms)
         val origen = intent.getStringExtra("origen")
 
         when (origen) {

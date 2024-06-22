@@ -2,9 +2,11 @@ package com.example.myapplication.activity
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -17,6 +19,7 @@ import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.changeColorTemporarily
 import com.example.myapplication.utils.deviceIsConnected
 import okhttp3.Call
 import okhttp3.Callback
@@ -158,6 +161,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun goToAnteEscanea(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_scan)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         if (deviceIsConnected(applicationContext)) {
             val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
             startActivity(intent)
@@ -170,6 +175,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun goToFormulario(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_ingresoegreso)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         if (deviceIsConnected(applicationContext)) {
             val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
             startActivity(intent)
@@ -182,6 +189,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun goToQREspecial(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_ingresoegresoespecial)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         if (deviceIsConnected(applicationContext)) {
             Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
             val intent = Intent(applicationContext, AnteEscaneaDniActivity::class.java)
@@ -198,6 +207,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun perfilSeguridadDetailAlert(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_cuenta)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         obtenerYMostrarDetallesPerfil()
     }
 
@@ -325,6 +336,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun goToReporteSeguridad(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_logs)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         if(deviceIsConnected(applicationContext)){
             val intent = Intent(applicationContext, ReportesSeguridadActivity::class.java)
             startActivity(intent)

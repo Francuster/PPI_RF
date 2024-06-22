@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -24,6 +23,7 @@ import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.changeColorTemporarily
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -120,16 +120,7 @@ class InicioRrHhActivity : AppCompatActivity() {
             }
         })
     }
-    // Función para cambiar el color temporalmente
-    private fun ImageView.changeColorTemporarily(color: Int, duration: Long) {
-        val originalColorFilter = this.colorFilter
-        this.setColorFilter(color)
 
-        // Restaurar el color original después de un retraso
-        Handler().postDelayed({
-            this.colorFilter = originalColorFilter
-        }, duration)
-    }
     private fun mostrarTodosLosEmpleados() {
         val container: LinearLayout = findViewById(R.id.container)
 
@@ -148,12 +139,12 @@ class InicioRrHhActivity : AppCompatActivity() {
 
                 itemView.findViewById<View>(R.id.imagen_editar).setOnClickListener {
                     val imageView = it as ImageView
-                    imageView.changeColorTemporarily(Color.GRAY, 200) // Cambia a gris por 200 ms
+                    imageView.changeColorTemporarily(Color.GRAY, 150) // Cambia a gris por 150 ms
                     goToModificacionUsuario(user)
                 }
                 itemView.findViewById<View>(R.id.imagen_ojo).setOnClickListener {
                     val imageView = it as ImageView
-                    imageView.changeColorTemporarily(Color.GRAY, 200) // Cambia a gris por 200 ms
+                    imageView.changeColorTemporarily(Color.GRAY, 150) // Cambia a gris por 150 ms
                     goToVerPerfil(user)
                 }
 
@@ -177,20 +168,29 @@ class InicioRrHhActivity : AppCompatActivity() {
     }
 
     fun goToRegistroRrHhPrimeraSala(view: View) {
+
+        val imageView = findViewById<ImageView>(R.id.imagen_add)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         val intent = Intent(applicationContext, RegistroUsuarioActivity::class.java)
         startActivity(intent)
     }
 
     fun goToCfgCerteza(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_empleados)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         val intent = Intent(applicationContext, ConfiguracionRRHHActivity::class.java)
         startActivity(intent)
     }
 
     fun perfilDetailAlert(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_cuenta)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         obtenerYMostrarDetallesPerfil()
     }
 
     fun mostrarIngresosEgresosDelDia(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_ingresoegreso)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         miVista.alpha = 0.10f // 10% de opacidad
         showLoadingOverlay()
 
@@ -430,6 +430,8 @@ class InicioRrHhActivity : AppCompatActivity() {
     }
 
     fun goToLicences(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_licencia_nav)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         val intent = Intent(applicationContext, EmpleadosLicenciasActivity::class.java)
         intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
         startActivity(intent)

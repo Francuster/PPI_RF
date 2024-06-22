@@ -29,5 +29,12 @@ class AnteEscaneaActivity: AppCompatActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
 
 }

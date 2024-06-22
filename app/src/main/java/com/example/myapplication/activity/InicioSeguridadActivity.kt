@@ -149,14 +149,15 @@ class InicioSeguridadActivity : AppCompatActivity() {
                     setPadding(24, 16, 24, 16)
                     setTextColor(ContextCompat.getColor(this@InicioSeguridadActivity, R.color.black))
                     setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-                    gravity = Gravity.CENTER_HORIZONTAL
+                    textAlignment = View.TEXT_ALIGNMENT_VIEW_START // Alinea el texto al inicio del TextView
+
                 }
 
                 val layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
-                    gravity = Gravity.CENTER_HORIZONTAL
+                    gravity = Gravity.CENTER
                 }
 
                 logContainer.addView(textView, 0, layoutParams)  // Añadir cada log al inicio de la lista

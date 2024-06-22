@@ -188,7 +188,7 @@ class InicioRrHhActivity : AppCompatActivity() {
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
-                    miVista.alpha = 1.0f // 100% de opacidad
+                    aumentarOpacidad()
                     hideLoadingOverlay()
                     Toast.makeText(this@InicioRrHhActivity, "Error al cargar los logs: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
@@ -291,6 +291,8 @@ class InicioRrHhActivity : AppCompatActivity() {
     }
 
     private fun obtenerYMostrarDetallesPerfil() {
+        miVista.alpha = 0.10f // 10% de opacidad
+        showLoadingOverlay()
         val empleado = GlobalData.empleado ?: return // Verificar que el empleado no sea nulo
         val empleadoId = empleado.userId // Obtener el ID del empleado
 
@@ -332,6 +334,7 @@ class InicioRrHhActivity : AppCompatActivity() {
                         if (horario != null) {
                             horarios.add(horario.getFullName())
                             if (horarios.size == userModel.horarios.size) {
+                                hideLoadingOverlay()
                                 detallesBuilder.append("Horarios: ${horarios.joinToString(", ")}\n")
                                 mostrarDialogoPerfil(detallesBuilder.toString())
                             }
@@ -340,6 +343,7 @@ class InicioRrHhActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: retrofit2.Call<HorarioModel>, t: Throwable) {
+                    hideLoadingOverlay()
                     mostrarDialogoError()
                 }
             })
@@ -353,6 +357,7 @@ class InicioRrHhActivity : AppCompatActivity() {
             setMessage(detalles)
 
             setPositiveButton("OK") { dialog, which ->
+                aumentarOpacidad()
                 // Aquí puedes añadir alguna acción si lo deseas
             }
 
@@ -380,6 +385,7 @@ class InicioRrHhActivity : AppCompatActivity() {
             }
 
             setNegativeButton("No") { dialog, which ->
+                aumentarOpacidad()
                 dialog.dismiss()
             }
 
@@ -397,6 +403,7 @@ class InicioRrHhActivity : AppCompatActivity() {
             setMessage("No se pudo obtener los detalles del perfil")
 
             setPositiveButton("OK") { dialog, which ->
+                aumentarOpacidad()
                 dialog.dismiss()
             }
 

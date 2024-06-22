@@ -18,11 +18,16 @@ import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
 import com.example.myapplication.utils.deviceIsConnected
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONArray
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class InicioSeguridadActivity : AppCompatActivity() {
     private lateinit var miVista : View
@@ -197,6 +202,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     private fun obtenerYMostrarDetallesPerfil() {
+        miVista.alpha = 0.10f // 10% de opacidad
+        showLoadingOverlay()
         val empleado = GlobalData.seguridad ?: return // Verificar que el empleado de seguridad no sea nulo
         val empleadoId = empleado.userId // Obtener el ID del empleado de seguridad
 
@@ -238,6 +245,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
                         if (horario != null) {
                             horarios.add(horario.getFullName())
                             if (horarios.size == userModel.horarios.size) {
+                                hideLoadingOverlay()
                                 detallesBuilder.append("Horarios: ${horarios.joinToString(", ")}\n")
                                 mostrarDialogoPerfil(detallesBuilder.toString())
                             }
@@ -246,6 +254,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: retrofit2.Call<HorarioModel>, t: Throwable) {
+                    hideLoadingOverlay()
                     mostrarDialogoError()
                 }
             })
@@ -260,6 +269,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
 
             setPositiveButton("OK") { dialog, which ->
                 // Aquí puedes añadir alguna acción si lo deseas
+                aumentarOpacidad()
             }
 
             setNegativeButton("Cerrar sesión") { dialog, which ->
@@ -285,6 +295,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
             }
 
             setNegativeButton("No") { dialog, which ->
+                aumentarOpacidad()
                 dialog.dismiss()
             }
 
@@ -302,6 +313,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
             setMessage("No se pudo obtener los detalles del perfil")
 
             setPositiveButton("OK") { dialog, which ->
+                aumentarOpacidad()
                 dialog.dismiss()
             }
 

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -133,22 +134,32 @@ class InicioSeguridadActivity : AppCompatActivity() {
                 val logNumber = i + 1
                 val log = logsArray.getJSONObject(i)
                 val logText = """
-                $logNumber. ┌────────────────────┐
-                     Nombre: ${log.getString("nombre").padEnd(18)} 
-                     Apellido: ${log.getString("apellido").padEnd(16)} 
-                     DNI: ${log.getInt("dni").toString().padEnd(21)} 
-                     Estado: ${log.getString("estado").padEnd(16)} 
-                     Horario: ${log.getString("horario").padEnd(15)} 
-                     Tipo: ${log.getString("tipo").padEnd(18)} 
-                    └────────────────────┘
-                """.trimIndent()
+            $logNumber. ┌────────────────────┐
+                 Nombre: ${log.getString("nombre").padEnd(18)} 
+                 Apellido: ${log.getString("apellido").padEnd(16)} 
+                 DNI: ${log.getInt("dni").toString().padEnd(21)} 
+                 Estado: ${log.getString("estado").padEnd(16)} 
+                 Horario: ${log.getString("horario").padEnd(15)} 
+                 Tipo: ${log.getString("tipo").padEnd(18)} 
+                └────────────────────┘
+            """.trimIndent()
 
-                val textView = TextView(this)
-                textView.text = logText
-                textView.setPadding(24, 16, 24, 16)
-                textView.setTextColor(ContextCompat.getColor(this, R.color.black))
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-                logContainer.addView(textView, 0)  // Añadir cada log al inicio de la lista
+                val textView = TextView(this).apply {
+                    text = logText
+                    setPadding(24, 16, 24, 16)
+                    setTextColor(ContextCompat.getColor(this@InicioSeguridadActivity, R.color.black))
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }
+
+                val layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.CENTER_HORIZONTAL
+                }
+
+                logContainer.addView(textView, 0, layoutParams)  // Añadir cada log al inicio de la lista
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()

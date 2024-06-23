@@ -75,7 +75,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
 
     private fun aumentarOpacidad(segundos: Long) {
         runOnUiThread {
-            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.5f, 1f)
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
             animator.duration = segundos
             animator.start()
         }
@@ -133,6 +133,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
     }
 
     private fun eliminarLicencia(licenciaId: String) {
+        miVista.alpha = 0.1f
         showLoadingOverlay()
 
         // Construir la URL para la solicitud HTTP
@@ -151,6 +152,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 // Manejar el caso en que la solicitud falle
                 runOnUiThread {
+                    aumentarOpacidad(800)
                     hideLoadingOverlay()
                     Log.e("HTTP DELETE Error", e.message ?: "Unknown error")
                     Toast.makeText(this@LicenciasEmpleadoActivity, "Error al eliminar la licencia: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -160,6 +162,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 // Manejar la respuesta recibida del servidor
                 runOnUiThread {
+                    aumentarOpacidad(800)
                     hideLoadingOverlay()
                 }
                 if (response.isSuccessful) {

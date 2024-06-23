@@ -22,7 +22,6 @@
         app:layout_constraintVertical_bias="0.431"
         app:layout_constraintWidth_percent="0.93">
 
-
         <TextView
             android:id="@+id/create_license"
             android:layout_width="300dp"
@@ -35,7 +34,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/flecha_atras"
+            app:layout_constraintStart_toEndOf="@+id/imagen_volver"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.036"
@@ -57,7 +56,6 @@
             android:id="@+id/imagen_volver"
             android:layout_width="62dp"
             android:layout_height="40dp"
-            
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.97"
@@ -66,16 +64,19 @@
             app:layout_constraintVertical_bias="0.026"
             app:srcCompat="@drawable/arrow_left" />
 
-        <CalendarView
-            android:id="@+id/licence_calendarView"
-            android:layout_width="311dp"
-            android:layout_height="308dp"
-            android:background="@drawable/rectangulo_alerta"
+        <LinearLayout
+            android:id="@+id/calendar_view_container"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.55"
+            app:layout_constraintWidth_percent="0.95"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+        </LinearLayout>
 
         <Button
             android:id="@+id/boton_create"
@@ -91,7 +92,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/licence_calendarView"
+            app:layout_constraintTop_toBottomOf="@+id/calendar_view_container"
             app:layout_constraintWidth_percent="0.48" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

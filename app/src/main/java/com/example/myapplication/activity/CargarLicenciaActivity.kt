@@ -3,12 +3,16 @@ package com.example.myapplication.activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.CalendarView
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
@@ -29,6 +33,7 @@ import kotlin.math.abs
 
 class CargarLicenciaActivity : AppCompatActivity() {
     private lateinit var calendarView: CalendarView
+    private lateinit var calendarViewContainer: LinearLayout
     private lateinit var cargarButton: Button
     private var fechaDesde: String? = null
     private var fechaHasta: String? = null
@@ -51,11 +56,29 @@ class CargarLicenciaActivity : AppCompatActivity() {
         val imageView = findViewById<ImageView>(R.id.imagen_volver)
         imageToggleAtras(imageView,applicationContext,"irLicenciasEmpleadoActivity",listaEmpleados,licenciasEmpleado,empleadoBuscado)
         // Asignar los elementos de la interfaz de usuario a las variables correspondientes
-        calendarView = findViewById(R.id.licence_calendarView)
+        calendarViewContainer = findViewById(R.id.calendar_view_container)
         cargarButton = findViewById(R.id.boton_create)
         cargarButton.isEnabled = false
 
+        inicializarCalendarView()
 
+        cargarButton.setOnClickListener {
+            if (fechaDesde != null && fechaHasta != null) {
+                val validationResult = esFechaValida(fechaDesde!!, fechaHasta!!)
+                if (validationResult.resultado) {
+                    guardarLicencia()
+                } else {
+                    Toast.makeText(this, validationResult.mensaje, Toast.LENGTH_SHORT).show()
+                    resetearFechas()
+                }
+            } else {
+                Toast.makeText(this, "Por favor seleccione ambas fechas", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun inicializarCalendarView() {
+        calendarView = CalendarView(this)
         val calendar = Calendar.getInstance()
         val minDate = calendar.timeInMillis
         calendarView.minDate = minDate
@@ -76,27 +99,14 @@ class CargarLicenciaActivity : AppCompatActivity() {
                 val diffInDays = ((selectedCalendar.timeInMillis - primeraFechaSeleccionada!!.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
                 if ((diffInDays + 1) % 7 != 0 || diffInDays + 1 > 35) {
                     Toast.makeText(this, "La Licencia tiene que ser múltiplo de 7 días y no mayor a 35 días", Toast.LENGTH_SHORT).show()
-                } else  {
+                } else {
                     fechaHasta = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedCalendar.time)
                     mostrarDialogoConfirmacionFechaHasta(selectedCalendar)
-
                 }
             }
         }
 
-        cargarButton.setOnClickListener {
-            if (fechaDesde != null && fechaHasta != null) {
-                val validationResult = esFechaValida(fechaDesde!!, fechaHasta!!)
-                if (validationResult.resultado) {
-                    guardarLicencia()
-                } else {
-                    Toast.makeText(this, validationResult.mensaje, Toast.LENGTH_SHORT).show()
-                    reiniciarSeleccionFechas()
-                }
-            } else {
-                Toast.makeText(this, "Por favor seleccione ambas fechas", Toast.LENGTH_SHORT).show()
-            }
-        }
+        calendarViewContainer.addView(calendarView)
     }
 
     private fun mostrarDialogoConfirmacionFechaInicio(selectedCalendar: Calendar) {
@@ -107,20 +117,11 @@ class CargarLicenciaActivity : AppCompatActivity() {
             .setPositiveButton("Sí") { _, _ ->
                 primeraFechaSeleccionada = selectedCalendar
                 seleccionFecha = false
-                // Asegurarse de actualizar el minDate en el hilo principal
-                runOnUiThread {
-                    calendarView.minDate = primeraFechaSeleccionada!!.timeInMillis + (1000 * 60 * 60 * 24)
-                }
+                actualizarMinDate(primeraFechaSeleccionada!!.timeInMillis + (1000 * 60 * 60 * 24))
                 Toast.makeText(this, "Seleccione la fecha de finalización", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("Cancelar") { _, _ ->
-                fechaDesde = null
-                primeraFechaSeleccionada = null
-                seleccionFecha = true
-                // Asegurarse de restablecer el minDate en el hilo principal
-                runOnUiThread {
-                    calendarView.minDate = Calendar.getInstance().timeInMillis
-                }
+                resetearFechas()
             }
             .show()
     }
@@ -136,10 +137,7 @@ class CargarLicenciaActivity : AppCompatActivity() {
             .setNegativeButton("Cancelar") { _, _ ->
                 fechaHasta = null
                 seleccionFecha = false
-                // Asegurarse de restablecer el minDate en el hilo principal
-                runOnUiThread {
-                    calendarView.minDate = primeraFechaSeleccionada!!.timeInMillis + (1000 * 60 * 60 * 24)
-                }
+                actualizarMinDate(primeraFechaSeleccionada!!.timeInMillis + (1000 * 60 * 60 * 24))
             }
             .show()
     }
@@ -153,23 +151,49 @@ class CargarLicenciaActivity : AppCompatActivity() {
                 cargarButton.isEnabled = true
             }
             .setNegativeButton("Reiniciar Fechas") { _, _ ->
-                reiniciarSeleccionFechas()
+                resetearFechas()
             }
             .show()
     }
 
-    private fun reiniciarSeleccionFechas() {
+    private fun resetearFechas() {
         fechaDesde = null
         fechaHasta = null
         primeraFechaSeleccionada = null
         seleccionFecha = true
-        // Asegurarse de restablecer el minDate en el hilo principal
-        runOnUiThread {
-            val hoy = Calendar.getInstance().timeInMillis
-            calendarView.minDate = hoy
-            calendarView.setDate(hoy, false, true) // Reposicionar en la fecha actual
-        }
+        actualizarMinDate(Calendar.getInstance().timeInMillis)
         cargarButton.isEnabled = false
+    }
+
+    private fun actualizarMinDate(minDate: Long) {
+        runOnUiThread {
+            calendarViewContainer.removeAllViews()
+            calendarView = CalendarView(this@CargarLicenciaActivity)
+            calendarView.minDate = minDate
+            calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
+                val selectedCalendar = Calendar.getInstance().apply {
+                    set(year, month, dayOfMonth)
+                }
+
+                if (seleccionFecha) {
+                    if (selectedCalendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+                        Toast.makeText(this@CargarLicenciaActivity, "La Licencia tiene que comenzar un Lunes", Toast.LENGTH_SHORT).show()
+                    } else {
+                        fechaDesde = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedCalendar.time)
+                        mostrarDialogoConfirmacionFechaInicio(selectedCalendar)
+                    }
+                } else {
+                    val diffInDays = ((selectedCalendar.timeInMillis - primeraFechaSeleccionada!!.timeInMillis) / (1000 * 60 * 60 * 24)).toInt()
+                    if ((diffInDays + 1) % 7 != 0 || diffInDays + 1 > 35) {
+                        Toast.makeText(this@CargarLicenciaActivity, "La Licencia tiene que ser múltiplo de 7 días y no mayor a 35 días", Toast.LENGTH_SHORT).show()
+                    } else {
+                        fechaHasta = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(selectedCalendar.time)
+                        mostrarDialogoConfirmacionFechaHasta(selectedCalendar)
+                    }
+                }
+            }
+            calendarViewContainer.addView(calendarView)
+        }
     }
 
     private fun esFechaValida(desde: String, hasta: String): ValidationResult {

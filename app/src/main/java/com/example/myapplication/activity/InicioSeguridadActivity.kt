@@ -2,9 +2,14 @@ package com.example.myapplication.activity
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.content.IntentFilter
+import android.graphics.Color
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -17,14 +22,22 @@ import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.NetworkChangeReceiver
+import com.example.myapplication.utils.changeColorTemporarily
 import com.example.myapplication.utils.deviceIsConnected
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONArray
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class InicioSeguridadActivity : AppCompatActivity() {
+    private lateinit var networkChangeReceiver: NetworkChangeReceiver
     private lateinit var miVista : View
     private lateinit var loadingOverlayout: View
     object GlobalData {
@@ -49,12 +62,12 @@ class InicioSeguridadActivity : AppCompatActivity() {
 
         val textoNombreUsuario = findViewById<TextView>(R.id.seguridad)
         textoNombreUsuario.text = GlobalData.seguridad!!.fullName
-
         logContainer = findViewById(R.id.container)
         totalLogsTextView = findViewById(R.id.total_logs_textview)
 
-        // Mostrar los logs del día actual
-        showLogsOfTheDay()
+
+        volvioDeConexion()
+
     }
 
     private fun aumentarOpacidad(){
@@ -77,7 +90,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
         }
     }
 
-    private fun showLogsOfTheDay() {
+     fun showLogsOfTheDay() {
         miVista.alpha = 0.10f // 10% de opacidad
         showLoadingOverlay()
         val url = "${BuildConfig.BASE_URL}/api/logs/day?fecha=${getCurrentDate()}"
@@ -125,22 +138,33 @@ class InicioSeguridadActivity : AppCompatActivity() {
                 val logNumber = i + 1
                 val log = logsArray.getJSONObject(i)
                 val logText = """
-                $logNumber. ┌────────────────────┐
-                     Nombre: ${log.getString("nombre").padEnd(18)} 
-                     Apellido: ${log.getString("apellido").padEnd(16)} 
-                     DNI: ${log.getInt("dni").toString().padEnd(21)} 
-                     Estado: ${log.getString("estado").padEnd(16)} 
-                     Horario: ${log.getString("horario").padEnd(15)} 
-                     Tipo: ${log.getString("tipo").padEnd(18)} 
-                    └────────────────────┘
-                """.trimIndent()
+            $logNumber. ┌────────────────────┐
+                 Nombre: ${log.getString("nombre").padEnd(18)} 
+                 Apellido: ${log.getString("apellido").padEnd(16)} 
+                 DNI: ${log.getInt("dni").toString().padEnd(21)} 
+                 Estado: ${log.getString("estado").padEnd(16)} 
+                 Horario: ${log.getString("horario").padEnd(15)} 
+                 Tipo: ${log.getString("tipo").padEnd(18)} 
+                └────────────────────┘
+            """.trimIndent()
 
-                val textView = TextView(this)
-                textView.text = logText
-                textView.setPadding(24, 16, 24, 16)
-                textView.setTextColor(ContextCompat.getColor(this, R.color.black))
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-                logContainer.addView(textView, 0)  // Añadir cada log al inicio de la lista
+                val textView = TextView(this).apply {
+                    text = logText
+                    setPadding(24, 16, 24, 16)
+                    setTextColor(ContextCompat.getColor(this@InicioSeguridadActivity, R.color.black))
+                    setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                    textAlignment = View.TEXT_ALIGNMENT_VIEW_START // Alinea el texto al inicio del TextView
+
+                }
+
+                val layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.CENTER
+                }
+
+                logContainer.addView(textView, 0, layoutParams)  // Añadir cada log al inicio de la lista
             }
         } catch (e: Exception) {
             Toast.makeText(this, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -153,6 +177,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun goToAnteEscanea(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_scan)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         if (deviceIsConnected(applicationContext)) {
             val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
             startActivity(intent)
@@ -165,6 +191,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun goToFormulario(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_ingresoegreso)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         if (deviceIsConnected(applicationContext)) {
             val intent = Intent(applicationContext, AnteEscaneaActivity::class.java)
             startActivity(intent)
@@ -177,6 +205,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun goToQREspecial(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_ingresoegresoespecial)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         if (deviceIsConnected(applicationContext)) {
             Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
             val intent = Intent(applicationContext, AnteEscaneaDniActivity::class.java)
@@ -184,19 +214,17 @@ class InicioSeguridadActivity : AppCompatActivity() {
         }
     }
 
-    fun goToFormEspecial(view: View) {
-        if (deviceIsConnected(applicationContext)) {
-            Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
-            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
-            startActivity(intent)
-        }
-    }
+
 
     fun perfilSeguridadDetailAlert(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_cuenta)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         obtenerYMostrarDetallesPerfil()
     }
 
     private fun obtenerYMostrarDetallesPerfil() {
+        miVista.alpha = 0.10f // 10% de opacidad
+        showLoadingOverlay()
         val empleado = GlobalData.seguridad ?: return // Verificar que el empleado de seguridad no sea nulo
         val empleadoId = empleado.userId // Obtener el ID del empleado de seguridad
 
@@ -238,6 +266,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
                         if (horario != null) {
                             horarios.add(horario.getFullName())
                             if (horarios.size == userModel.horarios.size) {
+                                hideLoadingOverlay()
                                 detallesBuilder.append("Horarios: ${horarios.joinToString(", ")}\n")
                                 mostrarDialogoPerfil(detallesBuilder.toString())
                             }
@@ -246,6 +275,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: retrofit2.Call<HorarioModel>, t: Throwable) {
+                    hideLoadingOverlay()
                     mostrarDialogoError()
                 }
             })
@@ -260,6 +290,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
 
             setPositiveButton("OK") { dialog, which ->
                 // Aquí puedes añadir alguna acción si lo deseas
+                aumentarOpacidad()
             }
 
             setNegativeButton("Cerrar sesión") { dialog, which ->
@@ -285,6 +316,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
             }
 
             setNegativeButton("No") { dialog, which ->
+                aumentarOpacidad()
                 dialog.dismiss()
             }
 
@@ -302,6 +334,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
             setMessage("No se pudo obtener los detalles del perfil")
 
             setPositiveButton("OK") { dialog, which ->
+                hideLoadingOverlay()
+                aumentarOpacidad()
                 dialog.dismiss()
             }
 
@@ -313,6 +347,8 @@ class InicioSeguridadActivity : AppCompatActivity() {
     }
 
     fun goToReporteSeguridad(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_logs)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         if(deviceIsConnected(applicationContext)){
             val intent = Intent(applicationContext, ReportesSeguridadActivity::class.java)
             startActivity(intent)
@@ -353,4 +389,42 @@ class InicioSeguridadActivity : AppCompatActivity() {
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(intent)
     }
+
+    private fun avisoSinConexion(){
+        val textView = TextView(this).apply {
+            text = "Sin Conexion a Internet"
+            setPadding(24, 16, 24, 16)
+            setTextColor(ContextCompat.getColor(this@InicioSeguridadActivity, R.color.my_red))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+            TextView.TEXT_ALIGNMENT_CENTER
+        }
+
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            gravity = Gravity.CENTER
+        }
+
+        logContainer.addView(textView, 0, layoutParams)  // Añadir cada log al inicio de la lista
+    }
+    private fun volvioDeConexion() {
+        networkChangeReceiver = NetworkChangeReceiver { isConnected ->
+            if (isConnected) {
+                // El dispositivo volvió a tener conexión a Internet
+                showLogsOfTheDay()
+            } else {
+                avisoSinConexion()
+            }
+        }
+
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkChangeReceiver, filter)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(networkChangeReceiver)
+    }
+
 }

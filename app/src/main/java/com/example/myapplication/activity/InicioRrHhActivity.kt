@@ -2,6 +2,7 @@ package com.example.myapplication.activity
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -22,11 +23,17 @@ import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
-import okhttp3.*
+import com.example.myapplication.utils.changeColorTemporarily
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONArray
 import java.io.IOException
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class InicioRrHhActivity : AppCompatActivity() {
     private lateinit var miVista: View
@@ -131,9 +138,13 @@ class InicioRrHhActivity : AppCompatActivity() {
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_editar).setOnClickListener {
+                    val imageView = it as ImageView
+                    imageView.changeColorTemporarily(Color.GRAY, 150) // Cambia a gris por 150 ms
                     goToModificacionUsuario(user)
                 }
                 itemView.findViewById<View>(R.id.imagen_ojo).setOnClickListener {
+                    val imageView = it as ImageView
+                    imageView.changeColorTemporarily(Color.GRAY, 150) // Cambia a gris por 150 ms
                     goToVerPerfil(user)
                 }
 
@@ -157,20 +168,67 @@ class InicioRrHhActivity : AppCompatActivity() {
     }
 
     fun goToRegistroRrHhPrimeraSala(view: View) {
+
+        val imageView = findViewById<ImageView>(R.id.imagen_add)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         val intent = Intent(applicationContext, RegistroUsuarioActivity::class.java)
         startActivity(intent)
     }
 
     fun goToCfgCerteza(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_empleados)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         val intent = Intent(applicationContext, ConfiguracionRRHHActivity::class.java)
         startActivity(intent)
     }
 
     fun perfilDetailAlert(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_cuenta)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         obtenerYMostrarDetallesPerfil()
     }
 
     fun mostrarIngresosEgresosDelDia(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_ingresoegreso)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
+        miVista.alpha = 0.10f // 10% de opacidad
+        showLoadingOverlay()
+
+        val url = "${BuildConfig.BASE_URL}/api/logs/day?fecha=${getCurrentDate()}"
+        val client = OkHttpClient()
+        val request = Request.Builder()
+            .url(url)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    aumentarOpacidad()
+                    hideLoadingOverlay()
+                    Toast.makeText(this@InicioRrHhActivity, "Error al cargar los logs: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+
+                hideLoadingOverlay()
+                if (response.isSuccessful) {
+                    response.body?.string()?.let { responseBody ->
+                        runOnUiThread {
+                            displayLogs(responseBody)
+                        }
+                    }
+                } else {
+                    runOnUiThread {
+                        aumentarOpacidad()
+                        Toast.makeText(this@InicioRrHhActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        })
+    }
+
+    private fun displayLogs(responseBody: String) {
         val alertDialogBuilder = AlertDialog.Builder(this)
         alertDialogBuilder.apply {
             setTitle("Ingresos y Egresos del Día")
@@ -192,35 +250,38 @@ class InicioRrHhActivity : AppCompatActivity() {
             logContainer.orientation = LinearLayout.VERTICAL
             container.addView(logContainer)
 
-            val url = "${BuildConfig.BASE_URL}/api/logs/day?fecha=${getCurrentDate()}"
-            val client = OkHttpClient()
-            val request = Request.Builder()
-                .url(url)
-                .build()
+            try {
+                val logsArray = JSONArray(responseBody)
+                val totalLogs = logsArray.length()
+                totalLogsTextView.text = "Total logs del día: $totalLogs"
 
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    runOnUiThread {
-                        Toast.makeText(this@InicioRrHhActivity, "Error al cargar los logs: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
+                for (i in 0 until logsArray.length()) {
+                    val logNumber = i + 1
+                    val log = logsArray.getJSONObject(i)
+                    val logText = """
+                    $logNumber. ┌────────────────────┐
+                         Nombre: ${log.getString("nombre").padEnd(18)} 
+                         Apellido: ${log.getString("apellido").padEnd(16)} 
+                         DNI: ${log.getInt("dni").toString().padEnd(21)} 
+                         Estado: ${log.getString("estado").padEnd(16)} 
+                         Horario: ${log.getString("horario").padEnd(15)} 
+                         Tipo: ${log.getString("tipo").padEnd(18)} 
+                        └────────────────────┘
+                    """.trimIndent()
+
+                    val textView = TextView(this@InicioRrHhActivity)
+                    textView.text = logText
+                    textView.setPadding(24, 16, 24, 16)
+                    textView.setTextColor(ContextCompat.getColor(this@InicioRrHhActivity, R.color.black))
+                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                    logContainer.addView(textView)  // Añadir cada log a la lista
                 }
+            } catch (e: Exception) {
+                Toast.makeText(this@InicioRrHhActivity, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
 
-                override fun onResponse(call: Call, response: Response) {
-                    if (response.isSuccessful) {
-                        response.body?.string()?.let { responseBody ->
-                            runOnUiThread {
-                                displayLogs(responseBody, logContainer, totalLogsTextView)
-                            }
-                        }
-                    } else {
-                        runOnUiThread {
-                            Toast.makeText(this@InicioRrHhActivity, "Error: ${response.code} - ${response.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            })
-
-            setPositiveButton("OK") { dialog, which ->
+            setPositiveButton("OK") { dialog, _ ->
+                aumentarOpacidad()
                 dialog.dismiss()
             }
 
@@ -239,48 +300,14 @@ class InicioRrHhActivity : AppCompatActivity() {
         window?.attributes = attributes as WindowManager.LayoutParams
     }
 
-
-
-    private fun displayLogs(responseBody: String, logContainer: LinearLayout, totalLogsTextView: TextView) {
-        logContainer.removeAllViews()
-
-        try {
-            val logsArray = JSONArray(responseBody)
-            val totalLogs = logsArray.length()
-            totalLogsTextView.text = "Total logs del día: $totalLogs"
-
-            for (i in 0 until logsArray.length()) {
-                val logNumber = i + 1
-                val log = logsArray.getJSONObject(i)
-                val logText = """
-                    $logNumber. ┌────────────────────┐
-                         Nombre: ${log.getString("nombre").padEnd(18)} 
-                         Apellido: ${log.getString("apellido").padEnd(16)} 
-                         DNI: ${log.getInt("dni").toString().padEnd(21)} 
-                         Estado: ${log.getString("estado").padEnd(16)} 
-                         Horario: ${log.getString("horario").padEnd(15)} 
-                         Tipo: ${log.getString("tipo").padEnd(18)} 
-                        └────────────────────┘
-                    """.trimIndent()
-
-                val textView = TextView(this@InicioRrHhActivity)
-                textView.text = logText
-                textView.setPadding(24, 16, 24, 16)
-                textView.setTextColor(ContextCompat.getColor(this@InicioRrHhActivity, R.color.black))
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-                logContainer.addView(textView)  // Añadir cada log a la lista
-            }
-        } catch (e: Exception) {
-            Toast.makeText(this@InicioRrHhActivity, "Error al parsear los logs: ${e.message}", Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun getCurrentDate(): String {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         return sdf.format(Date())
     }
 
     private fun obtenerYMostrarDetallesPerfil() {
+        miVista.alpha = 0.10f // 10% de opacidad
+        showLoadingOverlay()
         val empleado = GlobalData.empleado ?: return // Verificar que el empleado no sea nulo
         val empleadoId = empleado.userId // Obtener el ID del empleado
 
@@ -322,6 +349,7 @@ class InicioRrHhActivity : AppCompatActivity() {
                         if (horario != null) {
                             horarios.add(horario.getFullName())
                             if (horarios.size == userModel.horarios.size) {
+                                hideLoadingOverlay()
                                 detallesBuilder.append("Horarios: ${horarios.joinToString(", ")}\n")
                                 mostrarDialogoPerfil(detallesBuilder.toString())
                             }
@@ -330,6 +358,7 @@ class InicioRrHhActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: retrofit2.Call<HorarioModel>, t: Throwable) {
+                    hideLoadingOverlay()
                     mostrarDialogoError()
                 }
             })
@@ -343,6 +372,7 @@ class InicioRrHhActivity : AppCompatActivity() {
             setMessage(detalles)
 
             setPositiveButton("OK") { dialog, which ->
+                aumentarOpacidad()
                 // Aquí puedes añadir alguna acción si lo deseas
             }
 
@@ -366,10 +396,12 @@ class InicioRrHhActivity : AppCompatActivity() {
             setPositiveButton("Sí") { dialog, which ->
                 val intent = Intent(applicationContext, MainActivity::class.java)
                 startActivity(intent)
+                LicenciasEmpleadoActivity.GlobalData.preferences = true
                 finish()  // Finaliza la actividad actual para evitar que el usuario regrese usando el botón de atrás
             }
 
             setNegativeButton("No") { dialog, which ->
+                aumentarOpacidad()
                 dialog.dismiss()
             }
 
@@ -387,9 +419,10 @@ class InicioRrHhActivity : AppCompatActivity() {
             setMessage("No se pudo obtener los detalles del perfil")
 
             setPositiveButton("OK") { dialog, which ->
+                hideLoadingOverlay()
+                aumentarOpacidad()
                 dialog.dismiss()
             }
-
             setCancelable(true)
         }
 
@@ -398,6 +431,8 @@ class InicioRrHhActivity : AppCompatActivity() {
     }
 
     fun goToLicences(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_licencia_nav)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         val intent = Intent(applicationContext, EmpleadosLicenciasActivity::class.java)
         intent.putParcelableArrayListExtra("listaEmpleados", ArrayList(listaEmpleados))
         startActivity(intent)
@@ -411,6 +446,7 @@ class InicioRrHhActivity : AppCompatActivity() {
             setMessage(mensaje)
 
             setPositiveButton("OK") { dialog, which ->
+                LicenciasEmpleadoActivity.GlobalData.preferences = true
                 goToLogin()
             }
 

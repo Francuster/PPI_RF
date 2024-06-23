@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Handler
 import android.view.MotionEvent
+import android.widget.Button
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import com.example.myapplication.R
@@ -95,3 +97,22 @@ fun goAtras(context: Context, action: String, empleados: ArrayList<Empleado>, li
 }
 
 
+fun ImageView.changeColorTemporarily(color: Int, duration: Long) {
+    val originalColorFilter = this.colorFilter
+    this.setColorFilter(color)
+
+    // Restaurar el color original después de un retraso
+    Handler().postDelayed({
+        this.colorFilter = originalColorFilter
+    }, duration)
+}
+
+fun Button.changeTextColorTemporarily(color: Int, duration: Long) {
+    val originalTextColor = this.currentTextColor
+    this.setTextColor(color)
+
+    // Restaurar el color original después de un retraso
+    Handler().postDelayed({
+        this.setTextColor(originalTextColor)
+    }, duration)
+}

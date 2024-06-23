@@ -2,6 +2,7 @@ package com.example.myapplication.activity
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.Licencia
+import com.example.myapplication.utils.changeColorTemporarily
 import com.example.myapplication.utils.imageToggleAtras
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -78,6 +80,7 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
         }
     }
 
+
     private fun mostrarTodosLosEmpleados() {
         val container: LinearLayout = findViewById(R.id.container_empleado_licencias)
 
@@ -107,6 +110,8 @@ class EmpleadosLicenciasActivity: AppCompatActivity() {
                 container.addView(itemView)
 
                 itemView.findViewById<View>(R.id.imagen_flecha).setOnClickListener {
+                    val imageView = it as ImageView
+                    imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 200 ms
                     empleadoBuscado.clear()
                     empleadoBuscado.add(empleado)
                     cargarLicenciasDelEmpleado(userId)

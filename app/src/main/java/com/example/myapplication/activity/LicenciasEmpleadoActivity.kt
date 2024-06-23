@@ -2,7 +2,10 @@ package com.example.myapplication.activity
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +19,7 @@ import com.example.myapplication.BuildConfig
 import com.example.myapplication.R
 import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.Licencia
+import com.example.myapplication.utils.changeColorTemporarily
 import com.example.myapplication.utils.imageToggleAtras
 import okhttp3.Call
 import okhttp3.Callback
@@ -33,6 +37,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
     private lateinit var listaEmpleados: ArrayList<Empleado>
     private lateinit var empleadoBuscado: ArrayList<Empleado>
     private lateinit var loadingOverlayout: View
+    object GlobalData { var preferences: Boolean = true}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +62,9 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
         val texto = "LICENCIAS DE :\n${empleadoBuscado[0].fullName}"
         empleadoLicenciasTitulo.text = texto
 
-        mostrarDialogo()
+        if (GlobalData.preferences) {
+            mostrarDialogo()
+        }
         mostrarTodasLasLicencias()
     }
 
@@ -68,7 +75,10 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
         builder.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
         }
-        builder.create().show()
+        builder.setNegativeButton("No volver a mostrar") { dialog, _ ->
+            GlobalData.preferences = false
+        }
+        builder.show()
     }
 
     private fun aumentarOpacidad(segundos: Long) {
@@ -104,15 +114,19 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
                     textViewLicenciaVigente.text = diasDeLicencia
                     container.addView(itemView)
                     itemView.findViewById<View>(R.id.imagen_delete).setOnClickListener {
+                        val imageView = it as ImageView
+                        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
                         eliminarLicencia(licencia._id)
                     }
                 }
             }
-            aumentarOpacidad(800L)
+            aumentarOpacidad(500L)
         }
     }
 
     fun goToCargarLicencia(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_add)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 200 ms
         val intent = Intent(applicationContext, CargarLicenciaActivity::class.java)
         intent.putParcelableArrayListExtra("empleadoBuscado", ArrayList(empleadoBuscado))
         intent.putParcelableArrayListExtra("licenciasEmpleado", ArrayList(licenciasEmpleado))
@@ -127,7 +141,12 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
     }
 
     private fun eliminarLicencia(licenciaId: String) {
-        showLoadingOverlay()
+        val handler = Handler(Looper.getMainLooper())
+        // Ejecutar el código después de un retraso de 200 milisegundos
+        handler.postDelayed({
+            miVista.alpha = 0.1f
+            showLoadingOverlay()
+        }, 200)
 
         // Construir la URL para la solicitud HTTP
         val url = "${BuildConfig.BASE_URL}/api/licencias/$licenciaId"
@@ -145,6 +164,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 // Manejar el caso en que la solicitud falle
                 runOnUiThread {
+                    aumentarOpacidad(800)
                     hideLoadingOverlay()
                     Log.e("HTTP DELETE Error", e.message ?: "Unknown error")
                     Toast.makeText(this@LicenciasEmpleadoActivity, "Error al eliminar la licencia: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -154,6 +174,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 // Manejar la respuesta recibida del servidor
                 runOnUiThread {
+                    aumentarOpacidad(800)
                     hideLoadingOverlay()
                 }
                 if (response.isSuccessful) {

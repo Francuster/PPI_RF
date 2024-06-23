@@ -256,6 +256,8 @@ class CameraxOfllineActivity : AppCompatActivity() {
             //            if(start) name = recognizeImage(bitmap);
             val labelEmbeddingsTuple = faceRecognition!!.faceRecognition(bitmap, this)
             name = labelEmbeddingsTuple.usuario.nombre
+            val apellido = labelEmbeddingsTuple.usuario.apellido
+            val id = labelEmbeddingsTuple.usuario.userId
             if (labelEmbeddingsTuple.usuario.label != -1) {
                 if (!responseSuccess) {
 
@@ -266,6 +268,9 @@ class CameraxOfllineActivity : AppCompatActivity() {
                     // Optionally add extra data
                     intent.putExtra("key", "value")
 
+                    intent.putExtra("nombre", name)
+                    intent.putExtra("apellido", apellido)
+                    intent.putExtra("_id", id)
                     // Start the new activity
                     startActivity(intent)
                 }

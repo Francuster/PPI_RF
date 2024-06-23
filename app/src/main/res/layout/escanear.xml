@@ -20,16 +20,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.93">
 
+
         <ImageView
             android:id="@+id/imagen_volver"
             android:layout_width="62dp"
             android:layout_height="40dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.97"
+            app:layout_constraintHorizontal_bias="0.084"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.026"
+            app:layout_constraintVertical_bias="0.093"
             app:srcCompat="@drawable/arrow_left" />
 
         <TextView
@@ -37,19 +38,18 @@
             android:layout_width="331dp"
             android:layout_height="75dp"
             android:fontFamily="@font/inter_extrabold"
-            android:text="REGISTRAR INGRESO/EGRESO"
+            android:text="REGISTRAR\n INGRESO/EGRESO"
             android:textAlignment="center"
             android:textSize="23dp"
             android:textStyle="bold"
 
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/alerta"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_bias="0.509"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.107"
+            app:layout_constraintVertical_bias="0.521"
             tools:ignore="MissingConstraints" />
-
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/alerta"
@@ -109,21 +109,18 @@
             android:id="@+id/elipse_correcto"
             android:layout_width="144dp"
             android:layout_height="137dp"
-            android:layout_marginBottom="23dp"
             android:background="@drawable/elipse_celeste"
 
             app:layout_constraintBottom_toTopOf="@+id/boton_siguiente"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.20"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/alerta"
-            app:layout_constraintVertical_bias="0.895"
+            app:layout_constraintVertical_bias="0.584"
             app:layout_constraintWidth_percent="0.38">
 
 
         </View>
-
 
         <ImageView
             android:id="@+id/escaneo"

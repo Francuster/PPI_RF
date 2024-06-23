@@ -54,7 +54,7 @@ public class FaceRecognition(){
         // 6. Match the embeddings with known faces or perform clustering to identify faces
         var label = matchFaceEmbeddings(recognizedFaceEmbeddings)
         //Label can be "Unknown"
-        var usuario = Usuario(-1, "", "", "", listOf(), "", "")
+        var usuario = Usuario(-1, "", "", "", listOf(), "", "","")
         if(!label.equals("Unknown")){
             usuario = getUsarioByLabel(label.toInt())
         }
@@ -69,7 +69,7 @@ public class FaceRecognition(){
         // 6. Match the embeddings with known faces or perform clustering to identify faces
         var label = matchFaceEmbeddings(recognizedFaceEmbeddings)
         //Label can be "Unknown"
-        var usuario = Usuario(-1, "Unknown", "Unknown", "Unknown", listOf(), "", "")
+        var usuario = Usuario(-1, "Unknown", "Unknown", "Unknown", listOf(), "", "","")
         if(!label.equals("Unknown")){
             usuario = getUsarioByLabel(label.toInt())
         }
@@ -245,13 +245,13 @@ public class FaceRecognition(){
     }
 
     private fun loadUsuarios(){
-        usuarioList = usuarioList.plus(Usuario(0, "12123123", "Alfonso", "Lombardi", listOf("estudiante"), "0900", "1800"))
-        usuarioList = usuarioList.plus(Usuario(1, "12123123", "Esteban Ezequiel", "Lucero", listOf("seguridad"), "0900", "1800"))
-        usuarioList = usuarioList.plus(Usuario(2, "12123123", "Manuel", "Acosta", listOf("rrhh"), "0900", "1800"))
-        usuarioList = usuarioList.plus(Usuario(3, "12123123", "Guillermo", "Arditti", listOf("estudiante"), "0900", "1800"))
-        usuarioList = usuarioList.plus(Usuario(4, "12123123", "Gabriel", "Althaparro", listOf("estudiante"), "0900", "1800"))
-        usuarioList = usuarioList.plus(Usuario(5, "12123123", "Matias", "Suarez", listOf("estudiante"), "0900", "1800"))
-        usuarioList = usuarioList.plus(Usuario(6, "12123123", "Franco", "Disabato", listOf("administrador", "profesor"), "0900", "1800"))
+        usuarioList = usuarioList.plus(Usuario(0, "12123123", "Alfonso", "Lombardi", listOf("estudiante"), "0900", "1800","6639364677064c212cd0d9da"))
+        usuarioList = usuarioList.plus(Usuario(1, "12123123", "Esteban Ezequiel", "Lucero", listOf("seguridad"), "0900", "1800",""))
+        usuarioList = usuarioList.plus(Usuario(2, "12123123", "Manuel", "Acosta", listOf("rrhh"), "0900", "1800","6640e36cbaf1cbe4db2201dc"))
+        usuarioList = usuarioList.plus(Usuario(3, "12123123", "Guillermo", "Arditti", listOf("estudiante"), "0900", "1800","66423a5c2e6e06b70bf9c74a"))
+        usuarioList = usuarioList.plus(Usuario(4, "12123123", "Gabriel", "Althaparro", listOf("estudiante"), "0900", "1800","66423a782e6e06b70bf9c74b"))
+        usuarioList = usuarioList.plus(Usuario(5, "12123123", "Matias", "Suarez", listOf("estudiante"), "0900", "1800","6673356ddb0a05a275eae278"))
+        usuarioList = usuarioList.plus(Usuario(6, "12123123", "Franco", "Disabato", listOf("administrador", "profesor"), "0900", "1800","663934ff77064c212cd0d9d8"))
 
 
     }

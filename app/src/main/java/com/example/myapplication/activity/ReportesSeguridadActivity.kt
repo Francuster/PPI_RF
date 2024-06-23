@@ -35,6 +35,8 @@ import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.changeColorTemporarily
+import com.example.myapplication.utils.changeTextColorTemporarily
 import com.example.myapplication.utils.imageToggleAtras
 import okhttp3.Call
 import okhttp3.Callback
@@ -85,6 +87,8 @@ class ReportesSeguridadActivity : AppCompatActivity() {
 
         // Establecer un listener para el botón de descarga
         downloadButton.setOnClickListener {
+
+            downloadButton.changeTextColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
             selectedDate?.let { date ->
                 downloadLogs(date)
             } ?: run {
@@ -297,6 +301,8 @@ class ReportesSeguridadActivity : AppCompatActivity() {
     }
 
     fun perfilSeguridadDetailAlert(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_cuenta)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         obtenerYMostrarDetallesPerfil()
     }
 
@@ -396,6 +402,8 @@ class ReportesSeguridadActivity : AppCompatActivity() {
 
 
     fun goToAtras(view: View) {
+        val imageView = findViewById<ImageView>(R.id.imagen_nav_ingresoegreso)
+        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
         val intent = Intent(applicationContext, InicioSeguridadActivity::class.java)
         startActivity(intent)
     }

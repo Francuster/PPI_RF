@@ -219,12 +219,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
     fun perfilSeguridadDetailAlert(view: View) {
         val imageView = findViewById<ImageView>(R.id.imagen_nav_cuenta)
         imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
-        if (deviceIsConnected(applicationContext)){
-            obtenerYMostrarDetallesPerfil()
-        }else{
-            Toast.makeText(this,"No estas conectado a Internet",Toast.LENGTH_SHORT).show()
-        }
-
+        obtenerYMostrarDetallesPerfil()
     }
 
     private fun obtenerYMostrarDetallesPerfil() {
@@ -339,6 +334,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
             setMessage("No se pudo obtener los detalles del perfil")
 
             setPositiveButton("OK") { dialog, which ->
+                hideLoadingOverlay()
                 aumentarOpacidad()
                 dialog.dismiss()
             }

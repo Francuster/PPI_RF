@@ -418,10 +418,10 @@ class InicioRrHhActivity : AppCompatActivity() {
             setMessage("No se pudo obtener los detalles del perfil")
 
             setPositiveButton("OK") { dialog, which ->
+                hideLoadingOverlay()
                 aumentarOpacidad()
                 dialog.dismiss()
             }
-
             setCancelable(true)
         }
 

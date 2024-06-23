@@ -75,7 +75,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
 
     private fun aumentarOpacidad(segundos: Long) {
         runOnUiThread {
-            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.1f, 1f)
+            val animator = ObjectAnimator.ofFloat(miVista, "alpha", 0.5f, 1f)
             animator.duration = segundos
             animator.start()
         }
@@ -110,7 +110,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
                     }
                 }
             }
-            aumentarOpacidad(800L)
+            aumentarOpacidad(500L)
         }
     }
 

@@ -396,6 +396,7 @@ class InicioRrHhActivity : AppCompatActivity() {
             setPositiveButton("Sí") { dialog, which ->
                 val intent = Intent(applicationContext, MainActivity::class.java)
                 startActivity(intent)
+                LicenciasEmpleadoActivity.GlobalData.preferences = true
                 finish()  // Finaliza la actividad actual para evitar que el usuario regrese usando el botón de atrás
             }
 
@@ -445,6 +446,7 @@ class InicioRrHhActivity : AppCompatActivity() {
             setMessage(mensaje)
 
             setPositiveButton("OK") { dialog, which ->
+                LicenciasEmpleadoActivity.GlobalData.preferences = true
                 goToLogin()
             }
 

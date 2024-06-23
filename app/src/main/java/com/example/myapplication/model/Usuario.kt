@@ -7,7 +7,8 @@ class Usuario (
     var apellido: String,
     var rol: List<String>,
     var horarioEntrada: String,
-    var horarioSalida: String
+    var horarioSalida: String,
+    var userId: String
 ) {
 
 

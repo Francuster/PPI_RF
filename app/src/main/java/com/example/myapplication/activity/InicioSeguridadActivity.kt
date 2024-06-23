@@ -2,7 +2,9 @@ package com.example.myapplication.activity
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Gravity
@@ -20,6 +22,7 @@ import com.example.myapplication.model.Empleado
 import com.example.myapplication.model.HorarioModel
 import com.example.myapplication.model.UserModel
 import com.example.myapplication.service.RetrofitClient
+import com.example.myapplication.utils.NetworkChangeReceiver
 import com.example.myapplication.utils.changeColorTemporarily
 import com.example.myapplication.utils.deviceIsConnected
 import okhttp3.Call
@@ -34,6 +37,7 @@ import java.util.Date
 import java.util.Locale
 
 class InicioSeguridadActivity : AppCompatActivity() {
+    private lateinit var networkChangeReceiver: NetworkChangeReceiver
     private lateinit var miVista : View
     private lateinit var loadingOverlayout: View
     object GlobalData {
@@ -58,12 +62,12 @@ class InicioSeguridadActivity : AppCompatActivity() {
 
         val textoNombreUsuario = findViewById<TextView>(R.id.seguridad)
         textoNombreUsuario.text = GlobalData.seguridad!!.fullName
-
         logContainer = findViewById(R.id.container)
         totalLogsTextView = findViewById(R.id.total_logs_textview)
 
-        // Mostrar los logs del día actual
-        showLogsOfTheDay()
+
+        volvioDeConexion()
+
     }
 
     private fun aumentarOpacidad(){
@@ -86,7 +90,7 @@ class InicioSeguridadActivity : AppCompatActivity() {
         }
     }
 
-    private fun showLogsOfTheDay() {
+     fun showLogsOfTheDay() {
         miVista.alpha = 0.10f // 10% de opacidad
         showLoadingOverlay()
         val url = "${BuildConfig.BASE_URL}/api/logs/day?fecha=${getCurrentDate()}"
@@ -210,18 +214,17 @@ class InicioSeguridadActivity : AppCompatActivity() {
         }
     }
 
-    fun goToFormEspecial(view: View) {
-        if (deviceIsConnected(applicationContext)) {
-            Toast.makeText(this, "Estás conectado a Internet", Toast.LENGTH_SHORT).show()
-            val intent = Intent(applicationContext, FormularioOfflineActivity::class.java)
-            startActivity(intent)
-        }
-    }
+
 
     fun perfilSeguridadDetailAlert(view: View) {
         val imageView = findViewById<ImageView>(R.id.imagen_nav_cuenta)
         imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
-        obtenerYMostrarDetallesPerfil()
+        if (deviceIsConnected(applicationContext)){
+            obtenerYMostrarDetallesPerfil()
+        }else{
+            Toast.makeText(this,"No estas conectado a Internet",Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun obtenerYMostrarDetallesPerfil() {
@@ -390,4 +393,42 @@ class InicioSeguridadActivity : AppCompatActivity() {
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(intent)
     }
+
+    private fun avisoSinConexion(){
+        val textView = TextView(this).apply {
+            text = "Sin Conexion a Internet"
+            setPadding(24, 16, 24, 16)
+            setTextColor(ContextCompat.getColor(this@InicioSeguridadActivity, R.color.my_red))
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 18f)
+            TextView.TEXT_ALIGNMENT_CENTER
+        }
+
+        val layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            gravity = Gravity.CENTER
+        }
+
+        logContainer.addView(textView, 0, layoutParams)  // Añadir cada log al inicio de la lista
+    }
+    private fun volvioDeConexion() {
+        networkChangeReceiver = NetworkChangeReceiver { isConnected ->
+            if (isConnected) {
+                // El dispositivo volvió a tener conexión a Internet
+                showLogsOfTheDay()
+            } else {
+                avisoSinConexion()
+            }
+        }
+
+        val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        registerReceiver(networkChangeReceiver, filter)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(networkChangeReceiver)
+    }
+
 }

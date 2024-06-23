@@ -106,6 +106,8 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
                     textViewLicenciaVigente.text = diasDeLicencia
                     container.addView(itemView)
                     itemView.findViewById<View>(R.id.imagen_delete).setOnClickListener {
+                        val imageView = findViewById<ImageView>(R.id.imagen_delete)
+                        imageView.changeColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
                         eliminarLicencia(licencia._id)
                     }
                 }

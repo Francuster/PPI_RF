@@ -37,6 +37,7 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
     private lateinit var listaEmpleados: ArrayList<Empleado>
     private lateinit var empleadoBuscado: ArrayList<Empleado>
     private lateinit var loadingOverlayout: View
+    object GlobalData { var preferences: Boolean = true}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +62,9 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
         val texto = "LICENCIAS DE :\n${empleadoBuscado[0].fullName}"
         empleadoLicenciasTitulo.text = texto
 
-        mostrarDialogo()
+        if (GlobalData.preferences) {
+            mostrarDialogo()
+        }
         mostrarTodasLasLicencias()
     }
 
@@ -72,7 +75,10 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
         builder.setPositiveButton("OK") { dialog, _ ->
             dialog.dismiss()
         }
-        builder.create().show()
+        builder.setNegativeButton("No volver a mostrar") { dialog, _ ->
+            GlobalData.preferences = false
+        }
+        builder.show()
     }
 
     private fun aumentarOpacidad(segundos: Long) {

@@ -4,6 +4,8 @@ import android.animation.ObjectAnimator
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -133,8 +135,12 @@ class LicenciasEmpleadoActivity : AppCompatActivity() {
     }
 
     private fun eliminarLicencia(licenciaId: String) {
-        miVista.alpha = 0.1f
-        showLoadingOverlay()
+        val handler = Handler(Looper.getMainLooper())
+        // Ejecutar el código después de un retraso de 200 milisegundos
+        handler.postDelayed({
+            miVista.alpha = 0.1f
+            showLoadingOverlay()
+        }, 200)
 
         // Construir la URL para la solicitud HTTP
         val url = "${BuildConfig.BASE_URL}/api/licencias/$licenciaId"

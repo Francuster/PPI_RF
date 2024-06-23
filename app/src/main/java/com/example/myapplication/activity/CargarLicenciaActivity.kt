@@ -2,6 +2,7 @@ package com.example.myapplication.activity
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -20,6 +21,7 @@ import com.example.myapplication.model.Licencia
 import com.example.myapplication.model.LicenciaRequest
 import com.example.myapplication.model.LicenciaResponse
 import com.example.myapplication.service.RetrofitClient.apiService
+import com.example.myapplication.utils.changeTextColorTemporarily
 import com.example.myapplication.utils.imageToggleAtras
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -63,6 +65,8 @@ class CargarLicenciaActivity : AppCompatActivity() {
         inicializarCalendarView()
 
         cargarButton.setOnClickListener {
+            cargarButton.changeTextColorTemporarily(Color.BLACK, 150) // Cambia a NEGRO por 150 ms
+
             if (fechaDesde != null && fechaHasta != null) {
                 val validationResult = esFechaValida(fechaDesde!!, fechaHasta!!)
                 if (validationResult.resultado) {

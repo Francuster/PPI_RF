@@ -81,7 +81,8 @@ class Connection(val ctx: Context) : SQLiteOpenHelper(ctx, DATABASE_NAME, null, 
       apellido TEXT NOT NULL,
       dni INTEGER NOT NULL,
       estado TEXT NOT NULL,
-      tipo TEXT NOT NULL
+      tipo TEXT NOT NULL,
+      sincronizado INTEGER DEFAULT 0
     );
     """.trimIndent()
 

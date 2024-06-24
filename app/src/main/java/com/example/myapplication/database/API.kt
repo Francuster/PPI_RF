@@ -32,9 +32,9 @@ fun registrarLogs(context: Context, nombre: String, apellido: String, dni: Int, 
     val horario = formato.format(Date())
     try {
         // Registrar el visitante en la tabla de Logs
-        val queryLogs = "INSERT INTO logs (horario, nombre, apellido, dni, estado, tipo) VALUES (?, ?, ?, ?, ?, ?)"
-        db.execSQL(queryLogs, arrayOf(horario, nombre, apellido, dni, estado, tipo))
-        Log.i("TAG", "Entrada de usuario insertada correctamente en la tabla LOGS con horario: $horario, nombre: $nombre, apellido: $apellido, dni: $dni, estado: $estado, tipo: $tipo")
+        val queryLogs = "INSERT INTO logs (horario, nombre, apellido, dni, estado, tipo, sincronizado) VALUES (?, ?, ?, ?, ?, ?, ?)"
+        db.execSQL(queryLogs, arrayOf(horario, nombre, apellido, dni, estado, tipo, 0))
+        Log.i("TAG", "Entrada de usuario insertada correctamente en la tabla LOGS con horario: $horario, nombre: $nombre, apellido: $apellido, dni: $dni, estado: $estado, tipo: $tipo, sincronizado: 0")
     } catch (e: Exception) {
         // Manejar cualquier excepción
         Log.e(TAG, "Error al registrar Log", e)

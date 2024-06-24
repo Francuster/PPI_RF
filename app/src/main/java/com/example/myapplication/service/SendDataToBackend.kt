@@ -1,5 +1,6 @@
 package com.example.myapplication.service
 
+import android.content.ContentValues
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
@@ -106,7 +107,7 @@ class SendDataToBackend (private val context: Context) {
     fun getLocalRegs(): List<Registro> {
         val connection = Connection(context)
         val db = connection.readableDatabase
-        val puntero = db.rawQuery("SELECT * FROM LOGS", null)
+        val puntero = db.rawQuery("SELECT * FROM LOGS WHERE sincronizado = 0", null)
         val registros = mutableListOf<Registro>()
         if (puntero.moveToFirst()) {
 
@@ -119,8 +120,10 @@ class SendDataToBackend (private val context: Context) {
                         puntero.getString(puntero.getColumnIndexOrThrow("dni")),
                         puntero.getString(puntero.getColumnIndexOrThrow("estado")),
                         puntero.getString(puntero.getColumnIndexOrThrow("tipo")),
+                        false
                     )
                     registros.add(reg)
+                    marcarRegistroComoSincronizado(reg.dni)
                 } while (puntero.moveToNext())
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -186,10 +189,6 @@ class SendDataToBackend (private val context: Context) {
                     // La solicitud fue exitosa //
                     if (response.isSuccessful) {
                         sended = true
-                        // Llama a limpiarRegistrosOffline en el hilo principal de la UI
-                        Handler(Looper.getMainLooper()).post {
-                            limpiarRegistrosOffline(context)
-                        }
                     } else {
                         sended = false
                     }
@@ -211,21 +210,23 @@ class SendDataToBackend (private val context: Context) {
         })
         return sended
     }
-    fun limpiarRegistrosOffline(context: Context) {
+
+    fun marcarRegistroComoSincronizado(dni: String) {
         val connection = Connection(context)
         val db = connection.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put("sincronizado", 1)
+
+        val whereClause = "dni = ?"
+        val whereArgs = arrayOf(dni)
+
         try {
-            db.beginTransaction()
-            try {
-                db.delete("LOGS", null, null)
-                db.setTransactionSuccessful()
-            } finally {
-                db.endTransaction()
-            }
+            db.update("logs", contentValues, whereClause, whereArgs)
         } catch (e: Exception) {
             e.printStackTrace()
         } finally {
             db.close()
         }
     }
+
 }

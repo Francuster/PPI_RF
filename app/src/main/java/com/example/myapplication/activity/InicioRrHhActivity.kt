@@ -49,6 +49,7 @@ class InicioRrHhActivity : AppCompatActivity() {
     private var nombre: String? = null
     private var apellido: String? = null
     private var empleadoId: String? = null
+    private var dni: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +60,8 @@ class InicioRrHhActivity : AppCompatActivity() {
             nombre = intent.getStringExtra("nombre")
             apellido = intent.getStringExtra("apellido") // nombre para mostrar
             empleadoId = intent.getStringExtra("_id")
-            GlobalData.empleado = Empleado(fullName = "$nombre $apellido", userId = "$empleadoId")
+            dni = intent.getStringExtra("dni")
+            GlobalData.empleado = Empleado(fullName = "$nombre $apellido", userId = "$empleadoId",dni = "$dni")
         }
 
         val textoNombreUsuario = findViewById<TextView>(R.id.usuario)
@@ -133,7 +135,7 @@ class InicioRrHhActivity : AppCompatActivity() {
                 val textViewEmpleado: TextView = itemView.findViewById(R.id.empleado)
                 textViewEmpleado.text = user.getFullName()
                 if (user.rol.uppercase() != "ESTUDIANTE") {
-                    listaEmpleados.add(Empleado(user.getFullName(), user._id))
+                    listaEmpleados.add(Empleado(user.getFullName(), user._id,"$user.dni"))
                 }
                 container.addView(itemView)
 

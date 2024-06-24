@@ -258,6 +258,7 @@ class CameraxOfllineActivity : AppCompatActivity() {
             name = labelEmbeddingsTuple.usuario.nombre
             val apellido = labelEmbeddingsTuple.usuario.apellido
             val id = labelEmbeddingsTuple.usuario.userId
+            val dni = labelEmbeddingsTuple.usuario.dni
             if (labelEmbeddingsTuple.usuario.label != -1) {
                 if (!responseSuccess) {
 
@@ -267,7 +268,7 @@ class CameraxOfllineActivity : AppCompatActivity() {
 
                     // Optionally add extra data
                     intent.putExtra("key", "value")
-
+                    intent.putExtra("dni", dni)
                     intent.putExtra("nombre", name)
                     intent.putExtra("apellido", apellido)
                     intent.putExtra("_id", id)

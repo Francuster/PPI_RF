@@ -56,8 +56,9 @@ class InicioSeguridadActivity : AppCompatActivity() {
             val nombre = intent.getStringExtra("nombre")
             val apellido = intent.getStringExtra("apellido")
             val empleadoId = intent.getStringExtra("_id")
+            val dni = intent.getStringExtra("dni")
 
-            GlobalData.seguridad = Empleado(fullName = "$nombre $apellido", userId = "$empleadoId")
+            GlobalData.seguridad = Empleado(fullName = "$nombre $apellido", userId = "$empleadoId",dni ="$dni" )
         }
 
         val textoNombreUsuario = findViewById<TextView>(R.id.seguridad)

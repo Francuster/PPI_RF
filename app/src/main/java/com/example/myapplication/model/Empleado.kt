@@ -5,9 +5,11 @@ import android.os.Parcelable
 
 data class Empleado(
     var fullName: String,
-    var userId: String
+    var userId: String,
+    var dni: String
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
     )
@@ -15,6 +17,7 @@ data class Empleado(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(fullName)
         parcel.writeString(userId)
+        parcel.writeString(dni)
     }
 
     override fun describeContents(): Int {

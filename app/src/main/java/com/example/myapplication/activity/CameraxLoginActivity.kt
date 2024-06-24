@@ -321,7 +321,7 @@ class CameraxLoginActivity : AppCompatActivity() {
         if(embeddingsResponse.data.rol.equals("recursos humanos")||embeddingsResponse.data.rol.equals("RECURSOS HUMANOS")){
             val intent = Intent(this, InicioRrHhActivity::class.java)
             intent.putExtra("_id", embeddingsResponse.data._id)
-
+            intent.putExtra("dni", embeddingsResponse.data.dni)
             intent.putExtra("nombre", embeddingsResponse.data.nombre)
             intent.putExtra("apellido", embeddingsResponse.data.apellido)
             startActivity(intent)
@@ -330,6 +330,7 @@ class CameraxLoginActivity : AppCompatActivity() {
             intent.putExtra("_id", embeddingsResponse.data._id)
             intent.putExtra("nombre", embeddingsResponse.data.nombre)
             intent.putExtra("apellido", embeddingsResponse.data.apellido)
+            intent.putExtra("dni", embeddingsResponse.data.dni)
             startActivity(intent)
         } else {
             // Crear el Intent y pasar los datos solo si el rol no es "recursos humanos" ni "seguridad"

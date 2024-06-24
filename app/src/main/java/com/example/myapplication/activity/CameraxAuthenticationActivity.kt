@@ -565,6 +565,7 @@ class CameraxAuthenticationActivity : AppCompatActivity() {
     }
     private fun mostrarPantallaErrorIngreso() {
         val intent = Intent(applicationContext, IngresoDenegadoActivity::class.java)
+        intent.putExtra("fromCameraxAuthentication", true)
         startActivity(intent)
     }
     private fun stopScanTimer() {

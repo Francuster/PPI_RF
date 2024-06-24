@@ -177,7 +177,7 @@ class QRScannerActivity: AppCompatActivity() {
                 .build()
 
             val request = Request.Builder()
-                .url("https://log3r.up.railway.app/api/authentication/logs") // Cambiar por IP local para prueba o IP online
+                .url("https://log3r.up.railway.app/api/logs/authentication") // Cambiar por IP local para prueba o IP online
                 .post(requestBody)
                 .build()
 
